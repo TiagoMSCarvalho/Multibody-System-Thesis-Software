@@ -1,0 +1,13 @@
+Version Log:
+- Euler Parameters Updated;
+- Read inputs with points;
+- Fsolver doesn't find a solution;
+- Position,Velocity and Acceleration Equations Updates;
+- 3 New Excels were created:
+	- suspension_fst10e:
+		- Tries to solve the issue with the one wheel file, exchanges 2 sph on the chassis side  by 1 revolute to solve the overconstrain problem,
+		however the results are not satisfatory.
+	- one wheel:
+		- Reduces the probelm to 1 wheel (Lower Sus), it is overconstrained by 2 dofs ( I suspect by the 2 spherical in each a-arm).
+	- original:
+		- Keeps the data as given by the team, it has several issues with non perpendicular axis and i overconstrained.
