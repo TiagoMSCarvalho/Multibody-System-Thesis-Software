@@ -1,20 +1,20 @@
 function [Coilover]=compute_coilovers(Points,PointsStatic,Joints,i,flag,timestep)
 
 
-% flag=upper(flag);
-% if flag == 'FL'
-%     idx = [52 53];
-%     jointidx=2;
-% elseif flag == 'FR'
-%     idx = [57 58];
-%     jointidx=3;
-% elseif flag == 'RL'
-%     idx = [62 63];
-%     jointidx=4;
-% elseif flag == 'RR'
-%     idx = [67 68];
-%     jointidx=5;
-% end
+flag=upper(flag);
+if flag == 'FL'
+    idx = [52 53];
+    jointidx=2;
+elseif flag == 'FR'
+    idx = [57 58];
+    jointidx=3;
+elseif flag == 'RL'
+    idx = [62 63];
+    jointidx=4;
+elseif flag == 'RR'
+    idx = [67 68];
+    jointidx=5;
+end
 
 point1= [Points{idx(1),1}(i), Points{idx(1),2}(i), Points{idx(1),3}(i)];
 point2= [Points{idx(2),1}(i), Points{idx(2),1}(i), Points{idx(2),3}(i)];
