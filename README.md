@@ -14,3 +14,22 @@ pk-EP v.1.0.1:
       - Bryant Angles, the user supplies the bryant angles corresponding to the rotation of the frame (x-y-z order);
       - Orientational Axis, the user define a vector-axis around which the frame rotates (active view) and a angle corresponding to the rotation;
   - Implementation of a 3D Example for Debug of lsqr and fsolver;
+  - Version Closure: 
+	- Statement:
+		- Closed for backup porpuses;
+		- An extensive debug was done during the week, several bugs were found and corrected at this time the comparison with ADAMS is the following:
+			-Translational joint:
+				- All values are correct since only Vx is different from 0;
+				- Velocity signals are all correct;
+				- Velocity values of Matlab are higher than expected;
+				- Acceleration values are different from expected;
+			-Universal Joint:
+				- Velocity values are erratic, Vy should be 0;
+				- Acceleration Values don't add up vs Adams, Accel in y should be 0, Ang Accel in Z have different magnitudes;
+			-Spherical Joint:
+				- Velocity values are correct both in x and y;
+				- Angular z velocity signal is wrong, values are different than expected;
+				- Acceleration values are wrong;
+
+pk-EP v.1.0.2:
+  - Implementation of debug changes to the joints equations, experience changing some inconsistencies between the Wichita thesis and Nikravesh.
