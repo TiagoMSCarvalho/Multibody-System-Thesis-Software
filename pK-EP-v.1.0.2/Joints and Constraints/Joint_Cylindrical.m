@@ -154,7 +154,7 @@ if(Flags.Acceleration == 1)
     
     gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd - (-2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;
     gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd - (-2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2;
-    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*sjd*qid;
+    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*sjd'*qid;
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*sjd'*tid;    
 
     %Type 2 - Following the Jacobian logic the hi and hj wi1l be defined in relation
