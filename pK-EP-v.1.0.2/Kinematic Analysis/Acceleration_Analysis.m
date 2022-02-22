@@ -80,7 +80,8 @@ for i = 1:NBodies
     i1 = 7*(i-1)+1;
     i2 = 6*(i-1)+1;
     acc(i2:i2+2,1) = qdd(i1:i1+2);
-    acc(i2+3:i2+5,1) = 2*Bodies(i).Gd*qdd(i1+3:i1+6);    
+    Gd = Bodies(i).Gd;
+    acc(i2+3:i2+5,1) = 2*Gd*qdd(i1+3:i1+6);    
 end
 
 % Store the accelerations in proper variables

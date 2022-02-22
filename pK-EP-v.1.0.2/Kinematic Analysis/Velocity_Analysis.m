@@ -23,7 +23,7 @@ Flags.Jacobian = 1;
 Flags.Velocity = 1;
 Flags.Acceleration = 0;
 funCount = 1;
-Jacobian=zeros(debugdata(1).cdof,NBodies*7);
+Jacobian = zeros(debugdata(1).cdof,NBodies*7);
 niu = [];
 vel = [];
 

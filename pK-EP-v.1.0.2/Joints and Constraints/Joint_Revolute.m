@@ -115,8 +115,8 @@ if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount:funCount+2,i1:i2)=[eye(3),Ci];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,-sjg'*Ciq]; %Minus Added
-    Jacobian(funCount+4,i1:i2)=[0,0,0,-sjg'*Cit]; %Minus Added
+    Jacobian(funCount+3,i1:i2)=[0,0,0,sjg'*Ciq]; %Minus Added
+    Jacobian(funCount+4,i1:i2)=[0,0,0,sjg'*Cit]; %Minus Added
     %Body j
     i1 = 7*(j-1)+1;
     i2  = i1+6;
@@ -144,15 +144,15 @@ if(Flags.Acceleration == 1)
     wgj = Bodies(j).wg;
     wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame (eq 6.100/6.101 pg 192)
-    qid = SkewMatrix3(wgi)*qig;
-    tid = SkewMatrix3(wgi)*tig;
-    sjd = SkewMatrix3(wgj)*sjg;
+    qid = Ai*SkewMatrix3(wgi)*qi;
+    tid = Ai*SkewMatrix3(wgi)*ti;
+    sjd = Aj*SkewMatrix3(wgj)*sj;
  
     %Following the logic above (Jac) hj will be written in relation to
     %sj and hi will be written in relation to qi and ti
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi + 2*Gdj*Ldj.'*spj; 
-    gamma(funCount+3) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdj*Ldj'*qi) - 2*qid'*sjd; %15-02 sj to sjg 2nd term.
-    gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdj*Ldj'*ti) - 2*tid'*sjd; %15-02 sj to sjg 2nd term.
+    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj); 
+    gamma(funCount+3) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; %15-02 sj to sjg 2nd term/Gj to Gi
+    gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd; %15-02 sj to sjg 2nd term/ Gj to Gi
 end
    
 % Update the function counter

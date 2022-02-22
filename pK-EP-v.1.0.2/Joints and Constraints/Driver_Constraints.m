@@ -36,42 +36,48 @@ direction = Driver(jointCount).direction;
 pos0 = Driver(jointCount).pos0;
 v0 = Driver(jointCount).v0; 
 a0 = Driver(jointCount).a0;
+rotaxis = Driver(jointCount).rotaxis;
+
+if direction > 3
+    if strcmp(ang,'Deg') == 1
+        ang0 = deg2rad(pos0);
+        w0 = deg2rad(v0);
+        alpha0 = deg2rad(a0);
+    elseif strcmp(ang,'Rad') == 1
+        ang0 = pos0;
+        w0 = v0;
+        alpha0 = a0;
+    end
+end
 
 % Form the position constraint equations
 if( Flags.Position == 1)
+    r = Bodies(i).r;
     if direction == 1
-        x = Bodies(i).r(direction);
+        x = r(direction);
         fun(funCount,1) = x - (pos0 + v0*t + 1/2*a0*t^2);
     elseif direction == 2
-        y = Bodies(i).r(direction);
+        y = r(direction);
         fun(funCount,1) = y - (pos0 + v0*t + 1/2*a0*t^2);
     elseif direction == 3
-        z = Bodies(i).r(direction);
+        z = r(direction);
         fun(funCount,1) = z - (pos0 + v0*t + 1/2*a0*t^2);
     elseif direction >= 4
-        if strcmp(ang,'Deg') == 1
-            ang0 = deg2rad(pos0);
-            w0 = deg2rad(v0);
-            alpha0 = deg2rad(a0);
-        elseif strcmp(ang,'Rad') == 1
-            ang0 = pos0;
-            w0 = v0;
-            alpha0 = a0;
-        end
+        p = Bodies(i).p;
         rotaxis = Driver(jointCount).rotaxis;
         phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
         if rotaxis(1) ~=0
-            e1 = Bodies(i).p(direction-3+1);
-            phix = rotaxis(1)*phimag;
-            fun(funCount,1) = e1 - sin(phix/2);
+            e1 = p(direction-3+1);
+            phix = rotaxis(1)*sin(phimag/2);
+            fun(funCount,1) = e1 - phix;
         elseif rotaxis(2) ~= 0
-            e2 = Bodies(i).p(direction-3+1);
-            phiy = rotaxis(2)*phimag;
-            fun(funCount,1) = e2 - sin(phiy/2);
+            e2 = p(direction-3+1);
+            phiy = rotaxis(2)*sin(phimag/2);
+            fun(funCount,1) = e2 - phiy;
         elseif rotaxis(3) ~= 0
-            e3 = Bodies(i).p(direction-3+1);
-            phiz = rotaxis(3)*phimag;
-            fun(funCount,1) = e3 - sin(phiz/2);
+            e3 = p(direction-3+1);
+            phiz = rotaxis(3)*sin(phimag/2);
+            fun(funCount,1) = e3 - phiz;
         end
     end
 end
@@ -81,17 +87,55 @@ if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount,i1:i2)=[0,0,0,0,0,0,0];
-    Jacobian(funCount,i1+direction)=1;
+    if direction < 4
+        Jacobian(funCount,i1+direction-1) = 1;
+    elseif direction > 3
+        Jacobian(funCount,i1+direction) = 1;
+    end
 end
 
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount) = v0+a0*t;
+    if direction < 4
+        niu(funCount) = v0*t + a0;
+    elseif direction > 3
+        phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
+        phimagd = w0 + alpha0*t;
+        if rotaxis(1) ~=0
+            phix = rotaxis(1)*(cos(phimag/2));
+            niu(funCount) = phimagd*phix;
+        elseif rotaxis(2) ~= 0
+            phiy = rotaxis(2)*(cos(phimag/2));
+            niu(funCount) = phimagd*phiy;
+        elseif rotaxis(3) ~= 0
+            phiz = rotaxis(3)*(cos(phimag/2));
+            niu(funCount) = phimagd*phiz;
+        end
+    end
 end
 
 % Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
-    gamma(funCount) = a0;
+    if direction < 4
+        gamma(funCount) = a0;
+    elseif direction > 3
+        phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
+        phimagd = w0 + alpha0*t;
+        phimagdd = alpha0;
+        if rotaxis(1) ~=0
+            phix1 = rotaxis(1)*(-sin(phimag/2));
+            phix2 = rotaxis(1)*(cos(phimag/2));
+            gamma(funCount) = phimagdd*phix2 - phimagd*phix1;
+        elseif rotaxis(2) ~= 0
+            phiy1 = rotaxis(2)*(-sin(phimag/2));
+            phiy2 = rotaxis(2)*(cos(phimag/2));
+            gamma(funCount) = phimagdd*phiy2 - phimagd*phiy1;
+        elseif rotaxis(3) ~= 0
+            phiz1 = rotaxis(3)*(-sin(phimag/2));
+            phiz2 = rotaxis(3)*(cos(phimag/2));
+            gamma(funCount) = phimagdd*phiz2 - phimagd*phiz1;
+        end
+    end
 end
    
 % Update the line counter

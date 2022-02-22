@@ -18,7 +18,7 @@ function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,
     %System Constrain check
     [debugdata] = SystemDofCalc(NBodies,Bodies,Joints,debugdata);
     % Process the input data
-    Bodies = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang);
+    Bodies = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang); %Até aqui os valores batem certo.
     [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t);
     [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies);
     [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,ang,t);

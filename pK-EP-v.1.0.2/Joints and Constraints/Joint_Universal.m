@@ -122,8 +122,8 @@ if(Flags.Acceleration == 1)
     sid = SkewMatrix3(wgi)*sig;
     sjd = SkewMatrix3(wgj)*sjg;
     
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi + 2*Gdj*Ldj.'*spj;
-    gamma(funCount+3) = sig'*(-2*Gdi*Ldi.'*si) + sjg'*(-2*Gdj*Ldj.'*sj) - 2*sid'*sjd;
+    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj);
+    gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
 end
    
 % Update the function counter

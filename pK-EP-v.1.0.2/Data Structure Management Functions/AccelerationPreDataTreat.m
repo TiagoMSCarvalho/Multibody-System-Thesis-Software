@@ -11,19 +11,23 @@ for i=1:NBodies
     e2d = q(6);
     e3d = q(7);
     %G and L derivatives assumir que d(G)/dt = [d(e1)/dt...]
-    Bodies(i).Gd = [-e1d, e0d, -e3d, e2d;
-                    -e2d, e3d, e0d, -e1d;
-                    -e3d, -e2d, e1d, e0d];
-    Bodies(i).Ld = [-e1d, e0d, e3d, -e2d;
-                    -e2d, -e3d, e0d, e1d;
-                    -e3d, e2d, -e1d, e0d];
-    
+    Gd = [-e1d, e0d, -e3d, e2d;
+          -e2d, e3d, e0d, -e1d;
+          -e3d, -e2d, e1d, e0d];
+    Ld = [-e1d, e0d, e3d, -e2d;
+          -e2d, -e3d, e0d, e1d;
+          -e3d, e2d, -e1d, e0d];
+    %Allocation of the derivatives            
+    Bodies(i).Gd = Gd;
+    Bodies(i).Ld = Ld;
+    %For easier debug
+    pd = Bodies(i).pd;
     %%Calc of the Angular Veloctiy following 6.105 Nikravesh equation and
     %%used for the calculation of derivatives.
     %Global Ang.Vel vector:
-    Bodies(i).wg = 2*Bodies(i).G*Bodies(i).pd;
+    Bodies(i).wg = 2*Gd*pd;
     %Local Ang.Vel vector:
-    Bodies(i).wl = 2*Bodies(i).L*Bodies(i).pd;
+    Bodies(i).wl = 2*Ld*pd;
     %This Angular velocity vector will be used to calculate the derivatives
     %of the vector for the 7.2 Table, following the 6.101 formula Nikra Pg
     %174

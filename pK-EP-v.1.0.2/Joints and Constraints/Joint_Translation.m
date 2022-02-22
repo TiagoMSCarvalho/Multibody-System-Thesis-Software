@@ -67,7 +67,7 @@ Li = Bodies(i).L;
 Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies
-d = ri + Aj*spi - rj - Ai*spj;
+d = -ri - Aj*spi + rj + Ai*spj;
 %Skew vector d
 sd = SkewMatrix4(d);
 
@@ -137,9 +137,9 @@ if (Flags.Jacobian == 1)
     Jacobian(funCount,i1:i2) = [-qig',-qig'*Bi+d'*Ciq];
     Jacobian(funCount+1,i1:i2) = [-tig',-tig'*Bi+d'*Cit];
     %Perp Type 1
-    Jacobian(funCount+2,i1:i2) = [0,0,0,-sjg'*Ciq]; %15-02 minus added
-    Jacobian(funCount+3,i1:i2) = [0,0,0,-sjg'*Cit]; %15-02 minus added
-    Jacobian(funCount+4,i1:i2) = [0,0,0,-qjg'*Cit]; %15-02 minus added
+    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*Ciq];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*Cit];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,qjg'*Cit];
     %Body j
     i1 = 7*(j-1)+1;
     i2 = i1+6;
@@ -180,13 +180,15 @@ if(Flags.Acceleration == 1)
     %code d = rj + Aj*spj - ri - Ai*spi;
     rjd = SkewMatrix3(wgj)*rj;
     rid = SkewMatrix3(wgi)*ri;
-    dd =  rid + Ai*SkewMatrix3(wgi)*spi - rjd - Aj*SkewMatrix3(wgj)*spj;
+    spid = SkewMatrix3(wgi)*spi;
+    spjd = SkewMatrix3(wgj)*spj;
+    dd =  -rid - Ai*SkewMatrix3(wgi)*spi + rjd + Aj*SkewMatrix3(wgj)*spj;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd;  %15-02 + added since h = -2;
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2;
-    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) - sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; %20-02 minus was added to the 2nd term - Nikra Table 7.2
-    gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) - sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
-    gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*qj) - qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;
+    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd - (-2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid;  %15-02 + added since h = -2 \ spi and spj to spid spjd
+    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd - (-2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2  \ spi and spj to spid spjd
+    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; 
+    gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
+    gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;
 
     %Type 2 - Following the Jacobian logic the hi and hj wi1l be defined in relation
     %to Pi and Pj and D*hi wi1l be defined in relation to qi and wi1l follow the 7.2 gamma equations.

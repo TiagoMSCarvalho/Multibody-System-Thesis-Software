@@ -99,7 +99,7 @@ if(Flags.Acceleration == 1)
     Ldi = Bodies(i).Ld;
     Ldj = Bodies(j).Ld;
 
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi + 2*Gdj*Ldj.'*spj;
+    gamma(funCount:funCount+2) = -2*Gdi*Ldi'*spi - (-2*Gdj*Ldj'*spj);
 end
    
 % Update the function counter
