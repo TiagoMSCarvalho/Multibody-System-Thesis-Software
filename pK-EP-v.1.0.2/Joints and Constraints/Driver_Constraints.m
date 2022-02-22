@@ -38,7 +38,7 @@ v0 = Driver(jointCount).v0;
 a0 = Driver(jointCount).a0;
 rotaxis = Driver(jointCount).rotaxis;
 
-if direction > 3
+ if direction > 3
     if strcmp(ang,'Deg') == 1
         ang0 = deg2rad(pos0);
         w0 = deg2rad(v0);
