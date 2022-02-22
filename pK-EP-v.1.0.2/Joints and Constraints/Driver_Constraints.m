@@ -109,7 +109,7 @@ if(Flags.Velocity == 1)
             niu(funCount) = phimagd*phiy;
         elseif rotaxis(3) ~= 0
             phiz = rotaxis(3)*(cos(phimag/2));
-            niu(funCount) = phimagd*phiz;
+            niu(funCount) = phimagd*phiz;%phimagd*phiz;
         end
     end
 end
