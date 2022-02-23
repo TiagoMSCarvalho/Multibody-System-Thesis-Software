@@ -15,7 +15,7 @@
 %    equations
 
 
-function [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,ang,t)
+function [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t)
 % Function that controls the acceleration analysis
 
 %Form the velocity contraint equation
@@ -24,7 +24,8 @@ Flags.Jacobian = 0;
 Flags.Velocity = 0;
 Flags.Acceleration = 1;
 funCount = 1;
-gamma = [];
+gamma = zeros(debugdata(1).cdof,1);
+Ctt = zeros(debugdata(1).cdof,1);
 acc = [];
 %% Determining the Gamma of the Multibody problem
 % For the Ground Constraints
@@ -60,7 +61,7 @@ for NBod = 2:NBodies %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,~,~,gamma,funCount] = Driver_Constraints([],[],[],gamma,funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,~,~,gamma,funCount] = Driver_Constraints([],[],[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares
@@ -70,7 +71,7 @@ gammac = Impose_Column(gamma);
 if conda <= 10^1
 qdd = Jacobian\gammac;
 elseif conda > 10^1
-qdd = Jacobian\gammac;
+qdd = Jacobian\(gammac-Ctt);
 %Possible algorithms: pcg,equilibrate,lsqr;
 end
 %% Post Data treatment for the rotational parameters

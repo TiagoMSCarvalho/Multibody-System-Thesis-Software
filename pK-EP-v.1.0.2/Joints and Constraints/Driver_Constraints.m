@@ -30,7 +30,7 @@
 %    correspondent to the bodies involved
 
 
-function [fun,Jacobian,niu,gamma,funCount] = Driver_Constraints(fun,Jacobian,niu,gamma,funCount,jointCount, Bodies, Driver,Flags,t,ang)
+function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Driver,Flags,t,ang)
 i = Driver(jointCount).Body;  
 direction = Driver(jointCount).direction;      
 pos0 = Driver(jointCount).pos0;
@@ -97,19 +97,29 @@ end
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     if direction < 4
-        niu(funCount) = v0*t + a0;
+        Ct(funCount) = v0*t + a0;
     elseif direction > 3
-        phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
-        phimagd = w0 + alpha0*t;
-        if rotaxis(1) ~=0
-            phix = rotaxis(1)*(cos(phimag/2));
-            niu(funCount) = phimagd*phix;
-        elseif rotaxis(2) ~= 0
-            phiy = rotaxis(2)*(cos(phimag/2));
-            niu(funCount) = phimagd*phiy;
-        elseif rotaxis(3) ~= 0
-            phiz = rotaxis(3)*(cos(phimag/2));
-            niu(funCount) = phimagd*phiz;%phimagd*phiz;
+        w = zeros(3,1);
+        if direction == 4
+            w(1,1) = w0 + alpha0*t;
+        elseif direction == 5
+            w(2,1) = w0 + alpha0*t;
+        elseif direction == 6
+            w(3,1) = w0 + alpha0*t;
+        end
+        G = Bodies(i).G;
+        pd = (1/2)*(G.'*w);
+        %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
+        %phimagd = w0 + alpha0*t;
+        if pd(2) ~=0 && abs(pd(2)) > 0.01
+            %phix = rotaxis(1)*(sin(phimag/2));
+            Ct(funCount) = pd(2);
+        elseif pd(3) ~= 0 && abs(pd(3)) > 0.01
+            %phiy = rotaxis(2)*(sin(phimag/2));
+            Ct(funCount) = pd(3);
+        elseif pd(4) ~= 0 && abs(pd(4)) > 0.01
+            %phiz = rotaxis(3)*(phimagd/2);
+            Ct(funCount) = pd(4);%phimagd*phiz;
         end
     end
 end
@@ -117,23 +127,33 @@ end
 % Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
     if direction < 4
-        gamma(funCount) = a0;
+        Ctt(funCount) = a0;
     elseif direction > 3
-        phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
-        phimagd = w0 + alpha0*t;
-        phimagdd = alpha0;
-        if rotaxis(1) ~=0
-            phix1 = rotaxis(1)*(-sin(phimag/2));
-            phix2 = rotaxis(1)*(cos(phimag/2));
-            gamma(funCount) = phimagdd*phix2 - phimagd*phix1;
-        elseif rotaxis(2) ~= 0
-            phiy1 = rotaxis(2)*(-sin(phimag/2));
-            phiy2 = rotaxis(2)*(cos(phimag/2));
-            gamma(funCount) = phimagdd*phiy2 - phimagd*phiy1;
-        elseif rotaxis(3) ~= 0
-            phiz1 = rotaxis(3)*(-sin(phimag/2));
-            phiz2 = rotaxis(3)*(cos(phimag/2));
-            gamma(funCount) = phimagdd*phiz2 - phimagd*phiz1;
+        alpha = zeros(3,1);
+        if direction == 4
+            alpha(1,1) = alpha0;
+        elseif direction == 5
+            alpha(2,1) = alpha0;
+        elseif direction == 6
+            alpha(3,1) = alpha0;
+        end
+        Gd = Bodies(i).Gd;
+        pdd = (1/2)*Gd.'*alpha;
+        %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
+        %phimagd = w0 + alpha0*t;
+        %phimagdd = alpha0;
+        if pdd(2) ~=0 && abs(pdd(2)) > 0.01 %rotaxis(1) ~=0
+            %phix1 = rotaxis(1)*(-sin(phimag/2));
+            %phix2 = rotaxis(1)*(cos(phimag/2));
+            Ctt(funCount) = pdd(2);%phimagdd;
+        elseif pdd(3) ~= 0 && abs(pdd(3)) > 0.01
+            %phiy1 = rotaxis(2)*(-sin(phimag/2));
+            %phiy2 = rotaxis(2)*(cos(phimag/2));
+            Ctt(funCount) = pdd(3);%phimagdd;
+        elseif pdd(4) ~= 0 && abs(pdd(4)) > 0.01
+            %phiz1 = rotaxis(3)*(-sin(phimag/2));
+            %phiz2 = rotaxis(3)*(cos(phimag/2));
+            Ctt(funCount) = pdd(4);%phimagdd;
         end
     end
 end

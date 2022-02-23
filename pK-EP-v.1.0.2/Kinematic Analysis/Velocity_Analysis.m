@@ -24,7 +24,8 @@ Flags.Velocity = 1;
 Flags.Acceleration = 0;
 funCount = 1;
 Jacobian = zeros(debugdata(1).cdof,NBodies*7);
-niu = [];
+niu = zeros(debugdata(1).cdof,1);
+Ct = zeros(debugdata(1).cdof,1);
 vel = [];
 
 %% Determining the Jacobian of the Multibody problem nhhny
@@ -62,7 +63,7 @@ for NBod = 2:NBodies %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,Jacobian,niu,~,funCount] = Driver_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,Jacobian,niu,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares
@@ -74,7 +75,7 @@ if condv <= 10^1
 qd = Jacobian\niuc; %qd is a column vector
 elseif condv > 10^1
 %qd = lsqr(Jacobian,niuc,1e-6,80);
-qd = Jacobian\niuc;
+qd = Jacobian\(niuc-Ct);
 end
 
 %% Post Data treatment for the rotational parameters

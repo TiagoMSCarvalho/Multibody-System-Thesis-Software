@@ -21,7 +21,7 @@ function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,
     Bodies = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang); %Até aqui os valores batem certo.
     [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t);
     [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies);
-    [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,ang,t);
+    [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t);
     [Points,it] = KinDataStorage(Points,Bodies,Joints,vel,acc,it);
 
 end
