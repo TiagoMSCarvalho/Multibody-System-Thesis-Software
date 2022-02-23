@@ -5,6 +5,7 @@ function [qi,ti] = PerpendicularVectors(vecsi)
     
     qi = [0;0;0];
     ti = [0;0;0];
+    vecsi = Impose_Column(vecsi);
     
     if vecsi(1) >0 || vecsi(1) < 0
         x = (+vecsi(2)+vecsi(3))/vecsi(1);
