@@ -28,7 +28,7 @@ niu = zeros(debugdata(1).cdof,1);
 Ct = zeros(debugdata(1).cdof,1);
 vel = [];
 
-%% Determining the Jacobian of the Multibody problem nhhny
+%% Determining the Jacobian of the Multibody problem 
 
 % For the Ground Constraints
 for jointCount=1:Joints.NGround
