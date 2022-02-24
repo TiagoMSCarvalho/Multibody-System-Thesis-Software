@@ -63,7 +63,7 @@ for NBod = 2:NBodies %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,Jacobian,niu,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,Jacobian,Ct,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares
@@ -84,10 +84,14 @@ end
 for i = 1:NBodies
     i1 = 7*(i-1)+1;
     i2 = 6*(i-1)+1;
+    p = Bodies(i).p;
     Gi = Bodies(i).G;
+    Ei = [p(1),p(2),p(3),p(4);Gi]; %From J.Haug Book
     pd = qd(i1+3:i1+6);
     vel(i2:i2+2,1) = qd(i1:i1+2);
-    vel(i2+3:i2+5,1) = 2*(Gi*pd);    
+    w = zeros(4,1);
+    w = 2*Ei*pd;
+    vel(i2+3:i2+5,1) = w(2:4);    
 end
 
 % Store the velocities in proper variables

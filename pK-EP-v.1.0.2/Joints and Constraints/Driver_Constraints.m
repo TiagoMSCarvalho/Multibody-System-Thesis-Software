@@ -99,18 +99,22 @@ if(Flags.Velocity == 1)
     if direction < 4
         Ct(funCount) = v0*t + a0;
     elseif direction > 3
-        w = zeros(3,1);
+        w = zeros(4,1);
         if direction == 4
-            w(1,1) = w0 + alpha0*t;
-        elseif direction == 5
             w(2,1) = w0 + alpha0*t;
-        elseif direction == 6
+        elseif direction == 5
             w(3,1) = w0 + alpha0*t;
+        elseif direction == 6
+            w(4,1) = w0 + alpha0*t;
         end
+        p = Bodies(i).p;
         G = Bodies(i).G;
-        pd = (1/2)*(G.'*w);
+        E = [p(1),p(2),p(3),p(4);G];
+        pd = (1/2)*(E.'*w);
         %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
         %phimagd = w0 + alpha0*t;
+        i1 = 7*(i-1)+1;
+        Ct(i1+3,1) = pd(1);
         if pd(2) ~=0 && abs(pd(2)) > 0.01
             %phix = rotaxis(1)*(sin(phimag/2));
             Ct(funCount) = pd(2);

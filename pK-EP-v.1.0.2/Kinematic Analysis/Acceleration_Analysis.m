@@ -61,7 +61,7 @@ for NBod = 2:NBodies %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,~,~,gamma,funCount] = Driver_Constraints([],[],[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,~,~,Ctt,funCount] = Driver_Constraints([],[],[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares
