@@ -92,7 +92,7 @@ if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount:funCount+2,i1:i2)=[eye(3), Cpi];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,sjg'*Ci];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,-sjg'*Ci];
     %Body j
     i1 = 7*(j-1)+1;
     i2 = i1+6;

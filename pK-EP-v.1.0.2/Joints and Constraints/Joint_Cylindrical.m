@@ -111,8 +111,8 @@ if (Flags.Jacobian == 1)
     i2  = i1+6;
     Jacobian(funCount,i1:i2) = [-qig',-qig'*Bi+d'*Ciq];
     Jacobian(funCount+1,i1:i2) = [-tig',-tig'*Bi+d'*Cit];
-    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*Ciq]; %15-02 minus added
-    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*Cit]; %15-02 minus added
+    Jacobian(funCount+2,i1:i2) = [0,0,0,-sjg'*Ciq]; %15-02 minus added
+    Jacobian(funCount+3,i1:i2) = [0,0,0,-sjg'*Cit]; %15-02 minus added
     %Body j
     i1 = 7*(j-1)+1;
     i2 = i1+6;
