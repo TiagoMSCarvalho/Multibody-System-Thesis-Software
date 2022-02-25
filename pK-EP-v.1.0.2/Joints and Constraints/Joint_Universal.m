@@ -92,7 +92,7 @@ if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount:funCount+2,i1:i2)=[eye(3), Cpi];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,-sjg'*Ci];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,sjg'*Ci];
     %Body j
     i1 = 7*(j-1)+1;
     i2 = i1+6;
@@ -122,7 +122,7 @@ if(Flags.Acceleration == 1)
     sid = SkewMatrix3(wgi)*sig;
     sjd = SkewMatrix3(wgj)*sjg;
     
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj);
+    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi + (2*Gdj*Ldj.'*spj);
     gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
 end
    

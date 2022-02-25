@@ -143,6 +143,8 @@ if(Flags.Acceleration == 1)
         end
         Gd = Bodies(i).Gd;
         pdd = (1/2)*Gd.'*alpha;
+        i1 = 7*(i-1)+1;
+        Ctt(i1+3,1) = pdd(1);
         %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
         %phimagd = w0 + alpha0*t;
         %phimagdd = alpha0;

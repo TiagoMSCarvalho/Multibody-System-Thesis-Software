@@ -70,6 +70,7 @@ end
 
 condv = cond(Jacobian);
 niuc = Impose_Column(niu);
+Ct = Impose_Column(Ct);
 
 if condv <= 10^1
 qd = Jacobian\niuc; %qd is a column vector

@@ -67,11 +67,12 @@ end
 %% Linear System Solver: Implementation of Robust IK - Least Squares
 conda = cond(Jacobian);
 gammac = Impose_Column(gamma);
+Ctt = Impose_Column(Ctt);
 
 if conda <= 10^1
 qdd = Jacobian\gammac;
 elseif conda > 10^1
-qdd = Jacobian\(gamma-Ctt);
+qdd = Jacobian\(gammac-Ctt);
 %Possible algorithms: pcg,equilibrate,lsqr;
 end
 %% Post Data treatment for the rotational parameters
@@ -80,9 +81,13 @@ end
 for i = 1:NBodies
     i1 = 7*(i-1)+1;
     i2 = 6*(i-1)+1;
+    p = Bodies(i).p;
     acc(i2:i2+2,1) = qdd(i1:i1+2);
-    Gd = Bodies(i).Gd;
-    acc(i2+3:i2+5,1) = 2*Gd*qdd(i1+3:i1+6);    
+    Gi = Bodies(i).G;
+    Ei = [p(1),p(2),p(3),p(4);Gi]; %From J.Haug Book
+    pdd = qdd(i1+3:i1+6);
+    acel = 2*Ei*pdd;
+    acc(i2+3:i2+5,1) = acel(2:4);    
 end
 
 % Store the accelerations in proper variables
