@@ -67,7 +67,7 @@ Li = Bodies(i).L;
 Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies
-d = -ri - Aj*spi + rj + Ai*spj;
+d = rj + Ai*spj - ri - Aj*spi;
 %Skew vector d
 sd = SkewMatrix4(d);
 
@@ -182,10 +182,10 @@ if(Flags.Acceleration == 1)
     rid = SkewMatrix3(wgi)*ri;
     spid = SkewMatrix3(wgi)*spi;
     spjd = SkewMatrix3(wgj)*spj;
-    dd =  -rid - Ai*SkewMatrix3(wgi)*spi + rjd + Aj*SkewMatrix3(wgj)*spj;
+    dd =  rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd + (2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd;  %15-02 + added since h = -2 \ spi and spj to spid spjd
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd + (2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2  \ spi and spj to spid spjd
+    gamma(funCount) = - qig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd;  %15-02 + added since h = -2 \ spi and spj to spid spjd
+    gamma(funCount+1) = - tig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2  \ spi and spj to spid spjd
     gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; 
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
     gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;

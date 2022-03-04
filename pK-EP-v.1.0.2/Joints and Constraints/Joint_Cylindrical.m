@@ -111,8 +111,8 @@ if (Flags.Jacobian == 1)
     i2  = i1+6;
     Jacobian(funCount,i1:i2) = [-qig',-qig'*Bi+d'*Ciq];
     Jacobian(funCount+1,i1:i2) = [-tig',-tig'*Bi+d'*Cit];
-    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*Ciq]; %15-02 minus added
-    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*Cit]; %15-02 minus added
+    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*Ciq];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*Cit];
     %Body j
     i1 = 7*(j-1)+1;
     i2 = i1+6;
@@ -150,10 +150,10 @@ if(Flags.Acceleration == 1)
     rid = SkewMatrix3(wgi)*ri;
     spid = SkewMatrix3(wgi)*ri;
     spjd = SkewMatrix3(wgj)*rj;
-    dd = - rid - Ai*SkewMatrix3(wgi)*spi + rjd + Aj*SkewMatrix3(wgj)*spj; %ri Ai e rj Aj estavam trocados.
+    dd = rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi; %ri Ai e rj Aj estavam trocados.
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd + (2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd; %15-02 + added since h = -2;
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd + (2*Gdi*Ldi'*spid)) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2;
+    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd; %15-02 + added since h = -2;
+    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2;
     gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd;
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
 

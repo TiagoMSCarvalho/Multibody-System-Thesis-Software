@@ -115,8 +115,8 @@ if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount:funCount+2,i1:i2)=[eye(3),Ci];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,sjg'*Ciq]; %Minus Added
-    Jacobian(funCount+4,i1:i2)=[0,0,0,sjg'*Cit]; %Minus Added
+    Jacobian(funCount+3,i1:i2)=[0,0,0,sjg'*Ciq]; 
+    Jacobian(funCount+4,i1:i2)=[0,0,0,sjg'*Cit]; 
     %Body j
     i1 = 7*(j-1)+1;
     i2  = i1+6;
@@ -150,7 +150,7 @@ if(Flags.Acceleration == 1)
  
     %Following the logic above (Jac) hj will be written in relation to
     %sj and hi will be written in relation to qi and ti
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi + (2*Gdj*Ldj.'*spj); 
+    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj); 
     gamma(funCount+3) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; %15-02 sj to sjg 2nd term/Gj to Gi
     gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd; %15-02 sj to sjg 2nd term/ Gj to Gi
 end
