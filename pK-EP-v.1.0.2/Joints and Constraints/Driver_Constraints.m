@@ -97,7 +97,7 @@ end
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     if direction < 4
-        Ct(funCount) = v0*t + a0;
+        Ct(funCount) = v0 + a0*t;
     elseif direction > 3
         w = zeros(4,1);
         if direction == 4
@@ -141,8 +141,8 @@ if(Flags.Acceleration == 1)
         elseif direction == 6
             alpha(3,1) = alpha0;
         end
-        Gd = Bodies(i).Gd;
-        pdd = (1/2)*Gd.'*alpha;
+        G = Bodies(i).G;
+        pdd = (1/2)*G.'*alpha;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0

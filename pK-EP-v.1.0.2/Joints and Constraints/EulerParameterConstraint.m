@@ -34,7 +34,7 @@ end
 if (Flags.Acceleration == 1)
     %Isolate the pd from the rest of the qd vector allocated at the Bodie
     %Struct
-    pd = Bodies(i).pd;
+    pd = Impose_Column(Bodies(i).pd);
     
     gamma(funCount) = -pd'*pd;
 end

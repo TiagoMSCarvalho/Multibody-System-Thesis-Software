@@ -172,20 +172,18 @@ if(Flags.Acceleration == 1)
     wgj = Bodies(j).wg;
     wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
-    qid = SkewMatrix3(wgi)*qig;
-    tid = SkewMatrix3(wgi)*tig;
-    sjd = SkewMatrix3(wgj)*sjg;
-    qjd = SkewMatrix3(wgj)*qjg;
+    qid = Ai*SkewMatrix3(wgi)*qi;
+    tid = Ai*SkewMatrix3(wgi)*ti;
+    sjd = Aj*SkewMatrix3(wgj)*sj;
+    qjd = Aj*SkewMatrix3(wgj)*qj;
     %For the derivative of d we have to use the eq defined above in the
     %code d = rj + Aj*spj - ri - Ai*spi;
     rjd = SkewMatrix3(wgj)*rj;
     rid = SkewMatrix3(wgi)*ri;
-    spid = SkewMatrix3(wgi)*spi;
-    spjd = SkewMatrix3(wgj)*spj;
     dd =  rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd;  %15-02 + added since h = -2 \ spi and spj to spid spjd
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd; %15-02 + added since h = -2  \ spi and spj to spid spjd
+    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid;  %15-02 + added since h = -2 \ spi and spj to spid spjd
+    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2  \ spi and spj to spid spjd
     gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; 
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
     gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;

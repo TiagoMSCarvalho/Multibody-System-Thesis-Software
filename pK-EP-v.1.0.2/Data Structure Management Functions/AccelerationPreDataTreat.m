@@ -3,13 +3,11 @@ function [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies)
 %the Ld and Gd matrixes.
 for i=1:NBodies
     %%Calculation of the Gd and Ld used for the gamma formulation
-    k = (7*(i-1)+1):(7*i); 
-    q = qd(k); %isolates the coordinates for the body;
-    %first three coordinates are from the translation;
-    e0d = q(4); 
-    e1d = q(5);
-    e2d = q(6);
-    e3d = q(7);
+    pd = Impose_Column(Bodies(i).pd);    
+    e0d = pd(1); 
+    e1d = pd(2);
+    e2d = pd(3);
+    e3d = pd(4);
     %G and L derivatives assumir que d(G)/dt = [d(e1)/dt...]
     Gd = [-e1d, e0d, -e3d, e2d;
           -e2d, e3d, e0d, -e1d;
@@ -21,13 +19,15 @@ for i=1:NBodies
     Bodies(i).Gd = Gd;
     Bodies(i).Ld = Ld;
     %For easier debug
-    pd = Bodies(i).pd;
+    %pd = Bodies(i).pd;
     %%Calc of the Angular Veloctiy following 6.105 Nikravesh equation and
     %%used for the calculation of derivatives.
+    G = Bodies(i).G;
+    L = Bodies(i).L;
     %Global Ang.Vel vector:
-    Bodies(i).wg = 2*Gd*pd;
+    Bodies(i).wg = 2*G*pd;
     %Local Ang.Vel vector:
-    Bodies(i).wl = 2*Ld*pd;
+    Bodies(i).wl = 2*L*pd;
     %This Angular velocity vector will be used to calculate the derivatives
     %of the vector for the 7.2 Table, following the 6.101 formula Nikra Pg
     %174

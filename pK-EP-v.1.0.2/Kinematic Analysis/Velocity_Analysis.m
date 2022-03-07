@@ -76,7 +76,7 @@ if condv <= 10^1
 qd = Jacobian\niuc; %qd is a column vector
 elseif condv > 10^1
 %qd = lsqr(Jacobian,niuc,1e-6,80);
-qd = Jacobian\(niuc-Ct);
+qd = Jacobian\(niuc+Ct);
 end
 
 %% Post Data treatment for the rotational parameters

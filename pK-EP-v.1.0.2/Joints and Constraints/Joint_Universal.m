@@ -119,8 +119,8 @@ if(Flags.Acceleration == 1)
     wgj = Bodies(j).wg;
     wlj = Bodies(j).wl;
     %Derivatives of si and sj in the global frame
-    sid = SkewMatrix3(wgi)*sig;
-    sjd = SkewMatrix3(wgj)*sjg;
+    sid = Ai*SkewMatrix3(wgi)*si;
+    sjd = Aj*SkewMatrix3(wgj)*sj;
     
     gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj);
     gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
