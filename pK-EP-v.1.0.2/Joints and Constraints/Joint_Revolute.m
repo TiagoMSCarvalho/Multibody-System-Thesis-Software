@@ -49,23 +49,16 @@ sj = Impose_Column(Revolute(jointCount).sj);
 % Rotation matrix for each Bodies
 Ai = Bodies(i).A;
 Aj = Bodies(j).A;
-%Vector si and sj in the global frame
-sig = Ai*si;
+%Vector sj in the global frame
 sjg = Aj*sj;
-%Skew Matrix body
-ssi = SkewMatrix4(si);  
+%Skew Matrix body 
 ssj = SkewMatrix4(sj);
-%Skew Matrix Global
-ssig = SkewMatrix4(sig);
-ssjb = SkewMatrix4(sjg);
 %SkewMatrix Vector si and sj for P
 sspi = SkewMatrix4(spi);
 sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
@@ -140,9 +133,7 @@ if(Flags.Acceleration == 1)
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
     wgi = Bodies(i).wg;
-    wli = Bodies(i).wl;
     wgj = Bodies(j).wg;
-    wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame (eq 6.100/6.101 pg 192)
     qid = Ai*SkewMatrix3(wgi)*qi;
     tid = Ai*SkewMatrix3(wgi)*ti;

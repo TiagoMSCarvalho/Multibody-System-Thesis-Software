@@ -65,11 +65,6 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
-%SkewMatrix 3x3 of si and sj
-ssig = SkewMatrix3(sig);
-ssjg = SkewMatrix3(sjg);
 
 
 %% Joint Formulation
@@ -115,14 +110,12 @@ if(Flags.Acceleration == 1)
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
     wgi = Bodies(i).wg;
-    wli = Bodies(i).wl;
     wgj = Bodies(j).wg;
-    wlj = Bodies(j).wl;
     %Derivatives of si and sj in the global frame
     sid = Ai*SkewMatrix3(wgi)*si;
     sjd = Aj*SkewMatrix3(wgj)*sj;
     
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj);
+    gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi;
     gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
 end
    

@@ -16,6 +16,7 @@
 %    Bodies structure
 
 function [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t)
+%Function that controls the velocity analysis
 
 %Form the velocity constraint equation
 Flags.Position = 0;
@@ -27,9 +28,7 @@ Jacobian = zeros(debugdata(1).cdof,NBodies*7);
 niu = zeros(debugdata(1).cdof,1);
 Ct = zeros(debugdata(1).cdof,1);
 vel = [];
-
 %% Determining the Jacobian of the Multibody problem 
-
 % For the Ground Constraints
 for jointCount=1:Joints.NGround
     [~,Jacobian,niu,~,funCount] = Ground_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Ground,Flags);
@@ -67,7 +66,6 @@ for jointCount=1:Joints.NDriver
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares
-
 condv = cond(Jacobian);
 niuc = Impose_Column(niu);
 Ct = Impose_Column(Ct);

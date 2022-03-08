@@ -133,16 +133,18 @@ if(Flags.Acceleration == 1)
     if direction < 4
         Ctt(funCount) = a0;
     elseif direction > 3
-        alpha = zeros(3,1);
+        alpha = zeros(4,1);
         if direction == 4
-            alpha(1,1) = alpha0;
-        elseif direction == 5
             alpha(2,1) = alpha0;
-        elseif direction == 6
+        elseif direction == 5
             alpha(3,1) = alpha0;
+        elseif direction == 6
+            alpha(4,1) = alpha0;
         end
+        p = Bodies(i).p;
         G = Bodies(i).G;
-        pdd = (1/2)*G.'*alpha;
+        E = [p(1),p(2),p(3),p(4);G];
+        pdd = (1/2)*E.'*alpha;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0

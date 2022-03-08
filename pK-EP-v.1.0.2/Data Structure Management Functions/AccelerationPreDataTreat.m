@@ -1,4 +1,4 @@
-function [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies)
+function [Bodies] = AccelerationPreDataTreat(~,NBodies,Bodies)
 %Treats the data retrieved from the velocity analysis in order to establish
 %the Ld and Gd matrixes.
 for i=1:NBodies

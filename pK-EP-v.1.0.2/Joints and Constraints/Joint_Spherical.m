@@ -53,14 +53,10 @@ Aj = Bodies(j).A;
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
-%Skew Matrix 4x4 of the global vectors
-sspig = SkewMatrix4(spig);
-sspij = SkewMatrix4(spjg);
+
 
 %% Joint Formulation
 % Position constraint equations

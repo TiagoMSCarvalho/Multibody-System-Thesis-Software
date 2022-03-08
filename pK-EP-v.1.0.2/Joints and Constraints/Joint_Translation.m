@@ -48,48 +48,37 @@ sj = Impose_Column(Translation(jointCount).sj);
 %Rotation Matrix
 Ai = Bodies(i).A;
 Aj = Bodies(j).A;
-%Vector si and sj in the global frame
-sig = Ai*si;
+%Vector sj in the global frame
 sjg = Aj*sj;
 %Skew Matrix body
-ssi = SkewMatrix4(si);
 ssj = SkewMatrix4(sj);
-%Skew Matrix Global
-ssig = SkewMatrix4(sig);
-ssjb = SkewMatrix4(sjg);
 %SkewMatrix Vector si and sj for P
 sspi = SkewMatrix4(spi);
 sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies
 d = rj + Ai*spj - ri - Aj*spi;
-%Skew vector d
-sd = SkewMatrix4(d);
 
 % 2 non-colinear vector that are perpendicular to the vector si
 % si_p1 = [-si(2); si(1); 0];
 % si_p2 = cross(si,si_p1);
 [qi,ti] = PerpendicularVectors(si);
-[qj,tj] = PerpendicularVectors(sj);
+[qj,~] = PerpendicularVectors(sj);
 %Perpendicular vectors in the global frame
 %Body i
 qig = Ai*qi;
 tig = Ai*ti;
 %Body j
 qjg = Aj*qj;
-tjg = Aj*tj;
 %SkewMatrix of the perpendicular vectors body frame
 %Body i
 sqi = SkewMatrix4(qi);
 sti = SkewMatrix4(ti);
 %Body j
 sqj = SkewMatrix4(qj);
-stj = SkewMatrix4(tj);
 
 % Form the position constraint equations
 if(Flags.Position == 1)
@@ -168,9 +157,7 @@ if(Flags.Acceleration == 1)
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
     wgi = Bodies(i).wg;
-    wli = Bodies(i).wl;
     wgj = Bodies(j).wg;
-    wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
     qid = Ai*SkewMatrix3(wgi)*qi;
     tid = Ai*SkewMatrix3(wgi)*ti;
@@ -178,12 +165,12 @@ if(Flags.Acceleration == 1)
     qjd = Aj*SkewMatrix3(wgj)*qj;
     %For the derivative of d we have to use the eq defined above in the
     %code d = rj + Aj*spj - ri - Ai*spi;
-    rjd = SkewMatrix3(wgj)*rj;
-    rid = SkewMatrix3(wgi)*ri;
+    rid = Bodies(i).rd;
+    rjd = Bodies(j).rd;
     dd =  rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid;  %15-02 + added since h = -2 \ spi and spj to spid spjd
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj - (-2*Gdi*Ldi'*spi)) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2  \ spi and spj to spid spjd
+    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid;  %15-02 + added since h = -2 \ spi and spj to spid spjd
+    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2  \ spi and spj to spid spjd
     gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; 
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
     gamma(funCount+4) = tig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;
