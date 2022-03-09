@@ -141,7 +141,7 @@ if(Flags.Acceleration == 1)
  
     %Following the logic above (Jac) hj will be written in relation to
     %sj and hi will be written in relation to qi and ti
-    gamma(funCount:funCount+2) = -2*Gdi*Ldi.'*spi - (-2*Gdj*Ldj.'*spj); 
+    gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi; 
     gamma(funCount+3) = qig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*qi) - 2*qid'*sjd; %15-02 sj to sjg 2nd term/Gj to Gi
     gamma(funCount+4) = tig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*ti) - 2*tid'*sjd; %15-02 sj to sjg 2nd term/ Gj to Gi
 end

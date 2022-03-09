@@ -111,19 +111,14 @@ if(Flags.Velocity == 1)
         G = Bodies(i).G;
         E = [p(1),p(2),p(3),p(4);G];
         pd = (1/2)*(E.'*w);
-        %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
-        %phimagd = w0 + alpha0*t;
         i1 = 7*(i-1)+1;
         Ct(i1+3,1) = pd(1);
         if pd(2) ~=0 && abs(pd(2)) > 0.01
-            %phix = rotaxis(1)*(sin(phimag/2));
             Ct(funCount) = pd(2);
         elseif pd(3) ~= 0 && abs(pd(3)) > 0.01
-            %phiy = rotaxis(2)*(sin(phimag/2));
             Ct(funCount) = pd(3);
         elseif pd(4) ~= 0 && abs(pd(4)) > 0.01
-            %phiz = rotaxis(3)*(phimagd/2);
-            Ct(funCount) = pd(4);%phimagd*phiz;
+            Ct(funCount) = pd(4);
         end
     end
 end
@@ -147,21 +142,12 @@ if(Flags.Acceleration == 1)
         pdd = (1/2)*E.'*alpha;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
-        %phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
-        %phimagd = w0 + alpha0*t;
-        %phimagdd = alpha0;
-        if pdd(2) ~=0 && abs(pdd(2)) > 0.01 %rotaxis(1) ~=0
-            %phix1 = rotaxis(1)*(-sin(phimag/2));
-            %phix2 = rotaxis(1)*(cos(phimag/2));
-            Ctt(funCount) = pdd(2);%phimagdd;
+        if pdd(2) ~=0 && abs(pdd(2)) > 0.01 
+            Ctt(funCount) = pdd(2);
         elseif pdd(3) ~= 0 && abs(pdd(3)) > 0.01
-            %phiy1 = rotaxis(2)*(-sin(phimag/2));
-            %phiy2 = rotaxis(2)*(cos(phimag/2));
-            Ctt(funCount) = pdd(3);%phimagdd;
+            Ctt(funCount) = pdd(3);
         elseif pdd(4) ~= 0 && abs(pdd(4)) > 0.01
-            %phiz1 = rotaxis(3)*(-sin(phimag/2));
-            %phiz2 = rotaxis(3)*(cos(phimag/2));
-            Ctt(funCount) = pdd(4);%phimagdd;
+            Ctt(funCount) = pdd(4);
         end
     end
 end

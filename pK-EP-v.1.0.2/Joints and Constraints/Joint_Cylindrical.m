@@ -136,8 +136,8 @@ if(Flags.Acceleration == 1)
     sjd = Aj*SkewMatrix3(wgj)*sj;
     %For the derivative of d we have to use the eq defined above in the
     %code d = ri + Ai*spi - rj - Aj*spj;
-    rjd = Bodies(i).rd;  
-    rid = Bodies(j).rd;
+    rid = Bodies(i).rd;  
+    rjd = Bodies(j).rd;
     dd = rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi; %ri Ai e rj Aj estavam trocados.
     
     gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;

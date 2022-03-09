@@ -15,8 +15,6 @@ function [Points,it] = KinDataStorage(Points,Bodies,Joints,vel,acc,it)
         %Used Equations:
             % Velocity - Va = Vb + w x R(A/B)
             % Acceleration -  Aa = Ab + alpha x R(A/B) + w x (w xR(A/B))
-    rd = [];
-    w = [];
     poivel = []; %Points of Interest Velocity
     poiacc = []; %Points of Interest Velocity
     if it > 1
@@ -42,7 +40,7 @@ function [Points,it] = KinDataStorage(Points,Bodies,Joints,vel,acc,it)
     end
     
     %% Store Vel and Accel Vectors in the fields
-    [a,b] = size(vel);
+    [a,~] = size(vel);
     for j = 1:a
         Data(j).Velocity = poivel(j);
         Data(j).Acceleration = poiacc(j);

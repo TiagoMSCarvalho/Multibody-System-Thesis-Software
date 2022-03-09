@@ -60,7 +60,7 @@ Gi = Bodies(i).G;
 Gj = Bodies(j).G;
 
 %Vector between P's of the Bodies
-d = rj + Ai*spj - ri - Aj*spi;
+d = rj + Aj*spj - ri - Ai*spi;
 
 % 2 non-colinear vector that are perpendicular to the vector si
 % si_p1 = [-si(2); si(1); 0];
