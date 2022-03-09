@@ -156,18 +156,20 @@ if(Flags.Acceleration == 1)
     Ldi = Bodies(i).Ld;
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
-    wgi = Bodies(i).wg;
-    wgj = Bodies(j).wg;
+    %wgi = Bodies(i).wg;
+    %wgj = Bodies(j).wg;
+    wli = Bodies(i).wl;
+    wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
-    qid = Ai*SkewMatrix3(wgi)*qi;
-    tid = Ai*SkewMatrix3(wgi)*ti;
-    sjd = Aj*SkewMatrix3(wgj)*sj;
-    qjd = Aj*SkewMatrix3(wgj)*qj;
+    qid = Ai*SkewMatrix3(wli)*qi;
+    tid = Ai*SkewMatrix3(wli)*ti;
+    sjd = Aj*SkewMatrix3(wlj)*sj;
+    qjd = Aj*SkewMatrix3(wlj)*qj;
     %For the derivative of d we have to use the eq defined above in the
     %code d = rj + Aj*spj - ri - Ai*spi;
     rid = Bodies(i).rd;
     rjd = Bodies(j).rd;
-    dd =  rjd + Aj*SkewMatrix3(wgj)*spj - rid - Ai*SkewMatrix3(wgi)*spi;
+    dd =  rjd + Aj*SkewMatrix3(wlj)*spj - rid - Ai*SkewMatrix3(wli)*spi;
     
     gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid;  %15-02 + added since h = -2 \ spi and spj to spid spjd
     gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2  \ spi and spj to spid spjd

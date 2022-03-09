@@ -109,11 +109,11 @@ if(Flags.Acceleration == 1)
     Ldi = Bodies(i).Ld;
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
-    wgi = Bodies(i).wg;
-    wgj = Bodies(j).wg;
+    wli = Bodies(i).wl;
+    wlj = Bodies(j).wl;
     %Derivatives of si and sj in the global frame
-    sid = Ai*SkewMatrix3(wgi)*si;
-    sjd = Aj*SkewMatrix3(wgj)*sj;
+    sid = Ai*SkewMatrix3(wli)*si;
+    sjd = Aj*SkewMatrix3(wlj)*sj;
     
     gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi;
     gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;

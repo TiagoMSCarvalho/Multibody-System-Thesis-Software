@@ -139,7 +139,7 @@ if(Flags.Acceleration == 1)
         p = Bodies(i).p;
         G = Bodies(i).G;
         E = [p(1),p(2),p(3),p(4);G];
-        pdd = (1/2)*E.'*alpha;
+        pdd = (1/2)*(E.'*alpha);
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         if pdd(2) ~=0 && abs(pdd(2)) > 0.01 

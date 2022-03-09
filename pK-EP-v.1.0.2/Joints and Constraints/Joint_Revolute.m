@@ -114,8 +114,8 @@ if (Flags.Jacobian == 1)
     i1 = 7*(j-1)+1;
     i2  = i1+6;
     Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-Cj];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,qig'*Cjs]; %15-02 qi to qig
-    Jacobian(funCount+4,i1:i2)=[0,0,0,tig'*Cjs]; %15-02 ti to tig
+    Jacobian(funCount+3,i1:i2)=[0,0,0,qig'*Cjs];
+    Jacobian(funCount+4,i1:i2)=[0,0,0,tig'*Cjs]; 
 end
 
 % Right-hand-side velocity equations
@@ -132,18 +132,18 @@ if(Flags.Acceleration == 1)
     Ldi = Bodies(i).Ld;
     Ldj = Bodies(j).Ld;
     %Extract the angular velocity vectors from the Bodies Struct
-    wgi = Bodies(i).wg;
-    wgj = Bodies(j).wg;
+    wli = Bodies(i).wl;
+    wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame (eq 6.100/6.101 pg 192)
-    qid = Ai*SkewMatrix3(wgi)*qi;
-    tid = Ai*SkewMatrix3(wgi)*ti;
-    sjd = Aj*SkewMatrix3(wgj)*sj;
+    qid = Ai*SkewMatrix3(wli)*qi; 
+    tid = Ai*SkewMatrix3(wli)*ti;
+    sjd = Aj*SkewMatrix3(wlj)*sj;
  
     %Following the logic above (Jac) hj will be written in relation to
     %sj and hi will be written in relation to qi and ti
     gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi; 
-    gamma(funCount+3) = qig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*qi) - 2*qid'*sjd; %15-02 sj to sjg 2nd term/Gj to Gi
-    gamma(funCount+4) = tig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*ti) - 2*tid'*sjd; %15-02 sj to sjg 2nd term/ Gj to Gi
+    gamma(funCount+3) = qig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*qi) - 2*qid'*sjd;
+    gamma(funCount+4) = tig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*ti) - 2*tid'*sjd;
 end
    
 % Update the function counter
