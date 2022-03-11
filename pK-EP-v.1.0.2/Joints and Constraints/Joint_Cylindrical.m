@@ -139,9 +139,12 @@ if(Flags.Acceleration == 1)
     rid = Bodies(i).rd;  
     rjd = Bodies(j).rd;
     dd = rjd + Aj*SkewMatrix3(wlj)*spj - rid - Ai*SkewMatrix3(wli)*spi; %ri Ai e rj Aj estavam trocados.
+    %Spid and Spjd for the 2nd perpendiculars
+    spid = SkewMatrix3(wli)*spi;
+    spjd = SkewMatrix3(wlj)*spj;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spj + 2*Gdi*Ldi'*spi) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2;
+    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;
+    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2;
     gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd;
     gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
 

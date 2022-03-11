@@ -56,7 +56,7 @@ for jointCount=1:Joints.NSimple
     [~,~,~,gamma,funCount] = Simple_Constraints([],[],[],gamma,funCount,jointCount, Bodies, Joints.Simple,Flags);
 end
 % For the Euler Parameter Constraint
-for NBod = 2:NBodies %takes the first body, ground out of the equation
+for NBod = 2:(NBodies) %takes the first body, ground out of the equation
     [~,~,~,gamma,funCount] = EulerParameterConstraint([],[],[],gamma,funCount,NBod,Bodies,Flags);
 end
 % For the Driver Constraints

@@ -125,14 +125,8 @@ end
 
 % Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
-    w = zeros(3,1);
-    if direction == 4
-       w(1,1) = w0 + alpha0*t;
-    elseif direction == 5
-       w(2,1) = w0 + alpha0*t;
-    elseif direction == 6
-       w(3,1) = w0 + alpha0*t;
-    end
+    
+    
     if direction < 4
         Ctt(funCount) = a0;
     elseif direction > 3
@@ -149,11 +143,11 @@ if(Flags.Acceleration == 1)
         pdd = (1/2)*(G.'*alpha) - (1/4)*(w'*w)*p;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
-        if pdd(2) ~=0 && abs(pdd(2)) > 0.0001 
+        if pdd(2) ~=0 && abs(pdd(2)) > 0.01 
             Ctt(funCount) = pdd(2);
-        elseif pdd(3) ~= 0 && abs(pdd(3)) > 0.0001
+        elseif pdd(3) ~= 0 && abs(pdd(3)) > 0.01
             Ctt(funCount) = pdd(3);
-        elseif pdd(4) ~= 0 && abs(pdd(4)) > 0.0001
+        elseif pdd(4) ~= 0 && abs(pdd(4)) > 0.01
             Ctt(funCount) = pdd(4);
         end
     end
