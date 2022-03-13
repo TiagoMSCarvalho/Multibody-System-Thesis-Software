@@ -146,7 +146,7 @@ if(Flags.Acceleration == 1)
         end
         p = Bodies(i).p;
         G = Bodies(i).G;
-        pdd = (1/2)*(G.'*alpha) - (1/4)*(w'*w)*p;
+        pdd = (1/2)*(G.'*alpha) + (1/4)*(w'*w)*p; %This is what changes the value from -4.9 to -3.3 in accel;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         if pdd(2) ~=0 && abs(pdd(2)) > 0.0001 
