@@ -33,3 +33,15 @@ pk-EP v.1.0.1:
 
 pk-EP v.1.0.2:
   - Implementation of debug changes to the joints equations, experience changing some inconsistencies between the Wichita thesis and Nikravesh.
+  - Issues Detected:
+	- Acceleration Values were wrong in the joints and center of mass;
+		- Solved: Issue with the Driver Input Equation ( Nikravesh page 175(193) equation 6.112)
+			- Attention: The program is only giving the correct values with the signal of the equation second term is positive.
+			- Simulations were done for positive and negative values of the angular velocity both are correct.
+	- The y component of the velocity in the center of mass of body 3 is not giving the correct values
+		- May be problematic due to the dynamic simulation.
+
+pk-EP v1.0.3:
+  - Implementation of a more robust input function:
+		- Able to solve sinusoidal functions;
+		- Able to receive inputs without a direction input;
