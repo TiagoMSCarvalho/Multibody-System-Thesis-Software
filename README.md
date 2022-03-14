@@ -43,6 +43,6 @@ pk-EP v.1.0.2:
 
 pk-EP v1.0.3:
   - Implementation of a more robust input function:
-		- Able to solve sinusoidal functions;
+   		- Able to solve sinusoidal functions;
 		- Able to receive inputs without a direction input;
 		- Implementation of the Spherical-Spherical Composite Joint;
