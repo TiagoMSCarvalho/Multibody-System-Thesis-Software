@@ -14,6 +14,11 @@ for jointCount=1:Joints.NSpherical
     [fun,~,~,~,funCount] = Joint_Spherical(fun,[],[],[],funCount,jointCount, Bodies, Joints.Spherical,Flags);
 end
 
+% For the Composite Spherical Joint (SPH - SPH)
+for jointCount=1:Joints.NCompSpherical
+    [fun,~,~,~,funCount] = Joint_CompSpherical(fun,[],[],[],funCount,jointCount, Bodies, Joints.CompSpherical,Flags);
+end
+
 % For the Universal joints
 for jointCount=1:Joints.NUniversal
     [fun,~,~,~,funCount] = Joint_Universal(fun,[],[],[],funCount,jointCount, Bodies, Joints.Universal,Flags); 

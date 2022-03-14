@@ -225,6 +225,7 @@ JointInfo = cell2mat(raw(relevant_lines,4:14));
 % Determine the number of Joints ans Bodies for the cycles
 n_Joints = size(JointTypes,1); %Size (Struct,1) , 1st dim of the struct
 % Initialize the joint type counts as 0
+Joints.NCompSpherical = 0;
 Joints.NSpherical = 0;
 Joints.NUniversal = 0;
 Joints.NRevolute = 0;
@@ -262,6 +263,9 @@ function Joints = ProcessJoint(JointType,Joints,JointInfo,Bodies)
 if strcmp(JointType,'Spherical')%strcmp, compares the retrieved string to the desired one
     Joints.NSpherical = Joints.NSpherical + 1; %increases the size of the vector
     Joints = ProcessSpherical(Joints,JointInfo,Joints.NSpherical, Bodies);
+elseif strcmp(JointType,'CompSpherical')
+    Joints.NCompSpherical = Joints.NCompSpherical + 1;
+    Joints = ProcessCompSpherical(Joints,JointInfo,Joints.NCompSpherical, Bodies);
 elseif strcmp(JointType,'Universal')
     Joints.NUniversal = Joints.NUniversal + 1;
     Joints = ProcessUniversal(Joints,JointInfo,Joints.NUniversal, Bodies);
@@ -310,6 +314,34 @@ spj = EarthtoBody(spj,pj);
 % Save the joint location in each bodies' reference
 Joints.Spherical(jointCount).spi = spi;
 Joints.Spherical(jointCount).spj = spj;
+end
+
+function Joints = ProcessCompSpherical(Joints,JointsInfo,jointCount,Bodies)
+% Body numbers
+Joints.CompSpherical(jointCount).Body1 = JointsInfo(1); %Acces to Joints Struct and Spherical Sub Struct field Body and extract to a variable
+Joints.CompSpherical(jointCount).Body2 = JointsInfo(2);
+% Pass body numbers to easier to use variables
+i = Joints.CompSpherical(jointCount).Body1;
+j = Joints.CompSpherical(jointCount).Body2;
+% Location of joint center in fixed reference
+sp1 = Impose_Column(JointsInfo(3:5));
+sp2 = Impose_Column(JointsInfo(6:8));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+%Lenght of the link calculus
+length_vec = sp2 - sp1;
+length = norm(length_vec);
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp1 - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp2 - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+% Save the joint location in each bodies' reference
+Joints.CompSpherical(jointCount).spi = spi;
+Joints.CompSpherical(jointCount).spj = spj;
+Joints.CompSpherical(jointCount).length = length;
 end
 
 function Joints = ProcessUniversal (Joints,JointsInfo,jointCount,Bodies)
