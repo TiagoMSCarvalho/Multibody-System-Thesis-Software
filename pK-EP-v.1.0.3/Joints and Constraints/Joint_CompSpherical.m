@@ -79,7 +79,7 @@ if(Flags.Acceleration == 1)
     dd = rjd + Aj*SkewMatrix3(wlj)*spj - rid - Ai*SkewMatrix3(wli)*spi;
     dd = Impose_Column(dd);
     
-    gamma(funCount:funCount) = 2*(hi-hj) - 2*(dd')*dd;
+    gamma(funCount:funCount) = 2*d'*(hi-hj) - 2*(dd')*dd;
 end
    
 % Update the function counter
