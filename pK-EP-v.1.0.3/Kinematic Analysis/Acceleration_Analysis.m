@@ -15,7 +15,7 @@
 %    equations
 
 
-function [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t)
+function [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions)
 % Function that controls the acceleration analysis
 
 %Form the velocity contraint equation
@@ -65,7 +65,7 @@ for NBod = 2:(NBodies) %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,~,~,Ctt,funCount] = Driver_Constraints([],[],[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,~,~,Ctt,funCount] = Driver_Constraints([],[],[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares

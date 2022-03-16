@@ -249,7 +249,7 @@ Joints.NDriver = 0;
 Joints.NPoint = 0;
 
 for i=1:n_Joints
-    Joints = ProcessJoint(JointTypes{i},Joints,JointInfo(i,:),Bodies);
+    Joints = ProcessJoint(JointTypes{i},Joints,JointInfo(i,:),Bodies,[]);
 end
 
 %% Stores information from the second sheet

@@ -1,4 +1,4 @@
-function fun = GenerateFunctions(q0,Joints,NBodies,Bodies,Flags,t,ang)
+function fun = GenerateFunctions(q0,Joints,NBodies,Bodies,Flags,t,ang,driverfunctions)
 
 Bodies = UpdateBodyPostures(q0, NBodies, Bodies);
 funCount=1;
@@ -51,7 +51,7 @@ end
 
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
 end
     
     

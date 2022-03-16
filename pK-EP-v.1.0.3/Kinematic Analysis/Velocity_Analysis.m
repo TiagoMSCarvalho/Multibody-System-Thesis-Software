@@ -15,7 +15,7 @@
 %    calculated. In the end the velocities of the bodies are updated in the
 %    Bodies structure
 
-function [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t)
+function [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions)
 %Function that controls the velocity analysis
 
 %Form the velocity constraint equation
@@ -66,7 +66,7 @@ for NBod = 2:(NBodies) %takes the first body, ground out of the equation
 end
 % For the Driver Constraints
 for jointCount=1:Joints.NDriver
-    [~,Jacobian,Ct,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,ang);
+    [~,Jacobian,Ct,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
 end
 
 %% Linear System Solver: Implementation of Robust IK - Least Squares

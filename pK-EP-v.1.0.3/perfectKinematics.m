@@ -36,7 +36,7 @@ JointTypes = {'Spherical','Universal','Revolute','Cylindrical','Translation','Gr
 filename = 'crank_slide_2D_Nikra';
 
 Points = []; %Array to save the points during each iteration, lines are the points, col their value to each iteration
-[Bodies,Joints,Motions,debugdata,ang] = PreDataProcessing(filename,JointTypes); %reads the excel file
+[Bodies,Joints,Motions,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes); %reads the excel file
 NBodies = length(Bodies);
 clc
 
@@ -70,7 +70,7 @@ Ntotit = RunTime/TimeStep;
 tini = TimeStep; %Initial Time 0s + Initial Time, q0( pos for t = 0 s) is already stored.
 
 for t=tini:TimeStep:RunTime
-    [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang);
+    [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions);
 end
 
 %% POST-PROCESSING

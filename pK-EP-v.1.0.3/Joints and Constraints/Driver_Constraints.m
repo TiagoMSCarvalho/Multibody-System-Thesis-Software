@@ -30,40 +30,39 @@
 %    correspondent to the bodies involved
 
 
-function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Driver,Flags,time,ang)
+function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Driver,Flags,time,driverfunctions)
 %% Pre-processing Variables
 i = Driver(jointCount).Body;  
 direction = Driver(jointCount).direction;
-inputfunc = Driver(joint.Count).func;
+inputfunc = driverfunctions(jointCount);
+inputfunc = str2func(inputfunc);
 %Vector may not be unitary, needs to be recalculated, so the unitvector function is called.
 rotaxis = unitvector(Driver(jointCount).rotaxis);
 vectordir = unitvector(Driver(jointCount).rotaxis);
 syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
-%Falta implementar vectores que não coincidam com um dos eixos globais.
-%(Discutir com o prof)
+
+%Falta implementar vectores que não coincidam com um dos eixos globais. (Discutir com o prof)
 
 
 
 %% Form the position constraint equations
 if( Flags.Position == 1)
     r = Bodies(i).r;
+    funcvalue = inputfunc(time);
     if direction < 4
-        fun(funCount,1) = - inputfunc(time);
         if vectordir(1) ~=0
             x = r(direction);
-            fun(funCount,1) = x + fun(funCount,1);
+            fun(funCount,1) = x - funcvalue;
         elseif vectordir(2) ~=0
             y = r(direction);
-            fun(funCount,1) = y + fun(funCount,1);
+            fun(funCount,1) = y - funcvalue;
         elseif vectordir(3) ~=0
             z = r(direction);
-            fun(funCount,1) = z + fun(funCount,1);
+            fun(funCount,1) = z - funcvalue;
         end
     elseif direction >= 4
         p = Bodies(i).p;
-        phimag = inputfunc(time); %Solver of the inputed function
-        %Function takes into account if the rotational vector does not
-        %match one of the generalized axis.
+        phimag = funcvalue;
         if rotaxis(1) ~=0
             e1 = p(direction-3+1);
             phix = sin(phimag/2);
@@ -94,16 +93,23 @@ end
 
 %% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
+    der = diff(inputfunc,t);
+    degree = polynomialDegree(der);
+    if degree >= 1
+        funcvalue = der(time);
+    elseif degree == 0
+        funcvalue = der;
+    end
     if direction < 4
-        Ct(funCount) = v0 + a0*time;
+        Ct(funCount) = funcvalue;
     elseif direction > 3
         w = zeros(4,1);
         if direction == 4
-            w(2,1) = w0 + alpha0*time;
+            w(2,1) = funcvalue;
         elseif direction == 5
-            w(3,1) = w0 + alpha0*time;
+            w(3,1) = funcvalue;
         elseif direction == 6
-            w(4,1) = w0 + alpha0*time;
+            w(4,1) = funcvalue;
         end
         p = Bodies(i).p;
         G = Bodies(i).G;
@@ -124,23 +130,37 @@ end
 %% Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
     w = zeros(3,1);
+    der  = diff(inputfunc,t);
+    degree = polynomialDegree(der);
+    if degree >= 1
+        funcvalue = der(time);
+    elseif degree == 0
+        funcvalue = der;
+    end
     if direction == 4
-       w(1,1) = w0 + alpha0*time;
+       w(1,1) = funcvalue;
     elseif direction == 5
-       w(2,1) = w0 + alpha0*time;
+       w(2,1) = funcvalue;
     elseif direction == 6
-       w(3,1) = w0 + alpha0*time;
+       w(3,1) = funcvalue;
+    end
+    dder = diff(der,t);
+    degree = polynomialDegree(dder);
+    if degree >= 1
+        funcvalue = dder(time);
+    elseif degree == 0
+        funcvalue = dder;
     end
     if direction < 4
-        Ctt(funCount) = a0;
+        Ctt(funCount) = funcvalue;
     elseif direction > 3
         alpha = zeros(3,1);
         if direction == 4
-            alpha(1.1) = alpha0;
+            alpha(1.1) = funcvalue;
         elseif direction == 5
-            alpha(2,1) = alpha0;
+            alpha(2,1) = funcvalue;
         elseif direction == 6
-            alpha(3,1) = alpha0;
+            alpha(3,1) = funcvalue;
         end
         p = Bodies(i).p;
         G = Bodies(i).G;

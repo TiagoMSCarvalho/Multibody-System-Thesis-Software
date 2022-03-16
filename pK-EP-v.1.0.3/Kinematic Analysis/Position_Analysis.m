@@ -14,7 +14,7 @@
 %    calculated and concatenated to use on the function fsolve. In the end,
 %    the Bodies' information is updated for the next step
 
-function [Bodies,fval,exitflag] = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang)
+function [Bodies,fval,exitflag] = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang,driverfunctions)
 
     % Evaluate the Position Constraint Equations
     % Function that evaluates the position constraint equations
@@ -28,7 +28,7 @@ function [Bodies,fval,exitflag] = Position_Analysis(Joints,NBodies,Bodies,t,opts
     Flags.Velocity = 0;
     Flags.Acceleration = 0;
 
-    constrainsys = @(q)GenerateFunctions(q,Joints,NBodies,Bodies,Flags,t,ang); %Handle Input @ (arglist)
+    constrainsys = @(q)GenerateFunctions(q,Joints,NBodies,Bodies,Flags,t,ang,driverfunctions); %Handle Input @ (arglist)
 
     [q] = fsolve(constrainsys,q0,opts); %1st Func, 2nd Initial Guess, 3rd Solver Options
     Bodies = UpdateBodyPostures(q, NBodies, Bodies);
