@@ -482,9 +482,8 @@ function Joints = ProcessDriver (Joints,JointsInfo,jointCount)
 % Body number
 Joints.Driver(jointCount).Body = JointsInfo(1);
 % Body position and degree constrained
-Joints.Driver(jointCount).pos0 = JointsInfo(2);
-Joints.Driver(jointCount).v0 = JointsInfo(3);
-Joints.Driver(jointCount).a0 = JointsInfo(4);
+fustr = JointsInfo(2); % string of the function handle;
+Joints.Driver(jointCount.func = str2func(fustr); %Convert function string to function handle
 Joints.Driver(jointCount).direction = JointsInfo(5);
 if JointsInfo(5) > 3
     Joints.Driver(jointCount).rotaxis = JointsInfo(6:8);

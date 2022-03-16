@@ -30,6 +30,7 @@
 
 function [fun,Jacobian,niu,gamma,funCount] = Joint_Cylindrical(fun,Jacobian,niu,gamma,funCount,jointCount, Bodies, Cylindrical,Flags)
 % Function to evaluate all quantities required by the revolute joint
+%% Pre-processing Variables
 % Define the body numbers
 i = Cylindrical(jointCount).Body1;
 j = Cylindrical(jointCount).Body2;
@@ -73,7 +74,7 @@ tig = Ai*ti;
 sqi = SkewMatrix4(qi);
 sti = SkewMatrix4(ti);
 
-% Form the position constraint equations
+%% Form the position constraint equations
 if(Flags.Position == 1)
     fun(funCount,1) = qig'*d;
     fun(funCount+1,1) = tig'*d;
@@ -81,7 +82,7 @@ if(Flags.Position == 1)
     fun(funCount+3,1) = tig'*sjg;
 end
 
-% Form the Jacobian Matrix
+%% Form the Jacobian Matrix
 if (Flags.Jacobian == 1)
     %For this contraint the two parallel equations are modified to be 2
     %perpendicular constrains:
@@ -114,12 +115,12 @@ if (Flags.Jacobian == 1)
     Jacobian(funCount+3,i1:i2) = [0,0,0,tig'*Cjs];
 end
 
-% Form the r.h.s velocity equations
+%% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     niu(funCount:funCount+3) = 0;
 end
 
-% Form the r.h.s. acceleration equations
+%% Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
     
     %Taking the G and L derivatives out
@@ -154,6 +155,6 @@ if(Flags.Acceleration == 1)
     
 end
    
-% Update the line counter
+%% Update the line counter
 funCount = funCount+4;
 end

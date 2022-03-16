@@ -30,59 +30,57 @@
 %    correspondent to the bodies involved
 
 
-function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Driver,Flags,t,ang)
+function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Driver,Flags,time,ang)
+%% Pre-processing Variables
 i = Driver(jointCount).Body;  
-direction = Driver(jointCount).direction;      
-pos0 = Driver(jointCount).pos0;
-v0 = Driver(jointCount).v0; 
-a0 = Driver(jointCount).a0;
-rotaxis = Driver(jointCount).rotaxis;
+direction = Driver(jointCount).direction;
+inputfunc = Driver(joint.Count).func;
+%Vector may not be unitary, needs to be recalculated, so the unitvector function is called.
+rotaxis = unitvector(Driver(jointCount).rotaxis);
+vectordir = unitvector(Driver(jointCount).rotaxis);
+syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
+%Falta implementar vectores que não coincidam com um dos eixos globais.
+%(Discutir com o prof)
 
- if direction > 3
-    if strcmp(ang,'Deg') == 1
-        ang0 = deg2rad(pos0);
-        w0 = deg2rad(v0);
-        alpha0 = deg2rad(a0);
-    elseif strcmp(ang,'Rad') == 1
-        ang0 = pos0;
-        w0 = v0;
-        alpha0 = a0;
-    end
-end
 
-% Form the position constraint equations
+
+%% Form the position constraint equations
 if( Flags.Position == 1)
     r = Bodies(i).r;
-    if direction == 1
-        x = r(direction);
-        fun(funCount,1) = x - (pos0 + v0*t + 1/2*a0*t^2);
-    elseif direction == 2
-        y = r(direction);
-        fun(funCount,1) = y - (pos0 + v0*t + 1/2*a0*t^2);
-    elseif direction == 3
-        z = r(direction);
-        fun(funCount,1) = z - (pos0 + v0*t + 1/2*a0*t^2);
+    if direction < 4
+        fun(funCount,1) = - inputfunc(time);
+        if vectordir(1) ~=0
+            x = r(direction);
+            fun(funCount,1) = x + fun(funCount,1);
+        elseif vectordir(2) ~=0
+            y = r(direction);
+            fun(funCount,1) = y + fun(funCount,1);
+        elseif vectordir(3) ~=0
+            z = r(direction);
+            fun(funCount,1) = z + fun(funCount,1);
+        end
     elseif direction >= 4
         p = Bodies(i).p;
-        rotaxis = Driver(jointCount).rotaxis;
-        phimag = ang0 + w0*t + 1/2*alpha0*t^2; %Where pos0 = theta0, v0 = w0, a0 = alpha0
+        phimag = inputfunc(time); %Solver of the inputed function
+        %Function takes into account if the rotational vector does not
+        %match one of the generalized axis.
         if rotaxis(1) ~=0
             e1 = p(direction-3+1);
-            phix = rotaxis(1)*sin(phimag/2);
+            phix = sin(phimag/2);
             fun(funCount,1) = e1 - phix;
         elseif rotaxis(2) ~= 0
             e2 = p(direction-3+1);
-            phiy = rotaxis(2)*sin(phimag/2);
-            fun(funCount,1) = e2 - phiy;
+            phiy = sin(phimag/2);
+            fun(funCount,1) = fun(funCount,1) + e2 - phiy;
         elseif rotaxis(3) ~= 0
             e3 = p(direction-3+1);
-            phiz = rotaxis(3)*sin(phimag/2);
-            fun(funCount,1) = e3 - phiz;
+            phiz = sin(phimag/2);
+            fun(funCount,1) = fun(funCount,1) + e3 - phiz;
         end
     end
 end
 
-% Form the Jacobian Matrix
+%% Form the Jacobian Matrix
 if (Flags.Jacobian == 1)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
@@ -94,18 +92,18 @@ if (Flags.Jacobian == 1)
     end
 end
 
-% Form the r.h.s velocity equations
+%% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     if direction < 4
-        Ct(funCount) = v0 + a0*t;
+        Ct(funCount) = v0 + a0*time;
     elseif direction > 3
         w = zeros(4,1);
         if direction == 4
-            w(2,1) = w0 + alpha0*t;
+            w(2,1) = w0 + alpha0*time;
         elseif direction == 5
-            w(3,1) = w0 + alpha0*t;
+            w(3,1) = w0 + alpha0*time;
         elseif direction == 6
-            w(4,1) = w0 + alpha0*t;
+            w(4,1) = w0 + alpha0*time;
         end
         p = Bodies(i).p;
         G = Bodies(i).G;
@@ -123,15 +121,15 @@ if(Flags.Velocity == 1)
     end
 end
 
-% Form the r.h.s. acceleration equations
+%% Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
     w = zeros(3,1);
     if direction == 4
-       w(1,1) = w0 + alpha0*t;
+       w(1,1) = w0 + alpha0*time;
     elseif direction == 5
-       w(2,1) = w0 + alpha0*t;
+       w(2,1) = w0 + alpha0*time;
     elseif direction == 6
-       w(3,1) = w0 + alpha0*t;
+       w(3,1) = w0 + alpha0*time;
     end
     if direction < 4
         Ctt(funCount) = a0;
@@ -159,6 +157,6 @@ if(Flags.Acceleration == 1)
     end
 end
    
-% Update the line counter
+%% Update the line counter
 funCount = funCount+1;
 end
