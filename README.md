@@ -43,10 +43,10 @@ pk-EP v.1.0.2:
 
 pk-EP v1.0.3:
   - Implementation of a more robust input function:
-		- Implementation of the Spherical-Spherical Composite Joint;
-   		- Implementation of a new Driver Equation Input:
-			- Program now reads handle functions from the excel;
-			- Program has lost "sturdiness" in relation to the Rotational Inputs being in Rads or Deg; [Limitation]
-				- The sturdiness is maintained for the Body Orientation Input;
-			- Potential Issue:
-				-  Displacements and rotations are being applied to the CoM of the body, not to the point of application? -> Issue for the translation?
+  	- Implementation of the Spherical-Spherical Composite Joint;
+   	- Implementation of a new Driver Equation Input:
+		- Program now reads handle functions from the excel;
+		- Program has lost "sturdiness" in relation to the Rotational Inputs being in Rads or Deg; [Limitation]
+			- The sturdiness is maintained for the Body Orientation Input;
+		- Potential Issue:
+			-  Displacements and rotations are being applied to the CoM of the body, not to the point of application? -> Issue for the translation?
