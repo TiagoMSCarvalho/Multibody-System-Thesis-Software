@@ -34,7 +34,8 @@ function [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt
 %% Pre-processing Variables
 i = Driver(jointCount).Body;  
 direction = Driver(jointCount).direction;
-inputfunc = driverfunctions(jointCount);
+functype = driverfunctions(jointCount).Type;
+inputfunc = driverfunctions(jointCount).functions;
 inputfunc = str2func(inputfunc);
 %Vector may not be unitary, needs to be recalculated, so the unitvector function is called.
 rotaxis = unitvector(Driver(jointCount).rotaxis);
@@ -94,11 +95,16 @@ end
 %% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     der = diff(inputfunc,t);
-    degree = polynomialDegree(der);
+    dfuncdt = matlabFunction(der);
+    if strcmp(functype,'Sinusoidal') == 1
+        degree = 2;
+    elseif strcmp(functype,'Polynomial') == 1
+        degree = polynomialDegree(der);
+    end
     if degree >= 1
-        funcvalue = der(time);
+        funcvalue = dfuncdt(time);
     elseif degree == 0
-        funcvalue = der;
+        funcvalue = double(der);
     end
     if direction < 4
         Ct(funCount) = funcvalue;
@@ -131,11 +137,16 @@ end
 if(Flags.Acceleration == 1)
     w = zeros(3,1);
     der  = diff(inputfunc,t);
-    degree = polynomialDegree(der);
+    dfuncdt = matlabFunction(der);
+    if strcmp(functype,'Sinusoidal') == 1
+        degree = 2;
+    elseif strcmp(functype,'Polynomial') == 1
+        degree = polynomialDegree(der);
+    end
     if degree >= 1
-        funcvalue = der(time);
+        funcvalue = dfuncdt(time);
     elseif degree == 0
-        funcvalue = der;
+        funcvalue = double(der);
     end
     if direction == 4
        w(1,1) = funcvalue;
@@ -145,11 +156,16 @@ if(Flags.Acceleration == 1)
        w(3,1) = funcvalue;
     end
     dder = diff(der,t);
-    degree = polynomialDegree(dder);
+    ddfuncdt = matlabFunction(dder);
+    if strcmp(functype,'Sinusoidal') == 1
+        degree = 2;
+    elseif strcmp(functype,'Polynomial') == 1
+        degree = polynomialDegree(dder);
+    end
     if degree >= 1
-        funcvalue = dder(time);
+        funcvalue = ddfuncdt(time);
     elseif degree == 0
-        funcvalue = dder;
+        funcvalue = double(dder);
     end
     if direction < 4
         Ctt(funCount) = funcvalue;

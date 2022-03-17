@@ -258,7 +258,7 @@ JointInfo = cell2mat(rawdrivers(relevant_lines_drivers,4:8));
 n_Joints = size(JointTypes,1);
 
 %% Reads Functions from excel (strings), it is separated due to cell2mat
-[~,~,rawfunctions] = xlsread(filename,'Joints_Drivers','I2:I100');
+[~,~,rawfunctions] = xlsread(filename,'Joints_Drivers','I2:J100');
 relevant_lines_functions = [];
 for i = 2:size(rawdrivers,1)
     if ischar(rawfunctions{i,1})
@@ -268,7 +268,8 @@ for i = 2:size(rawdrivers,1)
     end
 end
 
-driverfunctions = convertCharsToStrings(rawfunctions(relevant_lines_functions,1));
+driverfunctions.functions = convertCharsToStrings(rawfunctions(relevant_lines_functions,1));
+driverfunctions.Type = rawfunctions(relevant_lines_functions,2);
 
 for i = 1:n_Joints
     Joints = ProcessJoint(JointTypes{i},Joints,JointInfo(i,:),Bodies);
