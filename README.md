@@ -50,3 +50,6 @@ pk-EP v1.0.3:
 			- The sturdiness is maintained for the Body Orientation Input;
 		- Potential Issue:
 			-  Displacements and rotations are being applied to the CoM of the body, not to the point of application? -> Issue for the translation?
+	- Version CLosure:
+		- SPH - SPH Implemented
+		- Sinusoidal and Polynomial input functions implemented  
