@@ -40,7 +40,6 @@ inputfunc = str2func(inputfunc);
 %Vector may not be unitary, needs to be recalculated, so the unitvector function is called.
 rotaxis = unitvector(Driver(jointCount).rotaxis);
 vectordir = unitvector(Driver(jointCount).rotaxis);
-syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
 
 %Falta implementar vectores que não coincidam com um dos eixos globais. (Discutir com o prof)
 
@@ -94,6 +93,7 @@ end
 
 %% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
+    syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
     der = diff(inputfunc,t);
     dfuncdt = matlabFunction(der);
     if strcmp(functype,'Sinusoidal') == 1
@@ -135,6 +135,7 @@ end
 
 %% Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
+    syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
     w = zeros(3,1);
     der  = diff(inputfunc,t);
     dfuncdt = matlabFunction(der);

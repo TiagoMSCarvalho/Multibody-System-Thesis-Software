@@ -62,7 +62,7 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
         Bodies(i).Inertia = Impose_Column(Inertia(i,:));
     end
 end
-
+%% Euler Parameters and A Calculus for the various inputs
 function A = AxisVectorsAmatrix(i,Point_along_x,Point_along_y,Origin)
 %Produces the A matrix for the Axis Vectors Input
 %Axis Vectors is now robust for points on x and points in y that do not
@@ -202,7 +202,7 @@ function [epar,debugdata] = EulerParameters(A)
         return
     end
 end
-
+%% Joints Information
 function [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies)
 % Read the excel sheet in the range with information
 % Identify which lines of the spreadsheet contain joint information,
