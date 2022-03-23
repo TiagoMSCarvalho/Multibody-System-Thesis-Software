@@ -29,7 +29,7 @@
 %    correspondent to the bodies involved
 
 function [fun,Jacobian,niu,gamma,funCount] = Joint_Translation(fun,Jacobian,niu,gamma,funCount,jointCount, Bodies, Translation,Flags)
-% Function to evaluate all quantities required by the revolute joint
+%% Initial variable definitions
 % Define the Bodies numbers
 i = Translation(jointCount).Body1;
 j = Translation(jointCount).Body2;
@@ -58,6 +58,8 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
+Li = Bodies(i).L;
+Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies
 d = rj + Aj*spj - ri - Ai*spi;
@@ -79,7 +81,7 @@ sqi = SkewMatrix4(qi);
 sti = SkewMatrix4(ti);
 %Body j
 sqj = SkewMatrix4(qj);
-
+%% Joint Formulation - Kinematic Problem
 % Form the position constraint equations
 if(Flags.Position == 1)
     fun(funCount,1)   = qig'*d;
@@ -90,7 +92,7 @@ if(Flags.Position == 1)
 end
 
 % Form the Jacobian Matrix
-if (Flags.Jacobian == 1)
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     %The translational constraint is constructed with the equations from
     %the cylindrical constraint however rotation is not allowed and the 3rd
     %dof of rotation should be contrained. For this we need to define a
@@ -186,7 +188,38 @@ if(Flags.Acceleration == 1)
     %Type 1 last eq - we have ti and qj so following the logic hj is
     %defined relative to qj and hi relative to ti;
 end
-   
-% Update the line counter
+%% Joint Formulation - Dynamic Problem
+
+% Form the Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    Bi = 2*(Gi*sspi + spi*pi');
+    Bj = 2*(Gj*sspj + spj*pj');
+    Ciq = 2*(Gi*sqi + qi*pi');
+    Cit = 2*(Gi*sti + ti*pi');
+    Cjs = 2*(Gj*ssj + sj*pj');
+    Cjq = 2*(Gj*sqj + qj*pj');
+    %Body i
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    %Perp Type 2
+    Jacobian(funCount,i1:i2) = [-qig',0.5*(-qig'*Bi+d'*Ciq)*Li'];
+    Jacobian(funCount+1,i1:i2) = [-tig',0.5*(-tig'*Bi+d'*Cit)*Li'];
+    %Perp Type 1
+    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(sjg'*Ciq)*Li'];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(sjg'*Cit)*Li'];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,0.5*(qjg'*Cit)*Li'];
+    %Body j
+    i1 = 6*(j-1)+1;
+    i2 = i1+5;
+    %Perp Type 2
+    Jacobian(funCount,i1:i2) = [qig',0.5*(qig'*Bj)*Lj];
+    Jacobian(funCount+1,i1:i2) = [tig',0.5*(tig'*Bj)*Lj];
+    %Perp Type 1
+    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(qig'*Cjs)*Lj];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(tig'*Cjs)*Lj];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,0.5*(tig'*Cjq)*Lj];
+end
+
+%% Update the line counter
 funCount = funCount+5;
 end

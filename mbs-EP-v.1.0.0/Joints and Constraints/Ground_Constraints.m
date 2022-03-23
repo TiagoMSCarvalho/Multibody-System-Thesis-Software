@@ -34,6 +34,7 @@ r = Impose_Column(Bodies(i).r);
 p = Impose_Column(Bodies(i).p);
 r0 = Impose_Column(Ground(jointCount).r0);      
 p0 = Impose_Column(Ground(jointCount).p0);
+%% Kinematic Problem
 % Form the position constraint equations
 if( Flags.Position == 1)
     fun(funCount:funCount+2,1) = r - r0; % r = r0 and passes to the other side r-r0 = 0;
@@ -55,7 +56,21 @@ end
 if(Flags.Acceleration == 1)
     gamma(funCount:funCount+6) = 0;
 end
+%% Dynamic Problem
+
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    i1 = 6*(i-1)+1;
+    Jacobian(funCount:funCount+5,i1:i1+5) = eye(6);
+end
+
+if (Flags.AccelDyn == 1)
+    gammadyn(funCount:funCount+5) = 0;
+end
    
-% Update the line counter
-funCount = funCount+7; % 7th equation must taken out of the Euler Parameter not from this function.
+%% Update the line counter
+if Flags.Dynamic == 0
+    funCount = funCount+7; % 7th equation must taken out of the Euler Parameter not from this function.
+elseif Flags.Dynamic == 1
+    funCount = funCount+6;
+end
 end

@@ -59,6 +59,8 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
+Li = Bodies(i).L;
+Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies, di is already global
 d = -ri - Ai*spi + rj + Aj*spj; %Ai, Aj were in different positions
@@ -74,7 +76,9 @@ tig = Ai*ti;
 sqi = SkewMatrix4(qi);
 sti = SkewMatrix4(ti);
 
-%% Form the position constraint equations
+%% Joint Formulation - Kinematic Problem
+
+% Form the position constraint equations
 if(Flags.Position == 1)
     fun(funCount,1) = qig'*d;
     fun(funCount+1,1) = tig'*d;
@@ -82,8 +86,8 @@ if(Flags.Position == 1)
     fun(funCount+3,1) = tig'*sjg;
 end
 
-%% Form the Jacobian Matrix
-if (Flags.Jacobian == 1)
+% Form the Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     %For this contraint the two parallel equations are modified to be 2
     %perpendicular constrains:
         %Type 2 - In relation with the vector d between Pi and Pj so Bi and
@@ -115,12 +119,12 @@ if (Flags.Jacobian == 1)
     Jacobian(funCount+3,i1:i2) = [0,0,0,tig'*Cjs];
 end
 
-%% Form the r.h.s velocity equations
+% Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
     niu(funCount:funCount+3) = 0;
 end
 
-%% Form the r.h.s. acceleration equations
+% Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
     
     %Taking the G and L derivatives out
@@ -154,7 +158,30 @@ if(Flags.Acceleration == 1)
     %Type 1 - hi relative to the q or t vector and hj relative to sj
     
 end
-   
+%% Joint Formulation - Dynamic Problem
+% Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    Bi = 2*(Gi*sspi + spi*pi');
+    Bj = 2*(Gj*sspj + spj*pj');
+    Ciq = 2*(Gi*sqi + qi*pi');
+    Cit = 2*(Gi*sti + ti*pi');
+    Cjs = 2*(Gj*ssj + sj*pj');
+    %Body i
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount,i1:i2) = [-qig',0.5*(-qig'*Bi+d'*Ciq)*Li'];
+    Jacobian(funCount+1,i1:i2) = [-tig',0.5*(-tig'*Bi+d'*Cit)*Li'];
+    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(sjg'*Ciq)*Li'];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(sjg'*Cit)*Li'];
+    %Body j
+    i1 = 6*(j-1)+1;
+    i2 = i1+5;
+    Jacobian(funCount,i1:i2) = [qig',0.5*(qig'*Bj)*Lj'];
+    Jacobian(funCount+1,i1:i2) = [tig',0.5*(tig'*Bj)*Lj']; % Diff in Wichita but following Nikra Logic and equation pg 201
+    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(qig'*Cjs)*Lj'];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(tig'*Cjs)*Lj'];
+end
+
 %% Update the line counter
 funCount = funCount+4;
 end

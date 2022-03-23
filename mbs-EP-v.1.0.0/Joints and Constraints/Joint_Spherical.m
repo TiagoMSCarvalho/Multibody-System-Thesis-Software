@@ -53,12 +53,14 @@ Aj = Bodies(j).A;
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
+Li = Bodies(i).L;
+Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
 
 
-%% Joint Formulation
+%% Joint Formulation - Kinematic Problem
 % Position constraint equations
 if(Flags.Position == 1)
     fun(funCount:funCount+2,1) = ri + spig - rj - spjg;
@@ -66,7 +68,7 @@ end
 
 % Jacobian Matrix
 % eye command that returns identity matrix
-if (Flags.Jacobian == 1)
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     %Ci Cj aux calc tab 7.1 Nikra  (pg291)
     %Constrain defined relative to the point P central to the sph joint
     Ci = 2*(Gi*sspi + spi*pi');
@@ -97,8 +99,24 @@ if(Flags.Acceleration == 1)
 
     gamma(funCount:funCount+2) = 2*Gdj*Ldj'*spj - 2*Gdi*Ldi'*spi;
 end
-   
-% Update the function counter
+%% Joint Formulation - Dynamic Problem
+% Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    %Ci Cj aux calc tab 7.1 Nikra  (pg291)
+    %Constrain defined relative to the point P central to the sph joint
+    Ci = 2*(Gi*sspi + spi*pi');
+    Cj = 2*(Gj*sspj + spj*pj');
+    %Body i
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),0.5*Ci*Li'];
+    %Body j
+    i1 = 6*(j-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-0.5*Cj*Lj'];
+end
+
+%% Update the function counter
 funCount = funCount+3;
 end
 

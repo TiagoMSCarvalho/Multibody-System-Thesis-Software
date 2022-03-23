@@ -47,7 +47,7 @@ if( Flags.Position == 1)
 end
 
 % Form the Jacobian Matrix
-if (Flags.Jacobian == 1)
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount,i1:i2)=[0,0,0,0,0,0,0];

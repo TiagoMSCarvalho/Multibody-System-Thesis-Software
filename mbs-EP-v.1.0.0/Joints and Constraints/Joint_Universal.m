@@ -67,7 +67,7 @@ Gi = Bodies(i).G;
 Gj = Bodies(j).G;
 
 
-%% Joint Formulation
+%% Joint Formulation - Kinematic Problem
 % Position constraint equations
 if(Flags.Position == 1)
     fun(funCount:funCount+2,1) = ri + spig - rj - spjg;
@@ -76,7 +76,7 @@ end
 
 % Jacobian Matrix
 %Universal 2ª eq é referente ao si e ao sj e nao ao spi e spj normal.
-if (Flags.Jacobian == 1)
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     %Ci Cj written to spi and spj aux calc tab 7.1 Nikra  (pg201)
     Cpi = 2*(Gi*sspi + spi*pi');
     Cpj = 2*(Gj*sspj + spj*pj');
@@ -118,7 +118,27 @@ if(Flags.Acceleration == 1)
     gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi;
     gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
 end
-   
-% Update the function counter
+%% Joint Formulation - Dynamic Problem
+%Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    %Ci Cj written to spi and spj aux calc tab 7.1 Nikra  (pg201)
+    Cpi = 2*(Gi*sspi + spi*pi');
+    Cpj = 2*(Gj*sspj + spj*pj');
+    %Ci Cj written to si and sj
+    Ci = 2*(Gi*ssi + si*pi');
+    Cj = 2*(Gj*ssj + sj*pj');
+    %Body i
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),0.5*Cpi*Li'];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sjg'*Ci)*Li'];
+    %Body j
+    i1 = 6*(j-1)+1;
+    i2 = i1+5;
+    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-0.5*Cpj*Lj'];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sig'*Cj)*Lj'];
+end
+
+%% Update the function counter
 funCount = funCount+4;
 end
