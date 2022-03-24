@@ -51,9 +51,10 @@ it = 1;
 
 [Points,it] = KinDataStorage(Points,Bodies,Joints,[],[],it);
 
-%% Solvers (Kinematic and Dynamic)
+%% Solvers
 if strcmp(SimType,"Kin") == 1
-%% Fsolve Opts (Justification is Found in The Mendeley) - Kin
+%% Kinematic Solver    
+% Fsolve Opts (Justification is Found in The Mendeley) - Kin
     opts=optimoptions('fsolve');
     opts.Algorithm='levenberg-marquardt';
     opts.Diagnostics = 'off';
@@ -63,10 +64,11 @@ if strcmp(SimType,"Kin") == 1
     opts.FunctionTolerance = 1e-6;
     opts.StepTolerance = 1e-6;
     
-    %% Calcs (t in seconds) 
+ % Calcs (t in seconds) 
     for t=tini:TimeStep:RunTime
         [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions);
     end
+%% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
 %% Solve the initial acceleration problem
     [DynAcc,LagMulti] = DynInitialAccel(NBodies,Bodies,Joints,Points,t,it);
