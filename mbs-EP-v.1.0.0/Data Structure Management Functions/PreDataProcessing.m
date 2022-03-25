@@ -77,8 +77,8 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
         % Read Info from Excel
         Mass = BodyInfo(:,17);
         Inertia = BodyInfo(:,18:20);
-        V0 = BodyInfo(:,21:23);
-        W0 = BodyInfo(:,24:26);
+        rd = BodyInfo(:,21:23);
+        w = BodyInfo(:,24:26);
         Force = BodyInfo(:,27:29);
         Torque = BodyInfo(:,30:32);
         
@@ -86,8 +86,8 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
         for i = 1:NBodies
         Bodies(i).Mass = Mass(i);
         Bodies(i).Inertia = Impose_Column(Inertia(i,:));
-        Bodies(i).V0 = Impose_Column(V0(i,:));
-        Bodies(i).W0 = Impose_Column(W0(i,:));
+        Bodies(i).rd = Impose_Column(rd(i,:));
+        Bodies(i).w = Impose_Column(w(i,:));
         Bodies(i).Force = ImposeColumn(Force(i,:));
         Bodies(i).Torque = ImposeColumn(Torque(i,:));
         end    

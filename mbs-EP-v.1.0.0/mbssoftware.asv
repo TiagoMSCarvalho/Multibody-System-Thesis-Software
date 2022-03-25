@@ -73,11 +73,9 @@ elseif strcmp(SimType,"Dyn") == 1
 %% Solve the initial acceleration problem
     for t = tini:TimeStep:RunTime
         [DynAcc,LagMulti] = DynInitialAccel(NBodies,Bodies,Joints,Points,t,it);
-        % Accel Problem -> We will implement the Penalty Method of
-        % Jalón and Bayo to avoid the need for an empiral determination of
-        % alpha and Beta for the feedback loop.
         
-        % Rugge-Kutta Method for the ODE solver
+        % Rugge-Kutta Method / We will implement the Penalty Method of
+        % Jalón and Bayo to avoid the need
         
         %Update of the variables
         

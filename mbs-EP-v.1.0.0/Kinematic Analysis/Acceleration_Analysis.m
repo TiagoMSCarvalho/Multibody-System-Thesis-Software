@@ -24,6 +24,8 @@ Flags.Jacobian = 0;
 Flags.Velocity = 0;
 Flags.Acceleration = 1;
 Flags.Dynamic = 0;
+Flags.AccelDyn = 0;
+
 funCount = 1;
 gamma = zeros(debugdata(1).cdof,1);
 Ctt = zeros(debugdata(1).cdof,1);

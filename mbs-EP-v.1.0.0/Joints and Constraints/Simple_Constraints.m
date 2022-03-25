@@ -41,6 +41,7 @@ end
 %  For Velocity and Accel both are null since the equation is based in
 %  constants.
 
+%% Joint Formulation - Kinematic Problem
 % Form the position constraint equations
 if( Flags.Position == 1)
     fun(funCount,1) = pos - pos0;
@@ -63,7 +64,18 @@ end
 if(Flags.Acceleration == 1)
     gamma(funCount) = 0;
 end
-   
-% Update the line counter
+%% Joint Formulation - Dynamic Problem
+% Form the Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount,i1:i2)=[0,0,0,0,0,0,0];
+    Jacobian(funCount,i1+direction-1)=1;
+end
+
+if (Flags.AccelDyn == 1)
+    gamma(funCount) = 0;
+end
+%% Update the line counter
 funCount = funCount+1;
 end

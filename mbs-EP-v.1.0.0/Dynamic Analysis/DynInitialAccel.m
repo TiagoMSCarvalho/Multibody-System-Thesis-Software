@@ -17,6 +17,7 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
     Flags.Velocity = 0;
     Flags.Acceleration = 0;
     Flags.Dynamic = 1;
+    Flags.AccelDyn = 1;
 %% Calculation of the Kinematic Converted Jacobian
     funCount = 1;
     % For the Ground Constraints
@@ -52,6 +53,8 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
     end
 
 %% Function Responsible for the Force Vectors    
-    
+    % Atribuir Forças e Momentos ao vetor g, estes estão guardados na
+    % struct Bodies e chamar a struct dos elementos força, assim como
+    % calcular de cada um como fosse uma joint.
 end
 

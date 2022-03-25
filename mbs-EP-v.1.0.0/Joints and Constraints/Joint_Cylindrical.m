@@ -182,6 +182,35 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(tig'*Cjs)*Lj'];
 end
 
+if(Flags.AccelDyn == 1)
+    %Body i, dynamic pre processing
+    rdi = Bodies(i).rd;
+    wi = Bodies(i).w;
+    %Body j, dynamic pre processing
+    rdj = Bodies(j).rd;
+    wj = Bodies(j).w;
+    %Angular Vel Skew Matrices
+    swi = SkewMatrix3(wi);
+    swj = SkewMatrix3(wj);
+    %Derivatives of the sp's
+    spid = swi*spi;
+    spjd = swj*spj;
+    %Derivatives of qi,ti and sj in the global frame
+    qid = swi*qi;
+    tid = swi*ti;
+    sjd = swj*sj;
+    
+    % d vector derivative -> A was taken out because the velocities given
+    % are in the absolute frame
+    dd = rdj + swj*spj - rdi - swi*spi;
+    dd = Impose_Column(dd);
+    
+    gamma(funCount,1) = -2*dd'*qid - d'*swi*qid + qi'*(swi*spid - swj*spjd);
+    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + ti*(swi*spid - swj*spjd);
+    gamma(funCount+2,1) = -2*qid'*sjd + qid'*swi*sj + sjd'*swj*qi;
+    gamma(funCount+3,1) = -2*tid'*sjd + tid'*swi*sj + sjd'*swj*ti;
+end
+
 %% Update the line counter
 funCount = funCount+4;
 end

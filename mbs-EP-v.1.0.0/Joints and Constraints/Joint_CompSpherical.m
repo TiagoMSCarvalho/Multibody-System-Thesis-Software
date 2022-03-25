@@ -100,7 +100,20 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
 end
 
 if (Flags.AccelDyn == 1)
-    %Implementar o Pre Processamento primeiro.
+    %Body i, dynamic pre processing
+    rdi = Bodies(i).rd;
+    wi = Bodies(i).w;
+    %Body j, dynamic pre processing
+    rdj = Bodies(j).rd;
+    wj = Bodies(j).w;
+    %Derivatives of the sp's
+    spid = SkewMatrix3(wi)*spi;
+    spjd = SkewMatrix3(wj)*spj;
+    % d vector derivative -> A was taken out because the velocities given
+    % are in the absolute frame
+    dd = rdj + SkewMatrix3(wj)*spj - rdi - SkewMatrix3(wi)*spi;
+    dd = Impose_Column(dd);
+    gamma(funCount) = -2*dd'*dd + 2*d'*(SkewMatrix3(wi)*spid - SkewMatrix3(wj)*spjd);
 end
    
 %% Update the function counter

@@ -28,6 +28,7 @@ function [Bodies,fval,exitflag] = Position_Analysis(Joints,NBodies,Bodies,t,opts
     Flags.Velocity = 0;
     Flags.Acceleration = 0;
     Flags.Dynamic = 0;
+    Flags.AccelDyn = 0;
 
     constrainsys = @(q)GenerateFunctions(q,Joints,NBodies,Bodies,Flags,t,ang,driverfunctions); %Handle Input @ (arglist)
 

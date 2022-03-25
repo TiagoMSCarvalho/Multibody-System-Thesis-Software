@@ -139,6 +139,25 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sig'*Cj)*Lj'];
 end
 
+if(Flags.AccelDyn == 1)
+    %Body i, dynamic pre processing
+    wi = Bodies(i).w;
+    %Body j, dynamic pre processing
+    wj = Bodies(j).w;
+    %Angular Vel Skew Matrices
+    swi = SkewMatrix3(wi);
+    swj = SkewMatrix3(wj);
+    %Derivatives of the sp's
+    spid = swi*spi;
+    spjd = swj*spj;
+    %Derivatives of qi,ti and sj in the global frame
+    sid = swi*si;
+    sjd = swj*sj;
+    
+    gamma(funCount+2,1) = -swi*spid + swj*spjd;
+    gamma(funCount+3,1) = -2*sid'*sjd + sid'*swi*sj + sjd'*swj*si;
+end
+
 %% Update the function counter
 funCount = funCount+4;
 end
