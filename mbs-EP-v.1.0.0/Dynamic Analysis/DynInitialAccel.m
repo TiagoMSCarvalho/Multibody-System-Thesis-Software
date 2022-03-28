@@ -56,5 +56,7 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
     % Atribuir Forças e Momentos ao vetor g, estes estão guardados na
     % struct Bodies e chamar a struct dos elementos força, assim como
     % calcular de cada um como fosse uma joint.
+    
+    [vetorg] = Forcecalculus(Forces,NBodies,Bodies);
 end
 

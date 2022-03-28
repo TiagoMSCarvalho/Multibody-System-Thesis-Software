@@ -42,7 +42,7 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
 
     %% Read all the information relative to the bodies.
     [~,BodyNames,~] = xlsread(filename,'Bodies','B4:B100');
-    BodyInfo = xlsread(filename,'Bodies','C4:AH100');
+    BodyInfo = xlsread(filename,'Bodies','C4:AK100');
     %Separates the Information by Column transforms into row vectors
     Origin = BodyInfo(:,1:3);
     if strcmp(str,'Axis Vectors') == 1
@@ -84,6 +84,7 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
         w = BodyInfo(:,24:26);
         Force = BodyInfo(:,27:29);
         Torque = BodyInfo(:,30:32);
+        ForcePoA = BodyInfo(:,33:35);
         
         %Allocates Info to the Bodies struct
         for i = 1:NBodies
@@ -93,6 +94,7 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
         Bodies(i).w = Impose_Column(w(i,:));
         Bodies(i).Force = ImposeColumn(Force(i,:));
         Bodies(i).Torque = ImposeColumn(Torque(i,:));
+        Bodies(i).ForcePoA = ImposeColumn(ForcePoA(i,:));
         end    
     end
     
@@ -621,6 +623,15 @@ Forces.Spring(ForcesCount).spi = spi;
 Forces.Spring(ForcesCount).spj = spj;
 %Save Constant
 Forces.Spring(ForcesCount).Constant = ForcesInfo(6);
+%% Initial Displacement
+% Bodies numbers
+i = Spring(forcescount).Body1;
+j = Spring(forcescount).Body2;
+% Bodies position vectors
+ri = Impose_Column(Bodies(i).r);
+rj = Impose_Column(Bodies(j).r);
+% Displacement Calculus and Storage
+Forces.Spring(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 end
 
 function Forces = ProcessTSpring(Forces,ForcesInfo,ForcesCount,Bodies)
@@ -645,6 +656,15 @@ Forces.TSpring(ForcesCount).spi = spi;
 Forces.TSpring(ForcesCount).spj = spj;
 %Save Constant
 Forces.TSpring(ForcesCount).Constant = ForcesInfo(6);
+%% Initial Displacement
+% Bodies numbers
+i = TSpring(forcescount).Body1;
+j = TSpring(forcescount).Body2;
+% Bodies position vectors
+ri = Impose_Column(Bodies(i).r);
+rj = Impose_Column(Bodies(j).r);
+% Displacement Calculus and Storage
+Forces.TSpring(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 end
 
 function Forces = ProcessDamper(Forces,ForcesInfo,ForcesCount,Bodies)
@@ -660,13 +680,22 @@ pi = Bodies(i).p;
 pj = Bodies(j).p;
 % Transform joint location on fixed reference to the bodies' local
 % reference
-spi = sp - Bodies(i).r;
-spi = EarthtoBody(spi,pi);
-spj = sp - Bodies(j).r;
-spj = EarthtoBody(spj,pj);
+spig = sp - Bodies(i).r;
+spi = EarthtoBody(spig,pi);
+spjg = sp - Bodies(j).r;
+spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Damper(ForcesCount).spi = spi;
 Forces.Damper(ForcesCount).spj = spj;
 %Save Constant
 Forces.Damper(ForcesCount).Constant = ForcesInfo(6);
+%% Initial Displacement
+% Bodies numbers
+i = Damper(forcescount).Body1;
+j = Damper(forcescount).Body2;
+% Bodies position vectors
+ri = Impose_Column(Bodies(i).r);
+rj = Impose_Column(Bodies(j).r);
+% Displacement Calculus and Storage
+Forces.Damper(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 end
