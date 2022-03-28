@@ -14,6 +14,9 @@ function [Bodies, Joints, SimParam,debugdata,ang,driverfunctions] = PreDataProce
 [SimParam,SimType] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies,SimType);
+if strcmp(SimType,"Dyn") == 1
+    Forces = ReadForcesInfo(filename,Bodies);
+end
 end
 %% Simulation Parameters
 function [SimParam,SimType] = SimulationInfo(filename)%for the coordinate transf.
@@ -548,4 +551,122 @@ pi = Bodies(i).p;
 spi = sp - Bodies(i).r;
 spi = EarthtoBody(spi,pi);
 Joints.Point(jointCount).spi = spi;
+end
+
+%% Process Force Elements [Dynamic]
+%Force elements are considered has Joints that impose a force, see
+%researchgate https://www.researchgate.net/figure/The-planar-revolute-pair-with-torsional-spring_fig3_225110018
+
+function Forces = ReadForcesInfo(filename,Bodies)
+
+[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:I100');
+relevant_lines_forces = [];
+for i = 1:size(rawforces,1)
+    if isnumeric(rawforces{i,4})
+        if ~isnan(rawforces{i,4})
+            relevant_lines_forces = [relevant_lines_forces,i];
+        end
+    end
+end
+
+ForcesType = rawforces(relevant_lines_forces,2); 
+ForcesInfo = cell2mat(rawforces(relevant_lines_forces,4:9));
+n_Forces = size(ForceTypes,1);
+
+% Initialize the force joint type at 0.
+Forces.NSpring = 0;
+Forces.NTSpring = 0;
+Forces.NDamper = 0;
+
+for i=1:n_Forces
+    Forces = ProcessForces(ForcesType{i},Forces,ForcesInfo(i,:),Bodies);
+end
+
+end
+
+function Forces = ProcessForces(ForcesType,Forces,ForcesInfo,Bodies)
+if strcmp(ForcesType,'Spring')
+    Forces.NSpring = Forces.NSpring + 1;
+    Forces = ProcessSpring(Forces,ForcesInfo,Forces.NSpring,Bodies);
+end
+if strcmp(ForcesType,'TSpring')
+    Forces.NTSpring = Forces.NTSpring + 1;
+    Forces = ProcessTSpring(Forces,ForcesInfo,Forces.NTSpring,Bodies);
+end
+if strcmp(ForcesType,'Damper')
+    Forces.NDamper = Forces.NDamper + 1;
+    Forces = ProcessDamper(Forces,ForcesInfo,Forces.NDamper,Bodies);
+end
+end
+
+function Forces = ProcessSpring(Forces,ForcesInfo,ForcesCount,Bodies)
+Forces.Spring(ForcesCount).Body1 = ForcesInfo(1);
+Forces.Spring(ForcesCount).Body2 = ForcesInfo(2);
+% Pass body numbers to easier to use variables
+i = Forces.Spring(ForcesCount).Body1;
+j = Forces.Spring(ForcesCount).Body2;
+% Location of joint center in fixed reference
+sp = Impose_Column(ForcesInfo(3:5));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+% Save the joint location in each bodies' reference
+Forces.Spring(ForcesCount).spi = spi;
+Forces.Spring(ForcesCount).spj = spj;
+%Save Constant
+Forces.Spring(ForcesCount).Constant = ForcesInfo(6);
+end
+
+function Forces = ProcessTSpring(Forces,ForcesInfo,ForcesCount,Bodies)
+Forces.TSpring(ForcesCount).Body1 = ForcesInfo(1);
+Forces.TSpring(ForcesCount).Body2 = ForcesInfo(2);
+% Pass body numbers to easier to use variables
+i = Forces.TSpring(ForcesCount).Body1;
+j = Forces.TSpring(ForcesCount).Body2;
+% Location of joint center in fixed reference
+sp = Impose_Column(ForcesInfo(3:5));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+% Save the joint location in each bodies' reference
+Forces.TSpring(ForcesCount).spi = spi;
+Forces.TSpring(ForcesCount).spj = spj;
+%Save Constant
+Forces.TSpring(ForcesCount).Constant = ForcesInfo(6);
+end
+
+function Forces = ProcessDamper(Forces,ForcesInfo,ForcesCount,Bodies)
+Forces.Damper(ForcesCount).Body1 = ForcesInfo(1);
+Forces.Damper(ForcesCount).Body2 = ForcesInfo(2);
+% Pass body numbers to easier to use variables
+i = Forces.Damper(ForcesCount).Body1;
+j = Forces.Damper(ForcesCount).Body2;
+% Location of joint center in fixed reference
+sp = Impose_Column(ForcesInfo(3:5));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+% Save the joint location in each bodies' reference
+Forces.Damper(ForcesCount).spi = spi;
+Forces.Damper(ForcesCount).spj = spj;
+%Save Constant
+Forces.Damper(ForcesCount).Constant = ForcesInfo(6);
 end
