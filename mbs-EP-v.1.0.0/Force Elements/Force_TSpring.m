@@ -1,35 +1,34 @@
-function [forceel] = Force_TSpring(forcescount,Bodies,TSpring)
+function [forceel] = Force_TSpring(forcescount,Bodies,TSpring,t)
 %% Initial variable definitions
-% Bodies numbers
+%Bodies numbers
 i = TSpring(forcescount).Body1;
 j = TSpring(forcescount).Body2;
-% Bodies position vectors
-ri = Impose_Column(Bodies(i).r);
-rj = Impose_Column(Bodies(j).r);
-% Force Element location relative to each Bodies coordinate system
-spi = Impose_Column(TSpring(forcescount).spi);
-spj = Impose_Column(TSpring(forcescount).spj);
 % Force Element Constant
-k = TSpring(forcescount).Constant;
-% Rotation matrix for each Bodies
-Ai = Bodies(i).A;
-Aj = Bodies(j).A;
-% Joint location in the global/absolute coordinate system
-spig = Ai*spi;
-spjg = Aj*spj;
-% Initial Displacement
-idisplacement = TSpring(forcescount).InitialDisplacement;
-
-%% Vector Calculus and formulation
-displacement = rj + spjg -ri - spig;
-deltax = displacement - idisplacement;
-forcei = k*deltax;
-forcej = -k*deltax;
-% Allocation of the force to the vector
-% Body i
+kt = TSpring(forcescount).Constant;
+% Torsion Spring Initial 
+t0 = Forces.TSpring(forcescount).theta0;
+% Initial Vectors that define the initial angle
+si = Forces.TSpring(focescount).si;
+sj = Forces.TSpring(forcescount).sj;
+%Bodies Velocities
+wi = Bodies(i).w;
+wj = Bodies(j).w;
+%Initial Bodies Velocities
+wi0 = Bodies(i).w0;
+wj0 = Bodies(j).w0;
+%% Vector Calculus and formulation - Torsional
+% Calculus of each vector displacement (new si and sj)
 i1 = 6*(i-1)+1;
-forceel(i1:i1+2,1) = forcei;
-% Body j
 i2 = 6*(j-1)+1;
-forceel(i2:i2+2,1) = forcej;
+if t == 0
+    forceel(i1:i1+5,1) = 0;
+    forceel(i2:i2+5,1) = 0;
+elseif t~=0
+    %tem de ser feito quando tier as variaveis e a storage dos angulos
+    %feitos.
+    %A ideia é:
+    % O que roda j vai rodar sj, o que roda i vai rodar i, soma e calcula o
+    % novo valor.
+end
+
 end

@@ -70,7 +70,7 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
     augmass = zeros(6*NBodies + size(Jacobian,1),6*NBodies + size(Jacobian,1));
     augmass = [massmatrix,Jacobian';Jacobian,0];
 %% Solving the Initial Acceleration Problem System
-    %
+    
     
 end
 

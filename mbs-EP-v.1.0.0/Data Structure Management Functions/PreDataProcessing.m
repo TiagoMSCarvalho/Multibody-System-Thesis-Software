@@ -561,7 +561,7 @@ end
 
 function Forces = ReadForcesInfo(filename,Bodies)
 
-[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:I100');
+[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:P100');
 relevant_lines_forces = [];
 for i = 1:size(rawforces,1)
     if isnumeric(rawforces{i,4})
@@ -572,7 +572,7 @@ for i = 1:size(rawforces,1)
 end
 
 ForcesType = rawforces(relevant_lines_forces,2); 
-ForcesInfo = cell2mat(rawforces(relevant_lines_forces,4:9));
+ForcesInfo = cell2mat(rawforces(relevant_lines_forces,4:16));
 n_Forces = size(ForceTypes,1);
 
 % Initialize the force joint type at 0.
@@ -656,15 +656,17 @@ Forces.TSpring(ForcesCount).spi = spi;
 Forces.TSpring(ForcesCount).spj = spj;
 %Save Constant
 Forces.TSpring(ForcesCount).Constant = ForcesInfo(6);
-%% Initial Displacement
-% Bodies numbers
-i = TSpring(forcescount).Body1;
-j = TSpring(forcescount).Body2;
-% Bodies position vectors
-ri = Impose_Column(Bodies(i).r);
-rj = Impose_Column(Bodies(j).r);
-% Displacement Calculus and Storage
-Forces.TSpring(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
+%% Initial Displacement Rotational
+si = ForcesInfo(7:9);
+sj = ForcesInfo(10:12);
+%Store si and sj in the forces struct
+Forces.TSpring(ForcesCount).si = si;
+Forces.TSpring(ForcesCount).sj = sj;
+if isnan(ForcesInfo(13)) == 1
+    Forces.TSpring(ForcesCount).theta0 = acos(dot(si,sj)/(norm(si)*norm(sj)));
+elseif isnan(ForcesInfo(13)) ~= 1
+    Forces.TSpring(ForcesCount).theta0 = ForcesInfo(13);
+end
 end
 
 function Forces = ProcessDamper(Forces,ForcesInfo,ForcesCount,Bodies)

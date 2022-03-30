@@ -19,8 +19,9 @@ end
 %Allocation of the forces to the bodies
 for i = 1:NBodies
     i1 = 6*(i-1)+1;
-    vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force);
-    vectorg(i1+3:i1+5,1) = Impose_Column(Bodies(i).Torque);    
+    vectorg(i1:i1+2,1)
+    vectorg(i1+3:i1+5
+    
 end
 
 vectorg = vectorg + forceel;
