@@ -85,10 +85,8 @@ elseif strcmp(SimType,"Dyn") == 1
         vel = Impose_Column(vel);
         dynacc = Impose_Column(DynAcc);
         yd = [vel',dynacc'];
-        % Store the time values
-        t0 = t - TimeStep;
-        tf = t;
-        % Rugge-Kutta Method for the ODE solver and integration of the aux vector
+        %Store 
+        % rugge-Kutta Method for the ODE solver and integration of the aux vector
         
         %Update of the variables
         

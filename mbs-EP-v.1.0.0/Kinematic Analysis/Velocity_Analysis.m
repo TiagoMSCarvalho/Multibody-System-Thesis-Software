@@ -95,7 +95,6 @@ for i = 1:NBodies
     Ei = [p(1),p(2),p(3),p(4);Gi]; %From J.Haug Book
     pd = qd(i1+3:i1+6);
     vel(i2:i2+2,1) = qd(i1:i1+2);
-    w = zeros(4,1);
     w = 2*Ei*pd;
     vel(i2+3:i2+5,1) = w(2:4);    
 end

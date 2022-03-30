@@ -4,7 +4,6 @@ function [vectorg] = ForceCalculus(Forces,NBodies,Bodies)
 
 vectorg = zeros(6*NBodies,1);
 forceel = zeros(6*NBodies,1);
-funCount = 1;
 
 %Calculus of the Force Elements
 for forcescount = 1:Forces.NSpring

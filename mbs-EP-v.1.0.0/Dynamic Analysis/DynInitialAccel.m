@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
+function [DynAcc,LagMulti] = DynInitialAccel(Joints,NBodies,Bodies,t)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -22,39 +22,44 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
 % Assembly of the Jacobian
     % For the Ground Constraints
     for jointCount=1:Joints.NGround
-        [~,Jacobian,~,~,funCount] = Ground_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Ground,Flags);
+        [~,Jacobian,~,gamma,funCount] = Ground_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Ground,Flags);
+    end
     % For the Spherical joints
     for jointCount=1:Joints.NSpherical
-        [~,Jacobian,~,~,funCount] = Joint_Spherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Spherical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Spherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Spherical,Flags);
     end
     % For the Composite Spherical Joint (SPH - SPH)
     for jointCount=1:Joints.NCompSpherical
-        [~,Jacobian,~,~,funCount] = Joint_CompSpherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.CompSpherical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_CompSpherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.CompSpherical,Flags);
     end
     % For the Universal joints
     for jointCount=1:Joints.NUniversal
-        [~,Jacobian,~,~,funCount] = Joint_Universal([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Universal,Flags); 
+        [~,Jacobian,~,gamma,funCount] = Joint_Universal([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Universal,Flags); 
     end
     % For the Revolute joints
     for jointCount=1:Joints.NRevolute
-        [~,Jacobian,~,~,funCount] = Joint_Revolute([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Revolute,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Revolute([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Revolute,Flags);
     end
     % For the Cylindrical joints
     for jointCount=1:Joints.NCylindrical
-        [~,Jacobian,~,~,funCount] = Joint_Cylindrical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Cylindrical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Cylindrical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Cylindrical,Flags);
     end 
     % For the Translation joints
     for jointCount=1:Joints.NTranslation
-        [~,Jacobian,~,~,funCount] = Joint_Translation([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Translation,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Translation([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Translation,Flags);
     end 
     % For the Simple Constraints
     for jointCount=1:Joints.NSimple
-        [~,Jacobian,~,~,funCount] = Simple_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Simple,Flags);
+        [~,Jacobian,~,gamma,funCount] = Simple_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Simple,Flags);
     end
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
     [vetorg] = Forcecalculus(Forces,NBodies,Bodies,t);
+%% Assemblying the force vector and acceleration vector
+    vetorg = Impose_Column(vetorg);
+    gamma = Impose_Column(gamma);
+    rhs = [vetorg;gamma];
     
 %% Augmented Mass Matrix Assembly
     % Mass Matrix
@@ -67,10 +72,15 @@ function [outputArg1,outputArg2] = DynInitialAccel(Joints,NBodies,Bodies,t,it)
         massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia);
     end
     % Joining the new Jacobian with the Mass Matrix
-    augmass = zeros(6*NBodies + size(Jacobian,1),6*NBodies + size(Jacobian,1));
-    augmass = [massmatrix,Jacobian';Jacobian,0];
+    augmass = [massmatrix,-Jacobian';Jacobian,0];
 %% Solving the Initial Acceleration Problem System
-    %
+    %Solvin the Linear Problem
+    iapsol = augmass\rhs;
+    %Allocating the solution to its respective vectors
+    i1 = 6*NBodies;
+    i2 = 6*NBodies + size(Jacobian,1);
+    DynAcc = iapsol(1:i1,1);
+    LagMulti = iapsol(i1+1:i2,1); 
     
 end
 
