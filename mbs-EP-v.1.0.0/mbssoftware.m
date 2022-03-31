@@ -72,25 +72,22 @@ if strcmp(SimType,"Kin") == 1
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
     for t = tini:TimeStep:RunTime
-        % Dynamic Initial Acceleration Problem
-        [DynAcc,LagMulti] = DynInitialAccel(NBodies,Bodies,Joints,Points,t);
-        % Store the velocities in a vector to setup it's integration
-        for i = 1:NBodies
-            i1 = 6*(i-1)+1;
-            rd = Bodies(i).rd;
-            w = Bodies(i).w;
-            vel(i1:i1+5,1) = [rd,w];
-        end
-        % Store the aux vector y = [vel' accel']'
-        vel = Impose_Column(vel);
-        dynacc = Impose_Column(DynAcc);
-        yd = [vel',dynacc'];
-        % Store the time values
-        t0 = t - TimeStep;
-        tf = t;
-        % Rugge-Kutta Method for the ODE solver and integration of the aux vector
+%NOTE: Runga-Kutta will be use to perform the Velocity and Position
+%Analysis then the Direct Correction will be implemented see:
+%"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
+%"On the constrains violation in forward dynamics of multibody systems pg 18
+        %% Runga-Kutta Pré Setup
+        % Stores initial position,velocities and calculates the time interval for ode45
+        [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep);
+        % Function to calculate the Dynamic Initial Acceleration
+        [DynAcc,LagMulti,Jacobian] = DynInitialAccel(NBodies,Bodies,Joints,Points,t);
+        %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
+        opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
+        [t,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);
+        %% Direct Correction of the calculated qu and vu
         
-        %Update of the variables
+        
+        % Update of the variables
         
     end
 end

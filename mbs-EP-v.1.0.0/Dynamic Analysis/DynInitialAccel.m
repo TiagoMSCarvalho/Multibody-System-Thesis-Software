@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti] = DynInitialAccel(Joints,NBodies,Bodies,t)
+function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,t)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -22,35 +22,35 @@ function [DynAcc,LagMulti] = DynInitialAccel(Joints,NBodies,Bodies,t)
 % Assembly of the Jacobian
     % For the Ground Constraints
     for jointCount=1:Joints.NGround
-        [~,Jacobian,~,gamma,funCount] = Ground_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Ground,Flags);
+        [~,Jacobian,~,gamma,funCount] = Ground_Constraints([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Ground,Flags);
     end
     % For the Spherical joints
     for jointCount=1:Joints.NSpherical
-        [~,Jacobian,~,gamma,funCount] = Joint_Spherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Spherical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Spherical([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Spherical,Flags);
     end
     % For the Composite Spherical Joint (SPH - SPH)
     for jointCount=1:Joints.NCompSpherical
-        [~,Jacobian,~,gamma,funCount] = Joint_CompSpherical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.CompSpherical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_CompSpherical([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.CompSpherical,Flags);
     end
     % For the Universal joints
     for jointCount=1:Joints.NUniversal
-        [~,Jacobian,~,gamma,funCount] = Joint_Universal([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Universal,Flags); 
+        [~,Jacobian,~,gamma,funCount] = Joint_Universal([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Universal,Flags); 
     end
     % For the Revolute joints
     for jointCount=1:Joints.NRevolute
-        [~,Jacobian,~,gamma,funCount] = Joint_Revolute([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Revolute,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Revolute([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Revolute,Flags);
     end
     % For the Cylindrical joints
     for jointCount=1:Joints.NCylindrical
-        [~,Jacobian,~,gamma,funCount] = Joint_Cylindrical([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Cylindrical,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Cylindrical([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Cylindrical,Flags);
     end 
     % For the Translation joints
     for jointCount=1:Joints.NTranslation
-        [~,Jacobian,~,gamma,funCount] = Joint_Translation([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Translation,Flags);
+        [~,Jacobian,~,gamma,funCount] = Joint_Translation([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Translation,Flags);
     end 
     % For the Simple Constraints
     for jointCount=1:Joints.NSimple
-        [~,Jacobian,~,gamma,funCount] = Simple_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Simple,Flags);
+        [~,Jacobian,~,gamma,funCount] = Simple_Constraints([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Simple,Flags);
     end
 
 %% Function Responsible for the Force Vectors    
