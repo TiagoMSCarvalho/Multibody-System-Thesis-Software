@@ -41,6 +41,8 @@ function [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints)
      [~,phid] = RKDCJoints(Joints,Bodies,Flags);
      % vu correction
      vc = vu - D'*Inv(D*D')*(phid*vu);
+     %Update of body velocities with the correction for t + timestep (vc)
+     Bodies = UpdateVelocities(vc,NBodies,Bodies);
      
      
 end
