@@ -10,8 +10,8 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies, Joints, SimParam,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes)
-[SimParam,SimType] = SimulationInfo(filename);%reads the number of time iterations and motions
+function [Bodies, Joints, SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes)
+[SimParam,SimType,Grav] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies,SimType);
 if strcmp(SimType,"Dyn") == 1
@@ -19,15 +19,19 @@ if strcmp(SimType,"Dyn") == 1
 end
 end
 %% Simulation Parameters
-function [SimParam,SimType] = SimulationInfo(filename)%for the coordinate transf.
+function [SimParam,SimType,Grav] = SimulationInfo(filename)%for the coordinate transf.
 
 [~,~,RunTime] = xlsread(filename,'SimParam','D3');
 [~,~,TimeStep] = xlsread(filename,'SimParam','D4');
 [~,~,SimulationType] = xlsread(filename,'SimParam','D5');
+[~,~,GravDirection] = xlsread(filename,'SimParam','D6');
+[~,~,GravMagnitude] = xlsread(filename,'SimParam','D7');
 
 SimParam.RunTime=RunTime;
 SimParam.TimeStep=TimeStep;
 SimParam.SimulationType=SimulationType;
+Grav.Direction=GravDirection;
+Grav.Magnitude=GravMagnitude;
 SimType = string(SimulationType);
 
 end

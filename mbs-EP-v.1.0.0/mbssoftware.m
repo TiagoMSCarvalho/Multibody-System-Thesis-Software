@@ -37,7 +37,7 @@ filename = 'template_mbs';
 
 %% Retrive Information from the Excel
 Points = []; %Array to save the points during each iteration, lines are the points, col their value to each iteration
-[Bodies,Joints,SimParam,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes); %reads the excel file
+[Bodies,Joints,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes); %reads the excel file
 NBodies = length(Bodies);
 clc
 
@@ -80,7 +80,7 @@ elseif strcmp(SimType,"Dyn") == 1
         % Stores initial position,velocities and calculates the time interval for ode45
         [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep);
         % Function to calculate the Dynamic Initial Acceleration
-        [DynAcc,LagMulti,Jacobian] = DynInitialAccel(NBodies,Bodies,Joints,Points,t);
+        [DynAcc,LagMulti,Jacobian] = DynInitialAccel(NBodies,Bodies,Joints,Points,Grav);
         %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
         opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
         [steps,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);

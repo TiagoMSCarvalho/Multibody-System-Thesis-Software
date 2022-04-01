@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,t)
+function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,Grav)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -55,7 +55,7 @@ function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,t)
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
-    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,t);
+    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav);
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);
