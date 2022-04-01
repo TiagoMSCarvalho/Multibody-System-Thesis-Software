@@ -19,7 +19,7 @@ function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,t)
     Flags.Dynamic = 1;
     Flags.AccelDyn = 1;
     funCount = 1;
-% Assembly of the Jacobian
+% Assembly of the Jacobian and rhs acceleration vector.
     % For the Ground Constraints
     for jointCount=1:Joints.NGround
         [~,Jacobian,~,gamma,funCount] = Ground_Constraints([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Ground,Flags);

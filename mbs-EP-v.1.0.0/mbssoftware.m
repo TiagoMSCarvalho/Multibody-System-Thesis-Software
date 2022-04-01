@@ -83,10 +83,9 @@ elseif strcmp(SimType,"Dyn") == 1
         [DynAcc,LagMulti,Jacobian] = DynInitialAccel(NBodies,Bodies,Joints,Points,t);
         %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
         opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
-        [t,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);
+        [steps,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);
         %% Direct Correction of the calculated qu and vu
-        
-        
+        [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints);
         % Update of the variables
         
     end
