@@ -13,15 +13,15 @@
 %    points, then updating their position
 
 
-function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions)
+function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType)
 
     %System Constrain check
     [debugdata] = SystemDofCalc(NBodies,Bodies,Joints,debugdata);
     % Process the input data
-    [Bodies] = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang,driverfunctions); %Até aqui os valores batem certo.
-    [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions);
+    [Bodies] = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang,driverfunctions);
+    [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType);
     [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies);
-    [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions);
+    [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType);
     [Points,it] = KinDataStorage(Points,Bodies,Joints,vel,acc,it);
 
 end

@@ -15,7 +15,7 @@
 %    calculated. In the end the velocities of the bodies are updated in the
 %    Bodies structure
 
-function [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions)
+function [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType)
 %Function that controls the Kinematic velocity analysis
 
 %Form the velocity constraint equation
@@ -100,6 +100,6 @@ for i = 1:NBodies
 end
 
 % Store the velocities in proper variables
-Bodies = UpdateVelocities(qd,NBodies,Bodies);
+Bodies = UpdateVelocities(qd,NBodies,Bodies,SimType);
 
 end

@@ -96,6 +96,6 @@ for i = 1:NBodies
 end
 
 % Store the accelerations in proper variables
-Bodies = UpdateAccelerations(qdd,NBodies,Bodies);
+Bodies = UpdateAccelerations(qdd,NBodies,Bodies,[]);
 
 end

@@ -47,13 +47,12 @@ RunTime=cell2mat(SimParam.RunTime);
 Ntotit = RunTime/TimeStep;
 tini = TimeStep; %Initial Time 0s + Initial Time, q0( pos for t = 0 s) is already stored.
 SimType = string(SimParam.SimulationType);
-
 it = 1;
-
-[Points,it] = KinDataStorage(Points,Bodies,Joints,[],[],it);
 
 %% Solvers
 if strcmp(SimType,"Kin") == 1
+% Storage of the first values for the Kinematic Analysis
+    [Points,it] = KinDataStorage(Points,Bodies,Joints,[],[],it);    
 %% Kinematic Solver    
 % Fsolve Opts (Justification is Found in The Mendeley) - Kin
     opts=optimoptions('fsolve');
@@ -67,27 +66,28 @@ if strcmp(SimType,"Kin") == 1
     
  % Calcs (t in seconds) 
     for t=tini:TimeStep:RunTime
-        [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions);
+        [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType);
     end
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
     for t = tini:TimeStep:RunTime
-%NOTE: Runga-Kutta will be use to perform the Velocity and Position
-%Analysis then the Direct Correction will be implemented see:
-%"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
-%"On the constrains violation in forward dynamics of multibody systems pg 18
+    %NOTE: Runga-Kutta will be use to perform the Velocity and Position
+    %Analysis then the Direct Correction will be implemented see:
+    %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
+    %"On the constrains violation in forward dynamics of multibody systems pg 18
         %% Runga-Kutta Pré Setup
         % Stores initial position,velocities and calculates the time interval for ode45
         [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep);
         % Function to calculate the Dynamic Initial Acceleration
-        [DynAcc,LagMulti,Jacobian] = DynInitialAccel(NBodies,Bodies,Joints,Points,Grav);
+        [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Joints,Points,Grav,SimType);
+        % Update of the variables (Stores t - Timestep)
+        [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
         %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
         opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
         [steps,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);
         %% Direct Correction of the calculated qu and vu
-        [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints);
-        % Update of the variables
-        
+        [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints,SimType);
     end
+    [Points,CoM,it] = DynDataStorage(Points,Bodies,Joints);
 end
 

@@ -1,4 +1,4 @@
-function [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints)
+function [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints,SimType)
 %This function implements the Direct Correction stated in the Constraint Violation
     % Equations that are implemented:
         % qc = qu - D'*inv(D*D') * phi(qu);
@@ -27,7 +27,7 @@ function [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints)
      % qu correction
      qc = qu - D'*Inv(D*D')*phi;
      %Update of the body postures with the correction for t + timestep (qc)
-     Bodies = UpdateBodyPostures(qc,NBodies,Bodies);
+     Bodies = UpdateBodyPostures(qc,NBodies,Bodies,SimType);
      
 %% phid (qc,vu) Calculation
      %Flags definition
@@ -42,7 +42,7 @@ function [qc,vc] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints)
      % vu correction
      vc = vu - D'*Inv(D*D')*(phid*vu);
      %Update of body velocities with the correction for t + timestep (vc)
-     Bodies = UpdateVelocities(vc,NBodies,Bodies);
+     Bodies = UpdateVelocities(vc,NBodies,Bodies,SimType);
      
      
 end

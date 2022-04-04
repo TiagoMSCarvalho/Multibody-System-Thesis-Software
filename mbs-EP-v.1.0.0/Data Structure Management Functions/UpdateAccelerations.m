@@ -11,11 +11,19 @@
 %    This function updates the Bodies structure with the obtained
 %    accelerations(from matricial equation solving) 
 
-function Bodies = UpdateAccelerations(qdd,NBodies,Bodies)
+function Bodies = UpdateAccelerations(qdd,NBodies,Bodies,SimType)
 % Update the velocities in the body information
-for i=1:NBodies
-    i1 = 7*(i-1)+1;
-    Bodies(i).rdd = Impose_Column(qdd(i1:i1+2));
-    Bodies(i).pdd = Impose_Column(qdd(i1+3:i1+6));
+if strcmp(SimType,"Kin") == 1
+    for i=1:NBodies
+        i1 = 7*(i-1)+1;
+        Bodies(i).rdd = Impose_Column(qdd(i1:i1+2));
+        Bodies(i).pdd = Impose_Column(qdd(i1+3:i1+6));
+    end
+elseif strcmp(SimType,"Dyn") == 1
+    for i=1:NBodies
+        i1 = 6*(i-1)+1;
+        Bodies(i).rdd = Impose_Column(qdd(i1:i1+2));
+        Bodies(i).wd = Impose_Column(qdd(i1+3:i1+5));
+    end
 end
 end

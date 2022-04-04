@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,Grav)
+function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(Joints,NBodies,Bodies,Grav,SimType)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -81,6 +81,7 @@ function [DynAcc,LagMulti,Jacobian] = DynInitialAccel(Joints,NBodies,Bodies,Grav
     i2 = 6*NBodies + size(Jacobian,1);
     DynAcc = iapsol(1:i1,1);
     LagMulti = iapsol(i1+1:i2,1); 
-    
+%% Update and storage of the acceleration value for the t - deltat time.
+    [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType);
 end
 
