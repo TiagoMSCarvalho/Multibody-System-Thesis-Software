@@ -75,19 +75,8 @@ elseif strcmp(SimType,"Dyn") == 1
     %Analysis then the Direct Correction will be implemented see:
     %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
     %"On the constrains violation in forward dynamics of multibody systems pg 18
-        %% Runga-Kutta Pré Setup
-        % Stores initial position,velocities and calculates the time interval for ode45
-        [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep);
-        % Function to calculate the Dynamic Initial Acceleration
-        [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Joints,Points,Grav,SimType);
-        % Update of the variables (Stores t - Timestep)
-        [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
-        %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
-        opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
-        [steps,y] = ode45(@RKAuxFunction,[t0,tf],initial,opts);
-        %% Direct Correction of the calculated qu and vu
-        [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,Joints,SimType);
+        [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,Joints,Points,CoM,t,TimeStep,Grav,SimType,it);
     end
-    [Points,CoM,it] = DynDataStorage(Points,Bodies,Joints);
+    [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
 end
 
