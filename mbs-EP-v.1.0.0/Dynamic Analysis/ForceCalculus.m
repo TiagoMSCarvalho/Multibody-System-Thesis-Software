@@ -1,4 +1,4 @@
-function [vectorg] = ForceCalculus(Forces,NBodies,Bodies,Grav)
+function [vectorg] = ForceCalculus(Forces,NBodies,Bodies,Grav,Joints)
 %Assemblies the Vector g to enable the calculation of the initial
 %acceleration
 %Pre Allocation of the Vectors
@@ -20,7 +20,7 @@ for forcescount = 1:Forces.NSpring
     [forceel] = Force_Spring(forcescount,Bodies,Forces.Spring);
 end
 for forcescount = 1:Forces.NTSpring
-    [forceel] = Force_TSpring(forcescount,Bodies,Forces.TSpring);
+    [forceel] = Force_TSpring(forcescount,Bodies,Forces.TSpring,Joints);
 end
 for forcescount = 1:Forces.NDamper
     [forceel] = Force_Damper(forcescount,Bodies,Forces.Damper);

@@ -55,7 +55,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(Joints,NBodies,Bodi
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
-    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav);
+    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav,Joints);
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);
@@ -84,4 +84,3 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(Joints,NBodies,Bodi
 %% Update and storage of the acceleration value for the t - deltat time.
     [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType);
 end
-
