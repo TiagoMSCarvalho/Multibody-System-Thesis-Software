@@ -13,7 +13,7 @@
 function [Bodies, Joints, SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes)
 [SimParam,SimType,Grav] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
-[Joints,driverfunctions] = ReadJointsInfo(filename,Bodies,SimType);
+[Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
     Forces = ReadForcesInfo(filename,Bodies);
 end
@@ -36,7 +36,7 @@ SimType = string(SimulationType);
 
 end
 %% Body Information + Euler Parameters
-function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename)
+function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType)
     %Prompts the user to state the type of inputs (Angles or Axis Vectors)
     %Temporary before GUI
     prompt = 'State the type of input for the body frame orientation [Axis Vectors/Bryant Angles/Orientational Axis]:';
