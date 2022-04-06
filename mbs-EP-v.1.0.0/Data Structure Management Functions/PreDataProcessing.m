@@ -645,19 +645,17 @@ Forces.TSpring(ForcesCount).Body2 = ForcesInfo(2);
 i = Forces.TSpring(ForcesCount).Body1;
 j = Forces.TSpring(ForcesCount).Body2;
 % Location of joint center in fixed reference
-sp = Impose_Column(ForcesInfo(3:5));
+axis = Impose_Column(ForcesInfo(3:5));
 % Get euler parameter for each body frame
 pi = Bodies(i).p;
 pj = Bodies(j).p;
-% Transform joint location on fixed reference to the bodies' local
-% reference
-spi = sp - Bodies(i).r;
-spi = EarthtoBody(spi,pi);
-spj = sp - Bodies(j).r;
-spj = EarthtoBody(spj,pj);
-% Save the joint location in each bodies' reference
-Forces.TSpring(ForcesCount).spi = spi;
-Forces.TSpring(ForcesCount).spj = spj;
+% Transform Spring Axis
+axi = EarthtoBody(axis,pi);
+axj = EarthtoBody(axis,pj);
+% Save spring axis in the local referential
+Forces.TSpring(ForcesCount).axi = axi;
+Forces.TSpring(ForcesCount).axj = axj;
+Forces.TSpring(ForcesCount).s = axis;
 %Save Constant
 Forces.TSpring(ForcesCount).Constant = ForcesInfo(6);
 %% Initial Displacement Rotational

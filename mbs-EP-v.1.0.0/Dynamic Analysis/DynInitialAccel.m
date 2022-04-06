@@ -1,10 +1,10 @@
-function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(Joints,NBodies,Bodies,Grav,SimType)
+function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Joints,Grav,SimType)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
 
 %% Set Up of the variables needed to construct the Matrix - Dynamic Modified Jacobian
-% Pre Allocation of the q0 vector
+% Pre Allocation of the q0 vector, for the calc of AGL
     q0 = CreateAuxiliaryBodyStructure(NBodies,Bodies);
 % Calculation of the Matrixes A, G and L
     Bodies = DynCalcAGL(q0,NBodies,Bodies);
@@ -55,7 +55,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(Joints,NBodies,Bodi
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
-    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav,Joints);
+    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav);
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);

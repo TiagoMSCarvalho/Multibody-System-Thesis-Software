@@ -1,5 +1,5 @@
 function [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep)
-% Stores initial position,velocities and calculates the time interval for ode45
+% Stores initial position,velocities, initial conditions, and calculates the time interval for ode45
     for i = 1:NBodies
         %Allocation of the initial velocities
         i1 = 6*(i-1)+1;

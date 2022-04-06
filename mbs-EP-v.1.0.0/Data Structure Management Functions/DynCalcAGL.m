@@ -2,7 +2,6 @@ function Bodies = DynCalcAGL(q0, NBodies, Bodies)
 % Update the position, orientation and transformation matrices
 for i=1:NBodies
     l1 = 7*(i-1)+1;
-    r = Impose_Column(q0(l1:l1+2));
     p = Impose_Column(q0(l1+3:l1+6));
     
     %Above is Corrected to retrieve the Euler Parameters
