@@ -10,7 +10,7 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies, Joints, SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes)
+function [Bodies, Joints, SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
@@ -96,9 +96,9 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType)
         Bodies(i).Inertia = Impose_Column(Inertia(i,:));
         Bodies(i).rd = Impose_Column(rd(i,:));
         Bodies(i).w = Impose_Column(w(i,:));
-        Bodies(i).Force = ImposeColumn(Force(i,:));
-        Bodies(i).Torque = ImposeColumn(Torque(i,:));
-        Bodies(i).ForcePoA = ImposeColumn(ForcePoA(i,:));
+        Bodies(i).Force = Impose_Column(Force(i,:));
+        Bodies(i).Torque = Impose_Column(Torque(i,:));
+        Bodies(i).ForcePoA = Impose_Column(ForcePoA(i,:));
         end    
     end
     
@@ -575,9 +575,9 @@ for i = 1:size(rawforces,1)
     end
 end
 
-ForcesType = rawforces(relevant_lines_forces,2); 
+ForcesTypes = rawforces(relevant_lines_forces,2); 
 ForcesInfo = cell2mat(rawforces(relevant_lines_forces,4:16));
-n_Forces = size(ForceTypes,1);
+n_Forces = size(ForcesTypes,1);
 
 % Initialize the force joint type at 0.
 Forces.NSpring = 0;
@@ -585,7 +585,7 @@ Forces.NTSpring = 0;
 Forces.NDamper = 0;
 
 for i=1:n_Forces
-    Forces = ProcessForces(ForcesType{i},Forces,ForcesInfo(i,:),Bodies);
+    Forces = ProcessForces(ForcesTypes{i},Forces,ForcesInfo(i,:),Bodies);
 end
 
 end

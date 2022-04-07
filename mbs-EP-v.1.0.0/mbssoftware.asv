@@ -36,9 +36,8 @@ ForcesTypes = {'Spring','TSpring','Damper'};
 filename = 'template_mbs';
 
 %% Retrive Information from the Excel
-%Array to save the points during each iteration, lines are the points, col their value to each iteration
-Points = [];
-CoM = [];
+
+Points = [];%Array to save the points during each iteration, lines are the points, col their value to each iteration
 [Bodies,Joints,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
 NBodies = length(Bodies);
 clc

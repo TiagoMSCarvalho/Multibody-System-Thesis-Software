@@ -128,7 +128,7 @@ if(Flags.AccelDyn == 1)
     spid = swi*spi;
     spjd = swj*spj;
     
-    gamma(funCount+2,1) = -swi*spid + swj*spjd;
+    gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
 end
 
 %% Update the function counter
