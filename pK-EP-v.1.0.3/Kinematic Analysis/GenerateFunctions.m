@@ -45,7 +45,7 @@ for jointCount=1:Joints.NSimple
 end
 
 %Euler Parameter Constraints
-for NBod = 2:(NBodies-1) %takes the first body, ground out of the equation
+for NBod = 2:(NBodies) %takes the first body, ground out of the equation
     [fun,~,~,~,funCount] = EulerParameterConstraint(fun,[],[],[],funCount,NBod,Bodies,Flags);
 end
 

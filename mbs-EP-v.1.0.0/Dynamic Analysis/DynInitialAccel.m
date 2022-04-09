@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Joints,Grav,SimType)
+function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Joints,Forces,Grav,SimType)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -57,7 +57,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Join
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
-    [vetorg] = Forcecalculus(Forces,NBodies,Bodies,Grav);
+    [vetorg] = ForceCalculus(Forces,NBodies,Bodies,Grav);
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);
@@ -74,7 +74,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Join
         massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia);
     end
     % Joining the new Jacobian with the Mass Matrix
-    augmass = [massmatrix,-Jacobian';Jacobian,0];
+    augmass = [massmatrix,-Jacobian';Jacobian,zeros(23,23)];
 %% Solving the Initial Acceleration Problem System
     %Solvin the Linear Problem
     iapsol = augmass\rhs;

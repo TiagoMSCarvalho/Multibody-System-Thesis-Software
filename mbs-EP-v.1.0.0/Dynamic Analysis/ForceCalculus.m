@@ -7,11 +7,11 @@ forceel = zeros(6*NBodies,1);
 %Allocation of the gravity properties and vector
 gdir = string(Grav.Direction);
 gmag = cell2mat(Grav.Magnitude);
-if str2cmp(gdir,"x") == 1
+if strcmp(gdir,"x") == 1
     g = [gmag;0;0];
-elseif str2cmp(gdir,"y") == 1
+elseif strcmp(gdir,"y") == 1
     g = [0;gmag;0];
-elseif str2cmp(gdir,"z") == 1
+elseif strcmp(gdir,"z") == 1
     g = [0;0;gmag];
 end
 
@@ -28,13 +28,19 @@ end
 %Allocation of the forces to the bodies and calculus of: swJw and weight
 for i = 1:NBodies
     Mass = Bodies(i).Mass;
-    Inertia = Bodies(i).Inertia;
+    Inertia = Bodies(i).Inertia; %Tem de ser posto em matriz
+    I = [Inertia(1),0,0;0,Inertia(2),0;0,0,Inertia(3)];
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
-    wJw = sw*Inertia*w;
+    wJw = sw*I*w;
     i1 = 6*(i-1)+1;
+    if isnan(gmag)
+    vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force);
+    vectorg(i1+3:i1+5,1) = Impose_Column(Bodies(i).Torque) - Impose_Column(wJw);        
+    elseif isnan(gmag) ~= 1
     vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force) + (Mass*eye(3))*g;
     vectorg(i1+3:i1+5,1) = Impose_Column(Bodies(i).Torque) - Impose_Column(wJw);
+    end
 end
 
 vectorg = vectorg + forceel;

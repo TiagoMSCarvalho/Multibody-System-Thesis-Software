@@ -65,7 +65,8 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-
+Li = Bodies(i).L;
+Lj = Bodies(j).L;
 
 %% Joint Formulation - Kinematic Problem
 % Position constraint equations
@@ -154,7 +155,7 @@ if(Flags.AccelDyn == 1)
     sid = swi*si;
     sjd = swj*sj;
     
-    gamma(funCount+2,1) = -swi*spid + swj*spjd;
+    gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
     gamma(funCount+3,1) = -2*sid'*sjd + sid'*swi*sj + sjd'*swj*si;
 end
 

@@ -187,7 +187,7 @@ if(Flags.AccelDyn == 1)
     tid = swi*ti;
     sjd = swj*sj;
     
-    gamma(funCount+2,1) = -swi*spid + swj*spjd;
+    gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
     gamma(funCount+3,1) = -2*qid'*sjd + qid'*swi*sj + sjd'*swj*qi;
     gamma(funCount+4,1) = -2*tid'*sjd + tid'*swi*sj + sjd'*swj*ti;
 end 

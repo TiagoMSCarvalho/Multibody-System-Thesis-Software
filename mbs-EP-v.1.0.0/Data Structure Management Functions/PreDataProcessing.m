@@ -10,7 +10,7 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies, Joints, SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes)
+function [Bodies,Joints,Forces,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
