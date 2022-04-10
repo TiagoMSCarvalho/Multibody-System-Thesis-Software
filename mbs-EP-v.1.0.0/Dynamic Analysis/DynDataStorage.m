@@ -24,6 +24,9 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
     end
     %% Storage of the Joints Data
     % Storage of the velocity values in a vector
+    % Used Equations:
+            % Velocity - Va = Vb + w x R(A/B)
+            % Acceleration -  Aa = Ab + alpha x R(A/B) + w x (w xR(A/B))
     for i = 1:NBodies
         i1 = 6*(i-1)+1;
         vel(i1:i1+2,1) = Bodies(i).rd;
@@ -34,12 +37,10 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
         %% Position Calculus
         i = Joints.Point(k).Body;
         spi = Joints.Point(k).spi; % spi - point position vector
-        sp_earth = BodytoEarth(spi,Bodies(i).p);
-        Point_position = Bodies(i).r + sp_earth;
+        spi_earth = BodytoEarth(spi,Bodies(i).p);
+        Point_position = Bodies(i).r + spi_earth;
         DataP(k).Position = Point_position;
         %% Velocity Calculus
-        spi = Joints.Point(k).spi;
-        spi_earth = BodytoEarth(spi,Bodies(i).p); %R(A/b)
         i1 = 6*(i-1)+1;
         rd = Impose_Column(vel(i1:i1+2));
         w = Impose_Column(vel(i1+3:i1+5));
@@ -54,6 +55,11 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
         poiacc(i1:i1+2,1) = Impose_Column(rddp);
         poiacc(i1+3:i1+5,1) = wd;
     end
+    [b,~] = size(acc);
+    for j = 1:b
+        DataP(j).Velocity = poivel(j);
+        DataP(j).Acceleration = poiacc(j);
+    end    
     %% Stores said data struct in a cell array per number of iteration
     Points{1,it} = DataP;
     CoM{1,it} = DataC;

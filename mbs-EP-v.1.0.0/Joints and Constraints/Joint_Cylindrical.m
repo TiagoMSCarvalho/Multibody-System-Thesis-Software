@@ -206,7 +206,7 @@ if(Flags.AccelDyn == 1)
     dd = Impose_Column(dd);
     
     gamma(funCount,1) = -2*dd'*qid - d'*swi*qid + qi'*(swi*spid - swj*spjd);
-    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + ti*(swi*spid - swj*spjd);
+    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + ti'*(swi*spid - swj*spjd);
     gamma(funCount+2,1) = -2*qid'*sjd + qid'*swi*sj + sjd'*swj*qi;
     gamma(funCount+3,1) = -2*tid'*sjd + tid'*swi*sj + sjd'*swj*ti;
 end
