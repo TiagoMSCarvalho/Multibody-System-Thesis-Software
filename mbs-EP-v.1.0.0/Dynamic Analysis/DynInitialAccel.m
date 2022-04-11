@@ -68,10 +68,11 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Join
     massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation
     for i = 1:NBodies
         Mass = Bodies(i).Mass;
+        A = Bodies(i).A;
         Inertia = Bodies(i).Inertia;
         i1 = 6*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
-        massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia);
+        massmatrix(i1+3:i1+5,i1+3:i1+5) = A*diag(Inertia)*A';
     end
     % Joining the new Jacobian with the Mass Matrix
     augmass = [massmatrix,-Jacobian';Jacobian,zeros(23,23)];
