@@ -65,8 +65,6 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 
 %% Joint Formulation - Kinematic Problem
 % Position constraint equations
@@ -122,22 +120,22 @@ end
 %% Joint Formulation - Dynamic Problem
 %Jacobian Matrix
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
-    %Ci Cj written to spi and spj aux calc tab 7.1 Nikra  (pg201)
-    Cpi = 2*(Gi*sspi + spi*pi');
-    Cpj = 2*(Gj*sspj + spj*pj');
-    %Ci Cj written to si and sj
-    Ci = 2*(Gi*ssi + si*pi');
-    Cj = 2*(Gj*ssj + sj*pj');
+    %1 SPH, 1x n1,1 constraint equations
+    %Skew Matrix 3x3
+    skewspi = SkewMatrix3(Ai*spi);
+    skewspj = SkewMatrix3(Aj*spj);
+    skewsi = SkewMatrix3(sig);
+    skewsj = SkewMatrix3(sjg);
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),0.5*Cpi*Li'];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sjg'*Ci)*Li'];
+    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),-skewspi*Ai];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,-sjg'*skewsi*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2 = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-0.5*Cpj*Lj'];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sig'*Cj)*Lj'];
+    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),skewspj*Aj];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,-sig'*skewsj*Aj];
 end
 
 if(Flags.AccelDyn == 1)

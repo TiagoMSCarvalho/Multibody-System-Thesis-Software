@@ -53,8 +53,6 @@ Aj = Bodies(j).A;
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
@@ -102,18 +100,18 @@ end
 %% Joint Formulation - Dynamic Problem
 % Jacobian Matrix
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
-    %Ci Cj aux calc tab 7.1 Nikra  (pg291)
-    %Constrain defined relative to the point P central to the sph joint
-    Ci = 2*(Gi*sspi + spi*pi');
-    Cj = 2*(Gj*sspj + spj*pj');
+    %Formulas from table 11.1 Nikravesh (page 317/299)
+    %Skew Matrix 3x3
+    skewspi = SkewMatrix3(Ai*spi);
+    skewspj = SkewMatrix3(Aj*spj);
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),0.5*Ci*Li'];
+    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),-skewspi*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2  = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-0.5*Cj*Lj'];
+    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),skewspj*Aj];
 end
 
 if(Flags.AccelDyn == 1)

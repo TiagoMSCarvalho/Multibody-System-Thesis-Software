@@ -59,13 +59,9 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
-
-
 % 2 non-colinear vectors (perpendicular in this case) that are
 % perpendicular to the vector si, si is defined in the local fram and thus
 % qi and ti will be LOCAL vectors
@@ -150,25 +146,26 @@ end
 %% Joint Formulation - Dynamic Problem
 % Jacobian Matrix
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
-    %Aux C calcs
-    Ci = 2*(Gi*sspi + spi*pi');
-    Cj = 2*(Gj*sspj + spj*pj');
-    Ciq = 2*(Gi*sqi + qi*pi');
-    Cit = 2*(Gi*sti + ti*pi');
-    Cjs = 2*(Gj*ssj + sj*pj');
+    %1 SPH, 2x n1,1 constraint equations
+    %Skew Matrix 3x3
+    skewspi = SkewMatrix3(Ai*spi);
+    skewspj = SkewMatrix3(Aj*spj);
+    skewqi = SkewMatrix3(qig);
+    skewti = SkewMatrix3(tig);
+    skewsj = SkewMatrix3(sjg);
     
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),0.5*Ci*Li'];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(sjg'*Ciq)*Li']; 
-    Jacobian(funCount+4,i1:i2)=[0,0,0,0.5*(sjg'*Cit)*Li']; 
+    Jacobian(funCount:funCount+2,i1:i2)=[eye(3),-skewspi*Ai];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,-sjg'*skewqi*Ai]; 
+    Jacobian(funCount+4,i1:i2)=[0,0,0,-sjg'*skewti*Ai]; 
     %Body j
     i1 = 6*(j-1)+1;
     i2  = i1+5;
-    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),-0.5*Cj*Lj'];
-    Jacobian(funCount+3,i1:i2)=[0,0,0,0.5*(qig'*Cjs)*Lj'];
-    Jacobian(funCount+4,i1:i2)=[0,0,0,0.5*(tig'*Cjs)*Lj']; 
+    Jacobian(funCount:funCount+2,i1:i2)=[-eye(3),skewspj*Aj];
+    Jacobian(funCount+3,i1:i2)=[0,0,0,-qig'*skewsj*Aj];
+    Jacobian(funCount+4,i1:i2)=[0,0,0,-tig'*skewsj*Aj]; 
 end
 
 if(Flags.AccelDyn == 1)

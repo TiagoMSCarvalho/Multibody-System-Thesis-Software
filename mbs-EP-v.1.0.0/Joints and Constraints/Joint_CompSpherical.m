@@ -85,18 +85,14 @@ if(Flags.Acceleration == 1)
 end
 %% Joint Formulation - Dynamic Problem
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
-    %Ci Cj aux calc tab 7.1 Nikra  (pg291)
-    %Constrain defined relative to the point P central to the sph joint
-    Bi = 2*(Gi*sspi + spi*pi');
-    Bj = 2*(Gj*sspj + spj*pj');
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount,i1:i2)=[-2*d',0.5*(-2*d'*Bi)*Li'];
+    Jacobian(funCount,i1:i2)=[-2*d',2*d'*(Ai*spi)'*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2  = i1+5;
-    Jacobian(funCount,i1:i2)=[2*d',0.5*(2*d'*Bj)*Lj'];
+    Jacobian(funCount,i1:i2)=[2*d',-2*d'*(Aj*spj)'*Aj];
 end
 
 if (Flags.AccelDyn == 1)

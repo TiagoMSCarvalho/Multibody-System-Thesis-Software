@@ -58,8 +58,6 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 
 %Vector between P's of the Bodies
 d = rj + Aj*spj - ri - Ai*spi;
@@ -192,32 +190,32 @@ end
 
 % Form the Jacobian Matrix
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
-    Bi = 2*(Gi*sspi + spi*pi');
-    Bj = 2*(Gj*sspj + spj*pj');
-    Ciq = 2*(Gi*sqi + qi*pi');
-    Cit = 2*(Gi*sti + ti*pi');
-    Cjs = 2*(Gj*ssj + sj*pj');
-    Cjq = 2*(Gj*sqj + qj*pj');
+    % 2x n2,1 and 2x n1,1 (Table 11.1)
+    %Skew Matrix 3x3
+    skewqi = SkewMatrix3(qig);
+    skewti = SkewMatrix3(tig);
+    skewsj = SkewMatrix3(sjg);
+    skewqj = SkewMatrix3(qjg);
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
     %Perp Type 2
-    Jacobian(funCount,i1:i2) = [-qig',0.5*(-qig'*Bi+d'*Ciq)*Li'];
-    Jacobian(funCount+1,i1:i2) = [-tig',0.5*(-tig'*Bi+d'*Cit)*Li'];
+    Jacobian(funCount,i1:i2) = [-qig',-(d + Ai*spi)'*skewqi*Ai];
+    Jacobian(funCount+1,i1:i2) = [-tig',-(d + Ai*spi)'*skewti*Ai];
     %Perp Type 1
-    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(sjg'*Ciq)*Li'];
-    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(sjg'*Cit)*Li'];
-    Jacobian(funCount+4,i1:i2) = [0,0,0,0.5*(qjg'*Cit)*Li'];
+    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*skewqi*Ai];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*skewti*Ai];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,qjg'*skewti*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2 = i1+5;
     %Perp Type 2
-    Jacobian(funCount,i1:i2) = [qig',0.5*(qig'*Bj)*Lj'];
-    Jacobian(funCount+1,i1:i2) = [tig',0.5*(tig'*Bj)*Lj'];
+    Jacobian(funCount,i1:i2) = [qig',-qi'*skewsj*Aj];
+    Jacobian(funCount+1,i1:i2) = [tig',-ti'*skewsj*Aj];
     %Perp Type 1
-    Jacobian(funCount+2,i1:i2) = [0,0,0,0.5*(qig'*Cjs)*Lj'];
-    Jacobian(funCount+3,i1:i2) = [0,0,0,0.5*(tig'*Cjs)*Lj'];
-    Jacobian(funCount+4,i1:i2) = [0,0,0,0.5*(tig'*Cjq)*Lj'];
+    Jacobian(funCount+2,i1:i2) = [0,0,0,qi'*skewsj*Aj];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,ti'*skewsj*Aj];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,ti'*skewqj*Aj];
 end
 
 if(Flags.AccelDyn == 1)
