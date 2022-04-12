@@ -64,7 +64,7 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
 end
 
 if (Flags.AccelDyn == 1)
-    gammadyn(funCount:funCount+5) = 0;
+    gamma(funCount:funCount+5,1) = 0;
 end
    
 %% Update the line counter

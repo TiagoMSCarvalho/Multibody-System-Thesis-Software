@@ -30,11 +30,11 @@ for i = 1:NBodies
     Mass = Bodies(i).Mass;
     Inertia = Bodies(i).Inertia; %Tem de ser posto em matriz
     A = Bodies(i).A;
-    I = [Inertia(1),0,0;0,Inertia(2),0;0,0,Inertia(3)];
+    I = diag(Inertia);
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
-    Ia = A*I*A';
-    wJw = sw*Ia*w;
+    %Ia = A*I*A'; Alterar para testar J'
+    wJw = sw*I*w;
     i1 = 6*(i-1)+1;
     if isnan(gmag) == 1
     vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force);

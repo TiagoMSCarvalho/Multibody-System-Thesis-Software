@@ -148,8 +148,8 @@ end
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     %1 SPH, 2x n1,1 constraint equations
     %Skew Matrix 3x3
-    skewspi = SkewMatrix3(Ai*spi);
-    skewspj = SkewMatrix3(Aj*spj);
+    skewspi = SkewMatrix3(spig);
+    skewspj = SkewMatrix3(spjg);
     skewqi = SkewMatrix3(qig);
     skewti = SkewMatrix3(tig);
     skewsj = SkewMatrix3(sjg);
@@ -177,16 +177,16 @@ if(Flags.AccelDyn == 1)
     swi = SkewMatrix3(wi);
     swj = SkewMatrix3(wj);
     %Derivatives of the sp's
-    spid = swi*spi;
-    spjd = swj*spj;
+    spid = Ai*swi*spi;
+    spjd = Aj*swj*spj;
     %Derivatives of qi,ti and sj in the global frame
-    qid = swi*qi;
-    tid = swi*ti;
-    sjd = swj*sj;
+    qid = swi*qig;
+    tid = swi*tig;
+    sjd = swj*sjg;
     
     gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
-    gamma(funCount+3,1) = -2*qid'*sjd + qid'*swi*sj + sjd'*swj*qi;
-    gamma(funCount+4,1) = -2*tid'*sjd + tid'*swi*sj + sjd'*swj*ti;
+    gamma(funCount+3,1) = -2*qid'*sjd + qid'*swi*sjg + sjd'*swj*qig;
+    gamma(funCount+4,1) = -2*tid'*sjd + tid'*swi*sjg + sjd'*swj*tig;
 end 
 
 %% Update the function counter

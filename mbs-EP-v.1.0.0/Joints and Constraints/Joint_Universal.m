@@ -122,8 +122,8 @@ end
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     %1 SPH, 1x n1,1 constraint equations
     %Skew Matrix 3x3
-    skewspi = SkewMatrix3(Ai*spi);
-    skewspj = SkewMatrix3(Aj*spj);
+    skewspi = SkewMatrix3(spig);
+    skewspj = SkewMatrix3(spjg);
     skewsi = SkewMatrix3(sig);
     skewsj = SkewMatrix3(sjg);
     %Body i
@@ -147,14 +147,14 @@ if(Flags.AccelDyn == 1)
     swi = SkewMatrix3(wi);
     swj = SkewMatrix3(wj);
     %Derivatives of the sp's
-    spid = swi*spi;
-    spjd = swj*spj;
+    spid = swi*spig;
+    spjd = swj*spjg;
     %Derivatives of qi,ti and sj in the global frame
-    sid = swi*si;
-    sjd = swj*sj;
+    sid = swi*sig;
+    sjd = swj*sjg;
     
     gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
-    gamma(funCount+3,1) = -2*sid'*sjd + sid'*swi*sj + sjd'*swj*si;
+    gamma(funCount+3,1) = -2*sid'*sjd + sid'*swi*sjg + sjd'*swj*sig;
 end
 
 %% Update the function counter

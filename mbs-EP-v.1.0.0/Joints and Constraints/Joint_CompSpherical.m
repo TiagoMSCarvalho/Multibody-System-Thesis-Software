@@ -85,14 +85,16 @@ if(Flags.Acceleration == 1)
 end
 %% Joint Formulation - Dynamic Problem
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    skewspi = SkewMatrix3(spig);
+    skewspj = SkewMatrix3(spjg);
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount,i1:i2)=[-2*d',2*d'*(Ai*spi)'*Ai];
+    Jacobian(funCount,i1:i2)=[-2*d',2*d'*skewspi*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2  = i1+5;
-    Jacobian(funCount,i1:i2)=[2*d',-2*d'*(Aj*spj)'*Aj];
+    Jacobian(funCount,i1:i2)=[2*d',-2*d'*skewspj*Aj];
 end
 
 if (Flags.AccelDyn == 1)
@@ -103,11 +105,11 @@ if (Flags.AccelDyn == 1)
     rdj = Bodies(j).rd;
     wj = Bodies(j).w;
     %Derivatives of the sp's
-    spid = SkewMatrix3(wi)*spi;
-    spjd = SkewMatrix3(wj)*spj;
+    spid = Ai*SkewMatrix3(wi)*spi;
+    spjd = Aj*SkewMatrix3(wj)*spj;
     % d vector derivative -> A was taken out because the velocities given
     % are in the absolute frame
-    dd = rdj + SkewMatrix3(wj)*spj - rdi - SkewMatrix3(wi)*spi;
+    dd = rdj + spjd - rdi - spid;
     dd = Impose_Column(dd);
     gamma(funCount) = -2*dd'*dd + 2*d'*(SkewMatrix3(wi)*spid - SkewMatrix3(wj)*spjd);
 end

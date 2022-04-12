@@ -102,8 +102,8 @@ end
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     %Formulas from table 11.1 Nikravesh (page 317/299)
     %Skew Matrix 3x3
-    skewspi = SkewMatrix3(Ai*spi);
-    skewspj = SkewMatrix3(Aj*spj);
+    skewspi = SkewMatrix3(spig);
+    skewspj = SkewMatrix3(spjg);
     %Body i
     i1 = 6*(i-1)+1;
     i2  = i1+5;
@@ -123,8 +123,8 @@ if(Flags.AccelDyn == 1)
     swi = SkewMatrix3(wi);
     swj = SkewMatrix3(wj);
     %Derivatives of the sp's
-    spid = swi*spi;
-    spjd = swj*spj;
+    spid = swi*spig;
+    spjd = swj*spjg;
     
     gamma(funCount:funCount+2,1) = -swi*spid + swj*spjd;
 end

@@ -58,6 +58,9 @@ sspj = SkewMatrix4(spj);
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
+%Global Vector for P
+spig = Ai*spi;
+spjg = Aj*spj;
 
 %Vector between P's of the Bodies
 d = rj + Aj*spj - ri - Ai*spi;
@@ -200,22 +203,22 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     i1 = 6*(i-1)+1;
     i2  = i1+5;
     %Perp Type 2
-    Jacobian(funCount,i1:i2) = [-qig',-(d + Ai*spi)'*skewqi*Ai];
-    Jacobian(funCount+1,i1:i2) = [-tig',-(d + Ai*spi)'*skewti*Ai];
+    Jacobian(funCount,i1:i2) = [-qig',-(d+spig)'*skewqi*Ai];
+    Jacobian(funCount+1,i1:i2) = [-tig',-(d+spig)'*skewti*Ai];
     %Perp Type 1
-    Jacobian(funCount+2,i1:i2) = [0,0,0,sjg'*skewqi*Ai];
-    Jacobian(funCount+3,i1:i2) = [0,0,0,sjg'*skewti*Ai];
-    Jacobian(funCount+4,i1:i2) = [0,0,0,qjg'*skewti*Ai];
+    Jacobian(funCount+2,i1:i2) = [0,0,0,-sjg'*skewqi*Ai];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,-sjg'*skewti*Ai];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,-qjg'*skewti*Ai];
     %Body j
     i1 = 6*(j-1)+1;
     i2 = i1+5;
     %Perp Type 2
-    Jacobian(funCount,i1:i2) = [qig',-qi'*skewsj*Aj];
-    Jacobian(funCount+1,i1:i2) = [tig',-ti'*skewsj*Aj];
+    Jacobian(funCount,i1:i2) = [qig',-qig'*skewsj*Aj];
+    Jacobian(funCount+1,i1:i2) = [tig',-tig'*skewsj*Aj];
     %Perp Type 1
-    Jacobian(funCount+2,i1:i2) = [0,0,0,qi'*skewsj*Aj];
-    Jacobian(funCount+3,i1:i2) = [0,0,0,ti'*skewsj*Aj];
-    Jacobian(funCount+4,i1:i2) = [0,0,0,ti'*skewqj*Aj];
+    Jacobian(funCount+2,i1:i2) = [0,0,0,-qig'*skewsj*Aj];
+    Jacobian(funCount+3,i1:i2) = [0,0,0,-tig'*skewsj*Aj];
+    Jacobian(funCount+4,i1:i2) = [0,0,0,-tig'*skewqj*Aj];
 end
 
 if(Flags.AccelDyn == 1)
@@ -229,24 +232,24 @@ if(Flags.AccelDyn == 1)
     swi = SkewMatrix3(wi);
     swj = SkewMatrix3(wj);
     %Derivatives of the sp's
-    spid = swi*spi;
-    spjd = swj*spj;
+    spid = swi*spig;
+    spjd = swj*spjg;
     %Derivatives of qi,ti and sj in the global frame
-    qid = swi*qi;
-    tid = swi*ti;
-    sjd = swj*sj;
-    qjd = swj*qj;
+    qid = swi*qig;
+    tid = swi*tig;
+    sjd = swj*sjg;
+    qjd = swj*qjg;
     
     % d vector derivative -> A was taken out because the velocities given
     % are in the absolute frame
-    dd = rdj + swj*spj - rdi - swi*spi;
+    dd = rdj + spjd - rdi - spid;
     dd = Impose_Column(dd);
     
-    gamma(funCount,1) = -2*dd'*qid - d'*swi*qid + qi'*(swi*spid - swj*spjd);
-    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + ti'*(swi*spid - swj*spjd);
-    gamma(funCount+2,1) = -2*qid'*sjd + qid'*swi*sj + sjd'*swj*qi;
-    gamma(funCount+3,1) = -2*tid'*sjd + tid'*swi*sj + sjd'*swj*ti;
-    gamma(funCount+4,1) = -2*tid'*qjd + tid'*swi*qj + qjd'*swj*ti;
+    gamma(funCount,1) = -2*dd'*qid - d'*swi*qid + qig'*(swi*spid - swj*spjd);
+    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + tig'*(swi*spid - swj*spjd);
+    gamma(funCount+2,1) = -2*qid'*sjd + qid'*swi*sjg + sjd'*swj*qig;
+    gamma(funCount+3,1) = -2*tid'*sjd + tid'*swi*sjg + sjd'*swj*tig;
+    gamma(funCount+4,1) = -2*tid'*qjd + tid'*swi*qjg + qjd'*swj*tig;
 end
 
 %% Update the line counter
