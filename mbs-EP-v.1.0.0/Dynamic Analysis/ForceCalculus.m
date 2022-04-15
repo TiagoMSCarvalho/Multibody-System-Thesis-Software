@@ -29,17 +29,17 @@ end
 for i = 1:NBodies
     Mass = Bodies(i).Mass;
     Inertia = Bodies(i).Inertia; %Tem de ser posto em matriz
-    A = Bodies(i).A;
+    %A = Bodies(i).A;
     I = diag(Inertia);
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
     %Ia = A*I*A'; Alterar para testar J'
     wJw = sw*I*w;
     i1 = 6*(i-1)+1;
-    if isnan(gmag) == 1
+    if isnan(gmag)
     vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force);
     vectorg(i1+3:i1+5,1) = Impose_Column(Bodies(i).Torque) - Impose_Column(wJw);        
-    elseif isnan(gmag) ~= 1
+    elseif ~isnan(gmag)
     vectorg(i1:i1+2,1) = Impose_Column(Bodies(i).Force) + (Mass*eye(3))*g;
     vectorg(i1+3:i1+5,1) = Impose_Column(Bodies(i).Torque) - Impose_Column(wJw);
     end

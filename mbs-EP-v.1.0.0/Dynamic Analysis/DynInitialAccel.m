@@ -68,11 +68,12 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,Join
     massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation
     for i = 1:NBodies
         Mass = Bodies(i).Mass;
-        %A = Bodies(i).A;
+        A = Bodies(i).A;
         Inertia = Bodies(i).Inertia;
+        Irat = A*diag(Inertia)*A'; %Inertia with applied Rotated Axes Theorem, It is not needed to apply the parrallel theorem?
         i1 = 6*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
-        massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia); %Alterado para J'
+        massmatrix(i1+3:i1+5,i1+3:i1+5) = Irat; %passar a global?
     end
     % Joining the new Jacobian with the Mass Matrix
     [a,~] = size(Jacobian);

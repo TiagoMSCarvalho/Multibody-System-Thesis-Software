@@ -21,8 +21,6 @@ Aj = Bodies(j).A;
 % Euler Parameters Aux Identities
 Gi = Bodies(i).G;
 Gj = Bodies(j).G;
-Li = Bodies(i).L;
-Lj = Bodies(j).L;
 %Joint location in the global/absolute coordinate system
 spig = Ai*spi;
 spjg = Aj*spj;
@@ -111,7 +109,7 @@ if (Flags.AccelDyn == 1)
     % are in the absolute frame
     dd = rdj + spjd - rdi - spid;
     dd = Impose_Column(dd);
-    gamma(funCount) = -2*dd'*dd + 2*d'*(SkewMatrix3(wi)*spid - SkewMatrix3(wj)*spjd);
+    gamma(funCount) = -2*(dd)'*dd + 2*d'*(SkewMatrix3(wi)*spid - SkewMatrix3(wj)*spjd);
 end
    
 %% Update the function counter

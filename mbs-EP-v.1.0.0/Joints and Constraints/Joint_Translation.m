@@ -245,11 +245,11 @@ if(Flags.AccelDyn == 1)
     dd = rdj + spjd - rdi - spid;
     dd = Impose_Column(dd);
     
-    gamma(funCount,1) = -2*dd'*qid - d'*swi*qid + qig'*(swi*spid - swj*spjd);
-    gamma(funCount+1,1) = -2*dd'*tid - d'*swi*tid + tig'*(swi*spid - swj*spjd);
-    gamma(funCount+2,1) = -2*qid'*sjd + qid'*swi*sjg + sjd'*swj*qig;
-    gamma(funCount+3,1) = -2*tid'*sjd + tid'*swi*sjg + sjd'*swj*tig;
-    gamma(funCount+4,1) = -2*tid'*qjd + tid'*swi*qjg + qjd'*swj*tig;
+    gamma(funCount,1) = -2*(dd)'*qid - d'*swi*qid + qig'*(swi*spid - swj*spjd);
+    gamma(funCount+1,1) = -2*(dd)'*tid - d'*swi*tid + tig'*(swi*spid - swj*spjd);
+    gamma(funCount+2,1) = -2*(qid)'*sjd + qid'*swi*sjg + sjd'*swj*qig;
+    gamma(funCount+3,1) = -2*(tid)'*sjd + tid'*swi*sjg + sjd'*swj*tig;
+    gamma(funCount+4,1) = -2*(tid)'*qjd + tid'*swi*qjg + qjd'*swj*tig;
 end
 
 %% Update the line counter
