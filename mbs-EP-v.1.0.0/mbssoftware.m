@@ -33,13 +33,13 @@ JointTypes = {'Spherical','Universal','Revolute','Cylindrical','Translation','Gr
 ForcesTypes = {'Spring','TSpring','Damper'};
 
 %file containing the suspension data:
-filename = 'unitsdebug';
+filename = 'template_mbs';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
 Points = [];
 CoM = [];
-[Bodies,Joints,Forces,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
+[Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
 NBodies = length(Bodies);
 clc
 
@@ -77,7 +77,7 @@ elseif strcmp(SimType,"Dyn") == 1
     %Analysis then the Direct Correction will be implemented see:
     %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
     %"On the constrains violation in forward dynamics of multibody systems pg 18
-        [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,it);
+        [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it);
     end
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
 end

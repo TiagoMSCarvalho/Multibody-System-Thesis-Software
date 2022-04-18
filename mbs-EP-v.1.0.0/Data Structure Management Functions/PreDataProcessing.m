@@ -10,9 +10,9 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies,Joints,Forces,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes)
+function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename);%reads the number of time iterations and motions
-[Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType,UnitsSystem);
+[Bodies,~,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
     Forces = ReadForcesInfo(filename,Bodies);
@@ -38,7 +38,7 @@ UnitsSystem = string(UnitsSystem);
 
 end
 %% Body Information + Euler Parameters
-function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType,UnitsSystem)
+function [Bodies,NBodies,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimType)
     %Prompts the user to state the type of inputs (Angles or Axis Vectors)
     %Temporary before GUI
     prompt = 'State the type of input for the body frame orientation [Axis Vectors/Bryant Angles/Orientational Axis]:';
@@ -48,7 +48,8 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType,Units
 
     %% Read all the information relative to the bodies.
     [~,BodyNames,~] = xlsread(filename,'Bodies','B4:B100');
-    BodyInfo = xlsread(filename,'Bodies','C4:AK100');
+    BodyInfo = xlsread(filename,'Bodies','C4:AB100');
+    BodyPoa = xlsread(filename,'Bodies','AI4:AK100');
     %Separates the Information by Column transforms into row vectors
     Origin = BodyInfo(:,1:3);
     if strcmp(str,'Axis Vectors') == 1
@@ -88,24 +89,29 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType,Units
         Inertia = BodyInfo(:,18:20);
         rd = BodyInfo(:,21:23);
         w = BodyInfo(:,24:26);
-        Force = BodyInfo(:,27:29);
-        Torque = BodyInfo(:,30:32);
-        ForcePoA = BodyInfo(:,33:35);
+        ForcePoA = BodyPoa(:,1:3);
+        %Force = BodyInfo(:,27:29);
+        %Torque = BodyInfo(:,30:32);
         
+        %% Reads Functions of Forces and Torque from excel (strings), it is separated due to cell2mat
+        [~,~,DynForceInfo] = xlsread(filename,'Bodies','AC4:AH100');
+        dynfunctions = DynForceInfo;
         %Allocates Info to the Bodies struct
         for i = 1:NBodies
         Bodies(i).Mass = Mass(i);
         Bodies(i).Inertia = Impose_Column(Inertia(i,:));
         Bodies(i).rd = Impose_Column(rd(i,:));
         Bodies(i).w = Impose_Column(w(i,:));
-        if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
-            Bodies(i).Force = Impose_Column(Force(i,:)*10^3);
-            Bodies(i).Torque = Impose_Column(Torque(i,:)*10^3);
-        elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-            Bodies(i).Force = Impose_Column(Force(i,:));
-            Bodies(i).Torque = Impose_Column(Torque(i,:));
-        end
         Bodies(i).ForcePoA = Impose_Column(ForcePoA(i,:));
+%         if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
+%             Bodies(i).Force = Impose_Column(Force(i,:)*10^3);
+%             Bodies(i).Torque = Impose_Column(Torque(i,:)*10^3);
+%         elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
+%             Bodies(i).Force = Impose_Column(Force(i,:));
+%             Bodies(i).Torque = Impose_Column(Torque(i,:));
+%         end
+        dynfunc(i).forcefunc = dynfunctions(i,1:3); 
+        dynfunc(i).torquefunc = dynfunctions(i,4:6);
         end    
     end
     
@@ -671,9 +677,9 @@ sj = ForcesInfo(10:12);
 %Store si and sj in the forces struct
 Forces.TSpring(ForcesCount).si = si;
 Forces.TSpring(ForcesCount).sj = sj;
-if isnan(ForcesInfo(13)) == 1
+if isnan(ForcesInfo(13))
     Forces.TSpring(ForcesCount).theta0 = acos(dot(si,sj)/(norm(si)*norm(sj)));
-elseif isnan(ForcesInfo(13)) ~= 1
+elseif ~isnan(ForcesInfo(13))
     Forces.TSpring(ForcesCount).theta0 = ForcesInfo(13);
 end
 end
