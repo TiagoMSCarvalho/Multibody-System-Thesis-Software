@@ -33,7 +33,7 @@ JointTypes = {'Spherical','Universal','Revolute','Cylindrical','Translation','Gr
 ForcesTypes = {'Spring','TSpring','Damper'};
 
 %file containing the suspension data:
-filename = 'template_mbs';
+filename = 'unitsdebug';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration

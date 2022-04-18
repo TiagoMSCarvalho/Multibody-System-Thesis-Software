@@ -14,7 +14,8 @@ c = Damper(forcescount).Constant;
 % Rotation matrix for each Bodies
 Ai = Bodies(i).A;
 Aj = Bodies(j).A;
-% Joint location in the global/absolute coordinate system
+% Joint location in the global/absolute coordinate system but in relation
+% to the CoM (Pre Processing sp - r)
 spig = Ai*spi;
 spjg = Aj*spj;
 % Initial Displacement
