@@ -11,21 +11,22 @@
 % which the Bodies are involved (number of joint)
 %% Main function caller
 function [Bodies,Joints,Forces,SimParam,Grav,debugdata,ang,driverfunctions] = PreDataProcessing(filename,JointTypes,ForcesTypes)
-[SimParam,SimType,Grav] = SimulationInfo(filename);%reads the number of time iterations and motions
-[Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType);
+[SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename);%reads the number of time iterations and motions
+[Bodies,~,debugdata,ang] = ReadBodiesInfo(filename,SimType,UnitsSystem);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
     Forces = ReadForcesInfo(filename,Bodies);
 end
 end
 %% Simulation Parameters
-function [SimParam,SimType,Grav] = SimulationInfo(filename)%for the coordinate transf.
+function [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename)%for the coordinate transf.
 
 [~,~,RunTime] = xlsread(filename,'SimParam','D3');
 [~,~,TimeStep] = xlsread(filename,'SimParam','D4');
 [~,~,SimulationType] = xlsread(filename,'SimParam','D5');
 [~,~,GravDirection] = xlsread(filename,'SimParam','D6');
 [~,~,GravMagnitude] = xlsread(filename,'SimParam','D7');
+[~,~,UnitsSystem] = xlsread(filename,'SimParam','D8');
 
 SimParam.RunTime=RunTime;
 SimParam.TimeStep=TimeStep;
@@ -33,10 +34,11 @@ SimParam.SimulationType=SimulationType;
 Grav.Direction=GravDirection;
 Grav.Magnitude=GravMagnitude;
 SimType = string(SimulationType);
+UnitsSystem = string(UnitsSystem);
 
 end
 %% Body Information + Euler Parameters
-function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType)
+function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType,UnitsSystem)
     %Prompts the user to state the type of inputs (Angles or Axis Vectors)
     %Temporary before GUI
     prompt = 'State the type of input for the body frame orientation [Axis Vectors/Bryant Angles/Orientational Axis]:';
@@ -96,8 +98,13 @@ function [Bodies, NBodies,debugdata,ang] = ReadBodiesInfo(filename,SimType)
         Bodies(i).Inertia = Impose_Column(Inertia(i,:));
         Bodies(i).rd = Impose_Column(rd(i,:));
         Bodies(i).w = Impose_Column(w(i,:));
-        Bodies(i).Force = Impose_Column(Force(i,:));
-        Bodies(i).Torque = Impose_Column(Torque(i,:));
+        if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
+            Bodies(i).Force = Impose_Column(Force(i,:)*10^3);
+            Bodies(i).Torque = Impose_Column(Torque(i,:)*10^3);
+        elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
+            Bodies(i).Force = Impose_Column(Force(i,:));
+            Bodies(i).Torque = Impose_Column(Torque(i,:));
+        end
         Bodies(i).ForcePoA = Impose_Column(ForcePoA(i,:));
         end    
     end
