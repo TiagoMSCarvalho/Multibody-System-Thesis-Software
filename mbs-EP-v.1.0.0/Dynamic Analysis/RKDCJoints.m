@@ -87,7 +87,7 @@ funCount=1;
         end
         % For the Driver Constraints
         for jointCount=1:Joints.NDriver
-            [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
+            [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
         end
        
         phid = Jacobian; %variable allocation

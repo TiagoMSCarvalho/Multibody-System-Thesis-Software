@@ -1,4 +1,4 @@
-function [debugdata] = SystemDofCalc(NBodies,Bodies,Joints,debugdata)
+function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata)
 %This function calculates the number of DoFs to ensure that the multibody is properly constrained;
     %This function is also responsible for warning the user for an issue
     %with the contrains to facilitate the problem debug.

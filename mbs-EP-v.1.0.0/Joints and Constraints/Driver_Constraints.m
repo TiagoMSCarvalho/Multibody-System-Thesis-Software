@@ -113,7 +113,7 @@ if(Flags.Velocity == 1)
         funcvalue = double(der);
     end
     if direction < 4
-        Ct(funCount) = funcvalue;
+        Ct(funCount,1) = funcvalue;
     elseif direction > 3
         w = zeros(4,1);
         if direction == 4
@@ -130,11 +130,11 @@ if(Flags.Velocity == 1)
         i1 = 7*(i-1)+1;
         Ct(i1+3,1) = pd(1);
         if pd(2) ~=0 && abs(pd(2)) > 0.01
-            Ct(funCount) = pd(2);
+            Ct(funCount,1) = pd(2);
         elseif pd(3) ~= 0 && abs(pd(3)) > 0.01
-            Ct(funCount) = pd(3);
+            Ct(funCount,1) = pd(3);
         elseif pd(4) ~= 0 && abs(pd(4)) > 0.01
-            Ct(funCount) = pd(4);
+            Ct(funCount,1) = pd(4);
         end
     end
 end
@@ -174,7 +174,7 @@ if(Flags.Acceleration == 1)
         funcvalue = double(dder);
     end
     if direction < 4
-        Ctt(funCount) = funcvalue;
+        Ctt(funCount,1) = funcvalue;
     elseif direction > 3
         alpha = zeros(3,1);
         if direction == 4
@@ -190,11 +190,11 @@ if(Flags.Acceleration == 1)
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         if pdd(2) ~=0 && abs(pdd(2)) > 0.0001 
-            Ctt(funCount) = pdd(2);
+            Ctt(funCount,1) = pdd(2);
         elseif pdd(3) ~= 0 && abs(pdd(3)) > 0.0001
-            Ctt(funCount) = pdd(3);
+            Ctt(funCount,1) = pdd(3);
         elseif pdd(4) ~= 0 && abs(pdd(4)) > 0.0001
-            Ctt(funCount) = pdd(4);
+            Ctt(funCount,1) = pdd(4);
         end
     end
 end
@@ -232,7 +232,7 @@ if(Flags.AccelDyn == 1)
     elseif degree == 0
         funcvalue = double(dder); %converts input do double
     end
-        Ctt(funCount) = funcvalue;
+        Ctt(funCount,1) = funcvalue;
 end
    
 %% Update the line counter

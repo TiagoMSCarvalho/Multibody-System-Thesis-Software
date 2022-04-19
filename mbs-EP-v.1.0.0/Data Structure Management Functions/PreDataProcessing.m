@@ -322,6 +322,7 @@ for i = 2:size(rawdrivers,1)
     end
 end
 
+driverfunctions = [];
 for i = 1:size(relevant_lines_functions,2)
     driverfunctions(i).functions = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),1));
     driverfunctions(i).Type = rawfunctions(relevant_lines_functions(1,i),2);

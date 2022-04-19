@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time,driverfunctions)
+function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time,driverfunctions,debugdata)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -20,8 +20,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     Flags.AccelDyn = 1;
     funCount = 1;
     Jacobian = [];
-    gamma = [];
-    Ctt = zeros(6*NBodies,1);
+    gamma = zeros(debugdata(1).cdof - NBodies,1);
+    Ctt = zeros(debugdata(1).cdof - NBodies,1);
 % Assembly of the Jacobian and rhs acceleration vector.
     % For the Ground Constraints
     for jointCount=1:Joints.NGround
@@ -57,7 +57,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     end
     % For the Driving Constraints
     for jointCount=1:Joints.NDriver
-        [~,Jacobian,~,Ctt,funCount] = Driver_Constraints(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
+        [~,Jacobian,~,Ctt,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
     end
 
 %% Function Responsible for the Force Vectors    
@@ -66,8 +66,10 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);
-    Ctt = Impose_Column(Ctt);
-    gamma = gamma - Ctt;
+    if Joints.NDriver >= 1
+        Ctt = Impose_Column(Ctt);
+        gamma = gamma - Ctt;
+    end
     rhs = [vetorg;gamma];
     
 %% Augmented Mass Matrix Assembly
