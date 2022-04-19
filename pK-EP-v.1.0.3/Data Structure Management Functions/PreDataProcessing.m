@@ -261,15 +261,17 @@ n_Joints = size(JointTypes,1);
 [~,~,rawfunctions] = xlsread(filename,'Joints_Drivers','I2:J100');
 relevant_lines_functions = [];
 for i = 2:size(rawdrivers,1)
-    if ischar(rawfunctions{i,1})
+    if ischar(rawfunctions{i,1}) || isnumeric(rawfunctions{i,1})
         if ~isnan(rawfunctions{i,1})
             relevant_lines_functions = [relevant_lines_functions,i];
         end
     end
 end
 
-driverfunctions.functions = convertCharsToStrings(rawfunctions(relevant_lines_functions,1));
-driverfunctions.Type = rawfunctions(relevant_lines_functions,2);
+for i = 1:size(relevant_lines_functions,2)
+    driverfunctions(i).functions = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),1));
+    driverfunctions(i).Type = rawfunctions(relevant_lines_functions(1,i),2);
+end
 
 for i = 1:n_Joints
     Joints = ProcessJoint(JointTypes{i},Joints,JointInfo(i,:),Bodies);

@@ -36,7 +36,13 @@ i = Driver(jointCount).Body;
 direction = Driver(jointCount).direction;
 functype = driverfunctions(jointCount).Type;
 inputfunc = driverfunctions(jointCount).functions;
-inputfunc = str2func(inputfunc);
+%This piece of codes is what enables to have constant drivers inputs.
+if isnumeric(inputfunc{1,1})
+    inputfunc = inputfunc{1,1};
+elseif ischar(inputfunc{1,1})
+    inputfunc = convertCharsToStrings(inputfunc{1,1});
+    inputfunc = str2func(inputfunc);
+end
 %Vector may not be unitary, needs to be recalculated, so the unitvector function is called.
 rotaxis = unitvector(Driver(jointCount).rotaxis);
 vectordir = unitvector(Driver(jointCount).rotaxis);

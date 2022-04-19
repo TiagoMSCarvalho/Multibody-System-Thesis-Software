@@ -21,6 +21,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     funCount = 1;
     Jacobian = [];
     gamma = [];
+    Ctt = zeros(6*NBodies,1);
 % Assembly of the Jacobian and rhs acceleration vector.
     % For the Ground Constraints
     for jointCount=1:Joints.NGround

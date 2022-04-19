@@ -322,8 +322,10 @@ for i = 2:size(rawdrivers,1)
     end
 end
 
-driverfunctions.functions = convertCharsToStrings(rawfunctions(relevant_lines_functions,1));
-driverfunctions.Type = rawfunctions(relevant_lines_functions,2);
+for i = 1:size(relevant_lines_functions,2)
+    driverfunctions(i).functions = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),1));
+    driverfunctions(i).Type = rawfunctions(relevant_lines_functions(1,i),2);
+end
 
 for i = 1:n_Joints
     Joints = ProcessJoint(JointTypes{i},Joints,JointInfo(i,:),Bodies);
