@@ -1,4 +1,4 @@
-function [phi,phid] = RKDCJoints(Joints,Bodies,NBodies,Flags)
+function [phi,phid] = RKDCJoints(Joints,Bodies,NBodies,Flags,driverfunctions,t)
 %Joins and calculates the joints equations for the velocity and position
 %Direct Correction. (Avoids Redudant Code at RKDirectCorrection)
 
@@ -44,6 +44,10 @@ funCount=1;
         for NBod = 2:(NBodies) %takes the first body, ground out of the equation
             [fun,~,~,~,funCount] = EulerParameterConstraint(fun,[],[],[],funCount,NBod,Bodies,Flags);
         end
+        % For the Driver Constraints
+        for jointCount=1:Joints.NDriver
+            [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
+        end
         
         phi = fun; %Variable allocation
         
@@ -80,6 +84,10 @@ funCount=1;
         % For the Simple Constraints
         for jointCount=1:Joints.NSimple
             [~,Jacobian,~,~,funCount] = Simple_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Simple,Flags);
+        end
+        % For the Driver Constraints
+        for jointCount=1:Joints.NDriver
+            [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
         end
        
         phid = Jacobian; %variable allocation

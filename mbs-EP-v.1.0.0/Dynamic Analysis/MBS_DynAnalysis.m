@@ -1,12 +1,18 @@
-function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it)
+function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions)
 %Calls the functions needed to solve the Foward Dynamic Problem
     %% Runga-Kutta Pré Setup
     % Stores initial position,velocities and calculates the time interval for ode45
     [t0,tf,initial] = RKSetup (NBodies,Bodies,t,TimeStep);
-    % Function to calculate the Dynamic Initial Acceleration (2nd output is the lagrange multipliers.
-    [DynAcc,~,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0);
+    %Function that for the driver functions updates the velocity vector
+    %called before due to Moment induced by Inertia due to the body
+    %rotation.
+    for jointCount = 1:Joints.NDriver
+        [Bodies] = DynDriverVel(Bodies,Joints.Driver,jointCount,time,driverfunctions);
+    end
+    % Function to calculate the Dynamic Initial Acceleration (2nd output is the lagrange multipliers).
+    [DynAcc,~,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions);
     %Function that retrieves the generalized coordinate Jacobian
-    [DCJac] = DCGenJac(NBodies,Bodies,Joints);
+    [DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t0);
     % Update of the variables (Stores t - Timestep)
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
@@ -16,6 +22,6 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
     [a,~] = size(vt);
     y = Impose_Column(y(a,:));
     %% Direct Correction of the calculated qu and vu
-    [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,DCJac,Joints,SimType);
+    [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,DCJac,Joints,SimType,driverfunctions,t0);
 end
 

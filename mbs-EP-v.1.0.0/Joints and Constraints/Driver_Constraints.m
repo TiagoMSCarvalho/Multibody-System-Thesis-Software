@@ -172,7 +172,7 @@ if(Flags.Acceleration == 1)
     elseif direction > 3
         alpha = zeros(3,1);
         if direction == 4
-            alpha(1.1) = funcvalue;
+            alpha(1,1) = funcvalue;
         elseif direction == 5
             alpha(2,1) = funcvalue;
         elseif direction == 6
@@ -191,6 +191,42 @@ if(Flags.Acceleration == 1)
             Ctt(funCount) = pdd(4);
         end
     end
+end
+%% Joint Formulation - Dynamic Problem
+% Jacobian Matrix
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
+    i1 = 6*(i-1)+1;
+    i2  = i1+5;
+    Jacobian(funCount,i1:i2)=[0,0,0,0,0,0];
+    Jacobian(funCount,i1+direction-1) = 1;
+end
+
+if(Flags.AccelDyn == 1)
+    der  = diff(inputfunc,t);
+    dfuncdt = matlabFunction(der);
+    if strcmp(functype,'Sinusoidal') == 1
+        degree = 2;
+    elseif strcmp(functype,'Polynomial') == 1
+        degree = polynomialDegree(der);
+    end
+    if degree >= 1
+        funcvalue = dfuncdt(time);
+    elseif degree == 0
+        funcvalue = double(der);
+    end
+    dder = diff(der,t);
+    ddfuncdt = matlabFunction(dder);
+    if strcmp(functype,'Sinusoidal') == 1
+        degree = 2;
+    elseif strcmp(functype,'Polynomial') == 1
+        degree = polynomialDegree(dder);
+    end
+    if degree >= 1
+        funcvalue = ddfuncdt(time);
+    elseif degree == 0
+        funcvalue = double(dder); %converts input do double
+    end
+        Ctt(funCount) = funcvalue;
 end
    
 %% Update the line counter

@@ -1,4 +1,4 @@
-function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time)
+function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time,driverfunctions)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Runge-Kutta ODE45 solver.
@@ -54,6 +54,10 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     for jointCount=1:Joints.NSimple
         [~,Jacobian,~,gamma,funCount] = Simple_Constraints([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Simple,Flags);
     end
+    % For the Driving Constraints
+    for jointCount=1:Joints.NDriver
+        [~,Jacobian,~,Ctt,funCount] = Driver_Constraints(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
+    end
 
 %% Function Responsible for the Force Vectors    
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
@@ -61,6 +65,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma);
+    Ctt = Impose_Column(Ctt);
+    gamma = gamma - Ctt;
     rhs = [vetorg;gamma];
     
 %% Augmented Mass Matrix Assembly

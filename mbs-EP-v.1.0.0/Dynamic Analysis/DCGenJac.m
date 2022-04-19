@@ -1,4 +1,4 @@
-function [DCJac] = DCGenJac(NBodies,Bodies,Joints)
+function [DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t)
 %This function retrieves the Jacobian but for the generalized coordinates
 %(Euler Parameters) that is needed to apply the variables correction to the
 %Position Problem.
@@ -48,6 +48,10 @@ function [DCJac] = DCGenJac(NBodies,Bodies,Joints)
     % For the Euler Parameter Constraint
     for NBod = 2:(NBodies) %takes the first body, ground out of the equation
         [~,Jacobian,~,~,funCount] = EulerParameterConstraint([],Jacobian,[],[],funCount,NBod,Bodies,Flags);
+    end
+    % For the Driver Constraints
+    for jointCount=1:Joints.NDriver
+        [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,Ct,[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
     end
     
     DCJac = Jacobian;

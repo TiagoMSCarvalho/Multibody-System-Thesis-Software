@@ -36,7 +36,7 @@ for i = 1:NBodies
     sw = SkewMatrix3(w);
     Ia = A*I*A';
     wJw = sw*Ia*w;
-    %% Calculus of the Force and Torque Vector
+    %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
     % Force
     forcevec = zeros(1,3);
     cellforce = dynfunc(i).forcefunc;
@@ -78,7 +78,7 @@ for i = 1:NBodies
         end
     end
     % Calculus of the moment created by Forces not applied to the CoM
-    if all(Bodies(i).ForcePoA == 0) == 1
+    if all(Bodies(i).ForcePoA == 0)
         ForceMoment = zeros(1,3);
     else
         PoA = Bodies(i).ForcePoA - Bodies(i).r;

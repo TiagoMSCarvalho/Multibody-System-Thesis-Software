@@ -75,13 +75,8 @@ end
 conda = cond(Jacobian);
 gammac = Impose_Column(gamma);
 Ctt = Impose_Column(Ctt);
+qdd = Jacobian\(gammac-Ctt);
 
-if conda <= 10^1
-qdd = Jacobian\(gammac-Ctt);
-elseif conda > 10^1
-qdd = Jacobian\(gammac-Ctt);
-%Possible algorithms: pcg,equilibrate,lsqr;
-end
 %% Post Data treatment for the rotational parameters
 
 
