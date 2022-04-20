@@ -76,7 +76,7 @@ elseif strcmp(SimType,"Dyn") == 1
     %NOTE: Runga-Kutta will be use to perform the Velocity and Position
     %Analysis then the Direct Correction will be implemented see:
     %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
-    %"On the constrains violation in forward dynamics of multibody systems pg 18
+    %"On the constrains violation in forward dynamics of multibody systems pg 18  
         [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata);
     end
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);

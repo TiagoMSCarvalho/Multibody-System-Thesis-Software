@@ -7,7 +7,7 @@ function [yd] = RKAuxFunction(DynAcc,NBodies,Bodies)
     qd = [];
     for i = 1:NBodies
         i1 = 7*(i-1)+1;
-        pd = 0.5*Bodies(i).L'*Bodies(i).w; % Euler Parameters Derivatives
+        pd = 0.5*Bodies(i).G'*Bodies(i).w; % Euler Parameters Derivatives
         qd(i1:i1+6,1) = [Impose_Column(Bodies(i).rd);Impose_Column(pd)];
     end
     yd = [qd;Impose_Column(DynAcc)];

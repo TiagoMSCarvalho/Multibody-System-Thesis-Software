@@ -12,18 +12,18 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
         [Bodies] = DynDriverVel(Bodies,Joints.Driver,jointCount,t0,driverfunctions);
     end
     % Function to calculate the Dynamic Initial Acceleration (2nd output is the lagrange multipliers).
-    [DynAcc,~,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata);
+    [DynAcc,~,~,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata);
     %Function that retrieves the generalized coordinate Jacobian
-    [DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t0);
+    %[DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t0);
     % Update of the variables (Stores t - Timestep)
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
-    opts = odeset('RelTol',1e-4,'AbsTol',1e-4);
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6);
     rkfunc = @(t,y)RKAuxFunction(DynAcc,NBodies,Bodies);
     [vt,y] = ode45(rkfunc,[t0,tf],initial,opts);
     [a,~] = size(vt);
     y = Impose_Column(y(a,:));
     %% Direct Correction of the calculated qu and vu
-    [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Jacobian,DCJac,Joints,SimType,driverfunctions,t0);
+    [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,driverfunctions,tf); %DCJac Eliminado.
 end
 
