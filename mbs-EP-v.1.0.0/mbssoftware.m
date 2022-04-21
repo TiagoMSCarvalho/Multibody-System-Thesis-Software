@@ -39,7 +39,7 @@ filename = 'template_mbs';
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
 Points = [];
 CoM = [];
-[Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
+[Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
 NBodies = length(Bodies);
 clc
 
@@ -59,7 +59,7 @@ if strcmp(SimType,"Kin") == 1
 % Fsolve Opts (Justification is Found in The Mendeley) - Kin
     opts=optimoptions('fsolve');
     opts.Algorithm='levenberg-marquardt';
-    opts.Diagnostics = 'off';
+    opts.Diagnostics = 'off';   
     opts.Display = 'iter';
     opts.ScaleProblem = 'Jacobian';
     opts.UseParallel = false;
@@ -77,7 +77,7 @@ elseif strcmp(SimType,"Dyn") == 1
     %Analysis then the Direct Correction will be implemented see:
     %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
     %"On the constrains violation in forward dynamics of multibody systems pg 18  
-        [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata);
+        [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction);
     end
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
 end

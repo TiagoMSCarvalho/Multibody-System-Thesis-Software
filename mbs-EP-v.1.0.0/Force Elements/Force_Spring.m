@@ -9,8 +9,6 @@ rj = Impose_Column(Bodies(j).r);
 % Force Element location relative to each Bodies coordinate system
 spi = Impose_Column(Spring(forcescount).spi);
 spj = Impose_Column(Spring(forcescount).spj);
-% Force Element Constant - Stiffness Constant
-k = Spring(forcescount).Constant;
 % Rotation matrix for each Bodies
 Ai = Bodies(i).A;
 Aj = Bodies(j).A;
@@ -23,8 +21,19 @@ idisplacement = Spring(forcescount).InitialDisplacement;
 %% Vector Calculus and formulation
 displacement = rj + spjg -ri - spig;
 deltax = displacement - idisplacement;
-%Force Magnitudes
-force = k*deltax;
+% Force Magnitude Calculus
+if ~isnan(Spring(forcescount).Constant)
+    % Linear Spring
+    k = Spring(forcescount).Constant; %Stiffness Constant
+    force = k*deltax; %Hooke Law
+elseif isnan(Spring(forcescount).Constant)
+    %Non Linear Spring
+        %Function Input: Displacement of the Spring
+        %Function Output: Spring Force
+    sym x
+    sfunc = str2func(ForceFunction.Spring(forcescount).Function);
+    force = sfunc(displacement);
+end
 %Force Direction Vector
 [~,lun] = unitvector(displacement);
 %Force Vectors

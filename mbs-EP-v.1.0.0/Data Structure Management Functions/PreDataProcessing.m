@@ -10,12 +10,12 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc] = PreDataProcessing(filename,JointTypes,ForcesTypes)
+function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
-    Forces = ReadForcesInfo(filename,Bodies);
+    [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies);
 end
 end
 %% Simulation Parameters
@@ -103,13 +103,6 @@ function [Bodies,NBodies,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimTyp
         Bodies(i).rd = Impose_Column(rd(i,:));
         Bodies(i).w = Impose_Column(w(i,:));
         Bodies(i).ForcePoA = Impose_Column(ForcePoA(i,:));
-%         if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
-%             Bodies(i).Force = Impose_Column(Force(i,:)*10^3);
-%             Bodies(i).Torque = Impose_Column(Torque(i,:)*10^3);
-%         elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-%             Bodies(i).Force = Impose_Column(Force(i,:));
-%             Bodies(i).Torque = Impose_Column(Torque(i,:));
-%         end
         dynfunc(i).forcefunc = dynfunctions(i,1:3); 
         dynfunc(i).torquefunc = dynfunctions(i,4:6);
         end    
@@ -518,8 +511,6 @@ j = Joints.Translation(jointCount).Body2;
 % Location of joint center and axis vector in fixed reference
 sp = Impose_Column(JointsInfo(3:5));
 s = Impose_Column(JointsInfo(6:8));
-% hi_earth = [s(2);-s(1);0];
-% hj_earth = cross(s,hi_earth);
 % Get euler parameters for each bodies' reference
 pi = Bodies(i).p;
 pj = Bodies(j).p;
@@ -579,7 +570,7 @@ end
 %Force elements are considered has Joints that impose a force, see
 %researchgate https://www.researchgate.net/figure/The-planar-revolute-pair-with-torsional-spring_fig3_225110018
 
-function Forces = ReadForcesInfo(filename,Bodies)
+function [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies)
 
 [~,~,rawforces] = xlsread(filename,'Force_Elements','A2:P100');
 relevant_lines_forces = [];
@@ -592,7 +583,9 @@ for i = 1:size(rawforces,1)
 end
 
 ForcesTypes = rawforces(relevant_lines_forces,2); 
-ForcesInfo = cell2mat(rawforces(relevant_lines_forces,4:16));
+%cell2mat was deleted, it will be done within the processing functions to
+%allow the processing of the nonlinear function.
+ForcesRaw = rawforces(relevant_lines_forces,4:16);
 n_Forces = size(ForcesTypes,1);
 
 % Initialize the force joint type at 0.
@@ -600,28 +593,32 @@ Forces.NSpring = 0;
 Forces.NTSpring = 0;
 Forces.NDamper = 0;
 
+ForceFunction = [];
+
 for i=1:n_Forces
-    Forces = ProcessForces(ForcesTypes{i},Forces,ForcesInfo(i,:),Bodies);
+    [Forces,ForceFunction] = ProcessForces(ForcesTypes{i},Forces,ForcesRaw(i,:),Bodies,ForceFunction);
 end
 
 end
 
-function Forces = ProcessForces(ForcesType,Forces,ForcesInfo,Bodies)
+function [Forces,ForceFunction] = ProcessForces(ForcesType,Forces,ForcesRaw,Bodies,ForceFunction)
 if strcmp(ForcesType,'Spring')
     Forces.NSpring = Forces.NSpring + 1;
-    Forces = ProcessSpring(Forces,ForcesInfo,Forces.NSpring,Bodies);
+    [Forces,ForceFunction] = ProcessSpring(Forces,ForcesRaw,Forces.NSpring,Bodies,ForceFunction);
 end
 if strcmp(ForcesType,'TSpring')
     Forces.NTSpring = Forces.NTSpring + 1;
-    Forces = ProcessTSpring(Forces,ForcesInfo,Forces.NTSpring,Bodies);
+    Forces = ProcessTSpring(Forces,ForcesRaw,Forces.NTSpring,Bodies);
 end
 if strcmp(ForcesType,'Damper')
     Forces.NDamper = Forces.NDamper + 1;
-    Forces = ProcessDamper(Forces,ForcesInfo,Forces.NDamper,Bodies);
+    [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,Forces.NDamper,Bodies,ForceFunction);
 end
 end
 
-function Forces = ProcessSpring(Forces,ForcesInfo,ForcesCount,Bodies)
+function [Forces,ForceFunction] = ProcessSpring(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
+ForcesInfo = cell2mat(ForcesRaw(1,1:6));
+ForceFunction.Spring(ForcesCount).Function = ForcesRaw{1,7};
 Forces.Spring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Spring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -634,10 +631,10 @@ pi = Bodies(i).p;
 pj = Bodies(j).p;
 % Transform joint location on fixed reference to the bodies' local
 % reference
-spi = sp - Bodies(i).r;
-spi = EarthtoBody(spi,pi);
-spj = sp - Bodies(j).r;
-spj = EarthtoBody(spj,pj);
+spig = sp - Bodies(i).r;
+spi = EarthtoBody(spig,pi);
+spjg = sp - Bodies(j).r;
+spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Spring(ForcesCount).spi = spi;
 Forces.Spring(ForcesCount).spj = spj;
@@ -645,8 +642,8 @@ Forces.Spring(ForcesCount).spj = spj;
 Forces.Spring(ForcesCount).Constant = ForcesInfo(6);
 %% Initial Displacement
 % Bodies numbers
-i = Spring(forcescount).Body1;
-j = Spring(forcescount).Body2;
+i = Forces.Spring(ForcesCount).Body1;
+j = Forces.Spring(ForcesCount).Body2;
 % Bodies position vectors
 ri = Impose_Column(Bodies(i).r);
 rj = Impose_Column(Bodies(j).r);
@@ -654,7 +651,8 @@ rj = Impose_Column(Bodies(j).r);
 Forces.Spring(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 end
 
-function Forces = ProcessTSpring(Forces,ForcesInfo,ForcesCount,Bodies)
+function Forces = ProcessTSpring(Forces,ForcesRaw,ForcesCount,Bodies)
+ForcesInfo = cell2mat(ForcesRaw(1,1:13));
 Forces.TSpring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.TSpring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -687,7 +685,9 @@ elseif ~isnan(ForcesInfo(13))
 end
 end
 
-function Forces = ProcessDamper(Forces,ForcesInfo,ForcesCount,Bodies)
+function [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
+ForcesInfo = cell2mat(ForcesRaw(1,1:6));
+ForceFunction.Damper(ForcesCount).Function = ForcesRaw{1,7};
 Forces.Damper(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Damper(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -711,8 +711,8 @@ Forces.Damper(ForcesCount).spj = spj;
 Forces.Damper(ForcesCount).Constant = ForcesInfo(6);
 %% Initial Displacement
 % Bodies numbers
-i = Damper(forcescount).Body1;
-j = Damper(forcescount).Body2;
+i = Forces.Damper(ForcesCount).Body1;
+j = Forces.Damper(ForcesCount).Body2;
 % Bodies position vectors
 ri = Impose_Column(Bodies(i).r);
 rj = Impose_Column(Bodies(j).r);

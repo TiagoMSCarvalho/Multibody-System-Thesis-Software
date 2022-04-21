@@ -1,4 +1,4 @@
-function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata)
+function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction)
 %Calls the functions needed to solve the Foward Dynamic Problem
     %% Runga-Kutta Pré Setup
     % Stores initial position,velocities and calculates the time interval for ode45
@@ -12,7 +12,7 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
         [Bodies] = DynDriverVel(Bodies,Joints.Driver,jointCount,t0,driverfunctions);
     end
     % Function to calculate the Dynamic Initial Acceleration (2nd output is the lagrange multipliers).
-    [DynAcc,~,~,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata);
+    [DynAcc,~,~,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata,ForceFunction);
     %Function that retrieves the generalized coordinate Jacobian
     %[DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t0);
     % Update of the variables (Stores t - Timestep)

@@ -3,7 +3,7 @@ function [magnitude,uvector] = unitvector(vector)
     magnitude = norm(vector);
     
     uvector = vector/magnitude;
-    
+    uvector = Impose_Column(uvector);
     if magnitude == 0
         uvector = [0;0;0];
     end

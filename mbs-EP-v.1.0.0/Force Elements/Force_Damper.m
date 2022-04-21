@@ -9,8 +9,6 @@ rj = Impose_Column(Bodies(j).r);
 % Force Element location relative to each Bodies coordinate system
 spi = Impose_Column(Damper(forcescount).spi);
 spj = Impose_Column(Damper(forcescount).spj);
-% Force Element Constant - Damper Coeff
-c = Damper(forcescount).Constant;
 % Rotation matrix for each Bodies
 Ai = Bodies(i).A;
 Aj = Bodies(j).A;
@@ -43,8 +41,19 @@ ddisp = rdj + spjd - rdi - spid;
 % Force Direction Vector
 [lmag,lun] = unitvector(displacement);
 lengthrateofchange = (1/lmag)*(displacement'*ddisp);
-% Force Magnitudes
-force = k*lengthrateofchange;
+% Force Magnitude Calculus
+if ~isnan(Force.Damper(forcescount).Function)
+    % Linear Spring
+    c = Damper(forcescount).Constant; %damping coefficient
+    force = c*lengthrateofchange;
+elseif isnan(Force.Damper(forcescount).Function)
+    % Non Linear Spring:
+        %Function Input: Velocity of compression ( lengthrateofchange)
+        %Function Output: Damper Force
+    sym x
+    dfunc = str2func(ForceFunction.Damper(forcescount).Function);
+    force = dfunc(lengthrateofchange);
+end
 %Force Vectors
 forcei = force*lun;
 forcej = -force*lun;
