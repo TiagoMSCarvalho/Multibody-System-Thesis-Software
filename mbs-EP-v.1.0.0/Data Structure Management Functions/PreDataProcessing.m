@@ -618,7 +618,10 @@ end
 
 function [Forces,ForceFunction] = ProcessSpring(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
 ForcesInfo = cell2mat(ForcesRaw(1,1:6));
-ForceFunction.Spring(ForcesCount).Function = ForcesRaw{1,7};
+ForceFunction.Spring(ForcesCount).Function1 = ForcesRaw{1,7};
+ForceFunction.Spring(ForcesCount).Function2 = ForcesRaw{1,8};
+ForceFunction.Spring(ForcesCount).Function3 = ForcesRaw{1,9};
+ForcesInterval = cell2mat(ForcesRaw(1,10:12));
 Forces.Spring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Spring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -649,6 +652,9 @@ ri = Impose_Column(Bodies(i).r);
 rj = Impose_Column(Bodies(j).r);
 % Displacement Calculus and Storage
 Forces.Spring(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
+Forces.Spring(ForcesCount).Noffun = ForcesInterval(1);
+Forces.Spring(ForcesCount).Intmin = ForcesInterval(2);
+Forces.Spring(ForcesCount).Intmax = ForcesInterval(3);
 end
 
 function Forces = ProcessTSpring(Forces,ForcesRaw,ForcesCount,Bodies)
@@ -687,7 +693,10 @@ end
 
 function [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
 ForcesInfo = cell2mat(ForcesRaw(1,1:6));
-ForceFunction.Damper(ForcesCount).Function = ForcesRaw{1,7};
+ForceFunction.Damper(ForcesCount).Function1 = ForcesRaw{1,7};
+ForceFunction.Damper(ForcesCount).Function2 = ForcesRaw{1,8};
+ForceFunction.Damper(ForcesCount).Function3 = ForcesRaw{1,9};
+ForcesInterval = cell2mat(ForcesRaw(1,10:12));
 Forces.Damper(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Damper(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -718,4 +727,7 @@ ri = Impose_Column(Bodies(i).r);
 rj = Impose_Column(Bodies(j).r);
 % Displacement Calculus and Storage
 Forces.Damper(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
+Forces.Damper(ForcesCount).Noffun = ForcesInterval(1);
+Forces.Damper(ForcesCount).Intmin = ForcesInterval(2);
+Forces.Damper(ForcesCount).Intmax = ForcesInterval(3);
 end

@@ -1,4 +1,4 @@
-function [forceel] = Force_Damper(forcescount,Bodies,Damper)
+function [forceel] = Force_Damper(forcescount,Bodies,Damper,ForceFunction)
 %% Initial variable definitions
 % Bodies numbers
 i = Damper(forcescount).Body1;
@@ -16,8 +16,6 @@ Aj = Bodies(j).A;
 % to the CoM (Pre Processing sp - r)
 spig = Ai*spi;
 spjg = Aj*spj;
-% Initial Displacement
-idisplacement = Damper(forcescount).InitialDisplacement;
 %% Displacement Derivative
 % Translational Velocities
 rdi = Bodies(i).rd;
@@ -35,24 +33,45 @@ spjd = Aj*swj*spj;
 %% Vector Calculus and formulation
 % Displacement and Delta Calculus
 displacement = rj + spjg -ri - spig;
-deltax = displacement - idisplacement;
 % Displacement derivative
 ddisp = rdj + spjd - rdi - spid;
 % Force Direction Vector
 [lmag,lun] = unitvector(displacement);
 lengthrateofchange = (1/lmag)*(displacement'*ddisp);
 % Force Magnitude Calculus
-if ~isnan(Force.Damper(forcescount).Function)
+if ~isnan(Damper(forcescount).Function)
     % Linear Spring
     c = Damper(forcescount).Constant; %damping coefficient
     force = c*lengthrateofchange;
-elseif isnan(Force.Damper(forcescount).Function)
+elseif isnan(Damper(forcescount).Function)
     % Non Linear Spring:
         %Function Input: Velocity of compression ( lengthrateofchange)
         %Function Output: Damper Force
     sym x
-    dfunc = str2func(ForceFunction.Damper(forcescount).Function);
-    force = dfunc(lengthrateofchange);
+    Noffun = Damper(forcescount).Noffun;
+    if Noffun == 1
+        dfunc = str2func(Damper(forcescount).Function1);
+        force = dfunc(lengthrateofchange);
+    elseif Noffun == 2
+        if lengthrateofchange <= Damper(forcescount).Intmin
+            dfunc = str2func(ForceFunction.Damper(forcescount).Function1);
+            force = dfunc(lengthrateofchange);
+        elseif lenthrateofchange > Damper(forcescount).Intmin
+            dfunc = str2func(ForceFunction.Damper(forcescount).Function2);
+            force = dfunc(lenthrateofchange);
+        end
+    elseif Noffun == 3
+        if lengthrateofchange <= Damper(forcescount).Intmin
+            dfunc = str2fun(ForceFunction.Damper(forcescount).Function1);
+            force = dfunc(lengthrateofchange);
+        elseif lengthrateofchange < Damper(forcescount).Intmax && lengthrateofchange > Damper(forcescount).Intmin
+            dfunc = str2fun(ForceFunction.Damper(forcescount).Function2);
+            force = dfunc(lengthrateofchange);
+        elseif lengthrateofchange >= Damper(forcescount).Intmax
+            dfunc = str2fun(ForceFunction.Damper(forcescount).Function3);
+            force = dfunc(lengthrateofchange);
+        end
+    end
 end
 %Force Vectors
 forcei = force*lun;
@@ -68,5 +87,5 @@ forceel(i1+3:i1+5,1) = momenti;
 % Body j
 i2 = 6*(j-1)+1;
 forceel(i2:i2+2,1) = forcej;
-forceel(i2+3:i2+5,1) = forcei;
+forceel(i2+3:i2+5,1) = momentj;
 end

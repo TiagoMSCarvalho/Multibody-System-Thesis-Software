@@ -1,4 +1,4 @@
-function [forceel] = Force_Spring(forcescount,Bodies,Spring)
+function [forceel] = Force_Spring(forcescount,Bodies,Spring,ForceFunction)
 %% Initial variable definitions
 % Bodies numbers
 i = Spring(forcescount).Body1;
@@ -30,9 +30,34 @@ elseif isnan(Spring(forcescount).Constant)
     %Non Linear Spring
         %Function Input: Displacement of the Spring
         %Function Output: Spring Force
-    sym x
-    sfunc = str2func(ForceFunction.Spring(forcescount).Function);
-    force = sfunc(displacement);
+%     sym dx
+%     sfunc = str2func(ForceFunction.Spring(forcescount).Function);
+%     force = sfunc(displacement);
+    sym dx
+    Noffun = Spring.Noffun;
+    if Noffun == 1
+        dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
+        force = dfunc(deltax);
+    elseif Noffun == 2
+        if lengthrateofchange <= Spring(forcescount).Intmin
+            dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
+            force = dfunc(deltax);
+        elseif lenthrateofchange > Spring(forcescount).Intmin
+            dfunc = str2func(ForceFunction.Spring(forcescount).Function2);
+            force = dfunc(deltax);
+        end
+    elseif Noffun == 3
+        if lengthrateofchange <= Spring(forcescount).Intmin
+            dfunc = str2fun(ForceFunction.Spring(forcescount).Function1);
+            force = dfunc(lengthrateofchange);
+        elseif lengthrateofchange < Spring(forcescount).Intmax && lengthrateofchange > Spring(forcescount).Intmin
+            dfunc = str2fun(ForceFunction.Spring(forcescount).Function2);
+            force = dfunc(lengthrateofchange);
+        elseif lengthrateofchange >= Spring(forcescount).Intmax
+            dfunc = str2fun(ForceFunction.Spring(forcescount).Function3);
+            force = dfunc(lengthrateofchange);
+        end
+    end
 end
 %Force Direction Vector
 [~,lun] = unitvector(displacement);
