@@ -66,4 +66,5 @@ mbs-EP v1.0.0:
   	-  Simulate Steering forces and Bump Scenarios;
   	-  Simulate Tyre Vertical Forces by means of a prismatic joint and spring system;
   - Limitations:
-  	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;   
+  	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;
+  		- Would be needed an implementation of a Sideslip model;     
