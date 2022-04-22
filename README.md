@@ -63,3 +63,6 @@ mbs-EP v1.0.0:
   	-  Capable of receiving Sinusoidal and Polynomial Driving Input Functions for Position, Velocity and Acceleration;
   	-  Run simulations in mmks and MKS (SI) Units;
   	-  Run simulations with gravity or without it;
+  	-  Simulate Steering forces and Bump Scenarios;
+  - Limitations:
+  	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;   
