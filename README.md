@@ -67,4 +67,4 @@ mbs-EP v1.0.0:
   	-  Simulate Tyre Vertical Forces by means of a prismatic joint and spring system;
   - Limitations:
   	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;
-  		- Would be needed an implementation of a Sideslip model;     
+  		- Would be needed an implementation of a Sideslip tyre force model;     
