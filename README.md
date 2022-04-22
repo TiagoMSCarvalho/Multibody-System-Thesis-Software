@@ -48,8 +48,18 @@ pk-EP v1.0.3:
 		- Program now reads handle functions from the excel;
 		- Program has lost "sturdiness" in relation to the Rotational Inputs being in Rads or Deg; [Limitation]
 			- The sturdiness is maintained for the Body Orientation Input;
-		- Potential Issue:
-			-  Displacements and rotations are being applied to the CoM of the body, not to the point of application? -> Issue for the translation?
+	-  Displacements and rotations are being applied to the CoM of the body, not to the point of application
 	- Version CLosure:
 		- SPH - SPH Implemented
-		- Sinusoidal and Polynomial input functions implemented  
+		- Sinusoidal and Polynomial input functions implemented 
+
+mbs-EP v1.0.0:
+  - Implementation of the dynamic simulations:
+  	- Solves the linear initial acceleration problem with the input of the q0 and rd0/w0 or q and rd/w for t0+timestep;
+  	- Implements the ODE45 function (runge-Kutta algorithm with a method of 4th Order and Error Estimation of 5th Order) to integrate the DAE's of the velocity and acceleration;
+  	- Uses the algorithm of Direct Correction by S.Yoon to geometric eliminate the constraint violations of the joints;
+  - The program is capable of receiving:
+  	-  Linear and Non Linear Spring and Damper Functions (Up to 3 functions for 1 spring);
+  	-  Capable of receiving Sinusoidal and Polynomial Driving Input Functions for Position, Velocity and Acceleration;
+  	-  Run simulations in mmks and MKS (SI) Units;
+  	-  Run simulations with gravity or without it;
