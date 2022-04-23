@@ -71,4 +71,5 @@ mbs-EP v1.0.0:
   - Being Implemented:
   	-  SPH-REV Joint;
   	-  PRI-REV Joint;
-  	-  REV-REV Joint; (maybe)      
+  	-  REV-REV Joint; (maybe)
+  	-  Force Actuators;      
