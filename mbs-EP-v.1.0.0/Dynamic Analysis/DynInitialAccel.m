@@ -50,7 +50,11 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     % For the Translation joints
     for jointCount=1:Joints.NTranslation
         [~,Jacobian,~,gamma,funCount] = Joint_Translation([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Translation,Flags);
-    end 
+    end
+    %For the Translational - Revolute joints
+    for jointCount=1:Joints.NTraRev
+        [~,Jacobian,~,gamma,funCount] = Joint_CompTraRev([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.TraRev,Flags);
+    end
     % For the Simple Constraints
     for jointCount=1:Joints.NSimple
         [~,Jacobian,~,gamma,funCount] = Simple_Constraints([],Jacobian,[],gamma,funCount,jointCount, Bodies, Joints.Simple,Flags);

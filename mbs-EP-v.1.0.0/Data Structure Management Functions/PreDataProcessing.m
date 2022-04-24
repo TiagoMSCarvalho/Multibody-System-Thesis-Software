@@ -256,7 +256,7 @@ function [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies)
 % removing header lines, spacing lines and lines after the final piece of
 % information, Only consideres numerical
 %% Reads Joint Excel Sheet
-[~,~,raw] = xlsread(filename,'Joints','A2:N1000');
+[~,~,raw] = xlsread(filename,'Joints','A2:Q1000');
 relevant_lines = [];
 for i=1:size(raw,1) %Number of Lines of raw
     if isnumeric(raw{i,4})
@@ -290,6 +290,7 @@ Joints.NUniversal = 0;
 Joints.NRevolute = 0;
 Joints.NCylindrical = 0;
 Joints.NTranslation = 0;
+Joints.NTraRev = 0;
 Joints.NSimple = 0;
 Joints.NGround = 0;
 Joints.NDriver = 0;
@@ -348,6 +349,9 @@ elseif strcmp(JointType,'Cylindrical')
 elseif strcmp(JointType,'Translation')
     Joints.NTranslation = Joints.NTranslation + 1;
     Joints = ProcessTranslation(Joints,JointInfo,Joints.NTranslation, Bodies);
+elseif strcmp(JoinType,'TraRev')
+    Joints.NTraRev = Joints.NTraRev + 1;
+    Joints = ProcessTraRev(Joints,JointInfo,Joints.NTraRev, Bodies);
 elseif strcmp(JointType,'Simple')
     Joints.NSimple = Joints.NSimple + 1;
     Joints = ProcessSimple(Joints,JointInfo,Joints.NSimple);
@@ -527,6 +531,38 @@ Joints.Translation(jointCount).spi = spi;
 Joints.Translation(jointCount).spj = spj;
 Joints.Translation(jointCount).si = si;
 Joints.Translation(jointCount).sj = sj;
+end
+
+function Joints = ProcessTraRev(Joints,JointsInfo,jointCount,Bodies)
+% Body numbers
+Joints.TraRev(jointCount).Body1 = JointsInfo(1);
+Joints.TraRev(jointCount).Body2 = JointsInfo(2);
+% Pass body numbers to easier to use variables
+i = Joints.TraRev(jointCount).Body1;
+j = Joints.TraRev(jointCount).Body2;
+% Location of joint center in fixed reference
+sp1 = Impose_Column(JointsInfo(3:5));
+sp2 = Impose_Column(JointsInfo(6:8));
+%Location of the Joints Axis
+si_earth = Impose_Column(JointsInfo(9:11));
+sj_earth = Impose_Column(JointsInfo(12:14));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp1 - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp2 - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+% Save the joint location in each bodies' reference
+Joints.CompSpherical(jointCount).spi = spi;
+Joints.CompSpherical(jointCount).spj = spj;
+%Joint Axis
+si_earth = si_earth - sp1;
+sj_earth = sj_earth - sp2;
+si = EarthtoBody(si_earth,pi);
+sj = EarthtoBody(sj_earth,pj);
 end
 
 function Joints = ProcessSimple (Joints,JointsInfo,jointCount)

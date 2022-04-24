@@ -29,7 +29,7 @@ clc
 addpath(genpath(pwd))
 clearvars %clear all decreases code performance
 addpath('Data Structure Management Functions','Joints and Constraints','Kinematic Analysis','Dynamic Analysis','Auxiliary Functions','Excel Files','Force Elements','Post Processing Parameters Functions');
-JointTypes = {'Spherical','Universal','Revolute','Cylindrical','Translation','Ground','Driver','Simple','Points'};
+JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','Translation','SphRev','TraRev','Ground','Driver','Simple','Points'};
 ForcesTypes = {'Spring','TSpring','Damper'};
 
 %file containing the suspension data:

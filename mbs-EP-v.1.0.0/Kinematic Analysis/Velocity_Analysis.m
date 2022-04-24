@@ -59,6 +59,10 @@ end
 for jointCount=1:Joints.NTranslation
     [~,Jacobian,niu,~,funCount] = Joint_Translation([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Translation,Flags);
 end 
+% For the Translation Revolute Composite joints
+for jointCount=1:Joints.NTraRev
+    [~,Jacobian,niu,~,funCount] = Joint_CompTraRev([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.TraRev,Flags);
+end 
 % For the Simple Constraints
 for jointCount=1:Joints.NSimple
     [~,Jacobian,niu,~,funCount] = Simple_Constraints([],Jacobian,niu,[],funCount,jointCount, Bodies, Joints.Simple,Flags);

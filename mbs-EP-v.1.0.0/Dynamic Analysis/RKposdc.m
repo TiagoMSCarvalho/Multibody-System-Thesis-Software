@@ -35,6 +35,10 @@ end
 for jointCount=1:Joints.NTranslation
     [fun,Jacobian,~,~,funCount] = Joint_Translation(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.Translation,Flags);
 end
+% For the Tra Rev Composite joint
+for jointCount=1:Joints.NTraRev
+    [fun,Jacobian,~,~,funCount] = Joint_CompTraRev(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);
+end
 % For the Simple Constraints
 for jointCount=1:Joints.NSimple
     [fun,Jacobian,~,~,funCount] = Simple_Constraints(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.Simple,Flags);
