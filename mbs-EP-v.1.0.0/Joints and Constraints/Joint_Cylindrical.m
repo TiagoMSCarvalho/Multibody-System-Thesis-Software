@@ -121,7 +121,7 @@ end
 
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+3) = 0;
+    niu(funCount:funCount+3,1) = 0;
 end
 
 % Form the r.h.s. acceleration equations
@@ -136,9 +136,9 @@ if(Flags.Acceleration == 1)
     wli = Bodies(i).wl;
     wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
-    qid = Ai*SkewMatrix3(wli)*qi;
-    tid = Ai*SkewMatrix3(wli)*ti;
-    sjd = Aj*SkewMatrix3(wlj)*sj;
+    qid = Ai*SkewMatrix3(wli)*qig;
+    tid = Ai*SkewMatrix3(wli)*tig;
+    sjd = Aj*SkewMatrix3(wlj)*sjg;
     %For the derivative of d we have to use the eq defined above in the
     %code d = ri + Ai*spi - rj - Aj*spj;
     rid = Bodies(i).rd;  
@@ -148,10 +148,10 @@ if(Flags.Acceleration == 1)
     spid = SkewMatrix3(wli)*spi;
     spjd = SkewMatrix3(wlj)*spj;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;
-    gamma(funCount+1) = tig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2;
-    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd;
-    gamma(funCount+3) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
+    gamma(funCount,1) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; %15-02 + added since h = -2;
+    gamma(funCount+1,1) = tig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid; %15-02 + added since h = -2;
+    gamma(funCount+2,1) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd;
+    gamma(funCount+3,1) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
 
     %Type 2 - Following the Jacobian logic the hi and hj wi1l be defined in relation
     %to Pi and Pj and D*hi wi1l be defined in relation to qi and wi1l follow the 7.2 gamma equations.

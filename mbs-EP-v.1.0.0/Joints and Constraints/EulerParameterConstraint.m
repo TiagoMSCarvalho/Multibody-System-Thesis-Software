@@ -27,7 +27,7 @@ end
 
 %r.h.s velocity equation
 if (Flags.Velocity == 1)
-    niu(funCount) = 0;
+    niu(funCount,1) = 0;
 end
 
 %r.h.s acceleration
@@ -36,7 +36,7 @@ if (Flags.Acceleration == 1)
     %Struct
     pd = Impose_Column(Bodies(i).pd);
     
-    gamma(funCount) = -pd'*pd;
+    gamma(funCount,1) = -pd'*pd;
 end
     
 %Update the function counter

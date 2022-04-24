@@ -39,6 +39,11 @@ for jointCount=1:Joints.NTranslation
     [fun,~,~,~,funCount] = Joint_Translation(fun,[],[],[],funCount,jointCount, Bodies, Joints.Translation,Flags);
 end
 
+% For the Spherical Revolute joints
+for jointCount=1:Joints.NSphRev
+    [fun,~,~,~,funCount] = Joint_CompSphRev(fun,[],[],[],funCount,jointCount, Bodies, Joints.CompSphRev,Flags);
+end
+
 % For the Translation Revolute Composite joints
 for jointCount=1:Joints.NTraRev
     [fun,~,~,~,funCount] = Joint_CompTraRev(fun,[],[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);

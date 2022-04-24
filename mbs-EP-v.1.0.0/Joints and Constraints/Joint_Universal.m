@@ -96,7 +96,7 @@ end
 
 % Right-hand-side velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+3) = 0;
+    niu(funCount:funCount+3,1) = 0;
 end
 
 % Right-hand-side acceleration equations
@@ -111,11 +111,11 @@ if(Flags.Acceleration == 1)
     wli = Bodies(i).wl;
     wlj = Bodies(j).wl;
     %Derivatives of si and sj in the global frame
-    sid = Ai*SkewMatrix3(wli)*si;
-    sjd = Aj*SkewMatrix3(wlj)*sj;
+    sid = Ai*SkewMatrix3(wli)*sig;
+    sjd = Aj*SkewMatrix3(wlj)*sjg;
     
-    gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi;
-    gamma(funCount+3) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
+    gamma(funCount:funCount+2,1) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi;
+    gamma(funCount+3,1) = sig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*si) - 2*sid'*sjd;
 end
 %% Joint Formulation - Dynamic Problem
 %Jacobian Matrix

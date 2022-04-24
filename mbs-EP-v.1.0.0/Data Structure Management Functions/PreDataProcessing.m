@@ -290,6 +290,7 @@ Joints.NUniversal = 0;
 Joints.NRevolute = 0;
 Joints.NCylindrical = 0;
 Joints.NTranslation = 0;
+Joints.NSphRev = 0;
 Joints.NTraRev = 0;
 Joints.NSimple = 0;
 Joints.NGround = 0;
@@ -349,6 +350,9 @@ elseif strcmp(JointType,'Cylindrical')
 elseif strcmp(JointType,'Translation')
     Joints.NTranslation = Joints.NTranslation + 1;
     Joints = ProcessTranslation(Joints,JointInfo,Joints.NTranslation, Bodies);
+elseif strcmp(JointType,'SphRev')
+    Joints.NSphRev = Joints.SphRev + 1;
+    Joints = ProcessSphRev(Joints,JointInfo,Joints.NSphRev,Bodies);
 elseif strcmp(JoinType,'TraRev')
     Joints.NTraRev = Joints.NTraRev + 1;
     Joints = ProcessTraRev(Joints,JointInfo,Joints.NTraRev, Bodies);
@@ -531,6 +535,39 @@ Joints.Translation(jointCount).spi = spi;
 Joints.Translation(jointCount).spj = spj;
 Joints.Translation(jointCount).si = si;
 Joints.Translation(jointCount).sj = sj;
+end
+
+function Joints = ProcessSphRev(Joints,JointsInfo,jointCount,Bodies)
+% Body numbers
+Joints.CompSphRev(jointCount).Body1 = JointsInfo(1); %Acces to Joints Struct and Spherical Sub Struct field Body and extract to a variable
+Joints.CompSphRev(jointCount).Body2 = JointsInfo(2);
+% Pass body numbers to easier to use variables
+i = Joints.CompSphRev(jointCount).Body1;
+j = Joints.CompSphRev(jointCount).Body2;
+% Location of joint center in fixed reference
+sp1 = Impose_Column(JointsInfo(3:5));
+sp2 = Impose_Column(JointsInfo(6:8));
+sj_earth = Impose_Column(JointsInfo(9:11));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+%Lenght of the link calculus
+length_vec = sp2 - sp1;
+length = norm(length_vec);
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spi = sp1 - Bodies(i).r;
+spi = EarthtoBody(spi,pi);
+spj = sp2 - Bodies(j).r;
+spj = EarthtoBody(spj,pj);
+%Sj
+sj_earth = sj_earth - sp;
+sj = EarthtoBody(sj_earth,pj);
+% Save the joint location in each bodies' reference
+Joints.CompSphRev(jointCount).spi = spi;
+Joints.CompSphRev(jointCount).spj = spj;
+Joints.CompSphRev(jointCount).length = length;
+Joints.CompSphRev(jointCount).sj = sj;
 end
 
 function Joints = ProcessTraRev(Joints,JointsInfo,jointCount,Bodies)

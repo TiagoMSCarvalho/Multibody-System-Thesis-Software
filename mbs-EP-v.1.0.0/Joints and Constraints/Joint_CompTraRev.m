@@ -97,7 +97,7 @@ end
 
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+3) = 0;
+    niu(funCount:funCount+3,1) = 0;
 end
 
 % Form the r.h.s. acceleration equations
@@ -114,10 +114,10 @@ if(Flags.Acceleration == 1)
     wli = Bodies(i).wl;
     wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
-    qid = Ai*SkewMatrix3(wli)*qi;
-    sid = Ai*SkewMatrix3(wli)*si;
-    sjd = Aj*SkewMatrix3(wlj)*sj;
-    qjd = Aj*SkewMatrix3(wlj)*qj;
+    qid = Ai*SkewMatrix3(wli)*qig;
+    sid = Ai*SkewMatrix3(wli)*sig;
+    sjd = Aj*SkewMatrix3(wlj)*sjg;
+    qjd = Aj*SkewMatrix3(wlj)*qjg;
     %For the derivative of d we have to use the eq defined above in the
     %code d = rj + Aj*spj - ri - Ai*spi;
     rid = Bodies(i).rd;
@@ -127,10 +127,10 @@ if(Flags.Acceleration == 1)
     spid = SkewMatrix3(wli)*spi;
     spjd = SkewMatrix3(wlj)*spj;
     
-    gamma(funCount) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; 
-    gamma(funCount+1) = sig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*si) - 2*dd'*sid;
-    gamma(funCount+2) = qig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*qjd; 
-    gamma(funCount+3) = sig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*si) - 2*sid'*sjd;    
+    gamma(funCount,1) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; 
+    gamma(funCount+1,1) = sig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*si) - 2*dd'*sid;
+    gamma(funCount+2,1) = qig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*qjd; 
+    gamma(funCount+3,1) = sig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*si) - 2*sid'*sjd;    
 
 end
 

@@ -57,12 +57,12 @@ end
 
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount) = 0;
+    niu(funCount,1) = 0;
 end
 
 % Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
-    gamma(funCount) = 0;
+    gamma(funCount,1) = 0;
 end
 %% Joint Formulation - Dynamic Problem
 % Form the Jacobian Matrix
@@ -74,7 +74,7 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
 end
 
 if (Flags.AccelDyn == 1)
-    gamma(funCount) = 0;
+    gamma(funCount,1) = 0;
 end
 %% Update the line counter
 funCount = funCount+1;

@@ -32,6 +32,10 @@ end
 for jointCount=1:Joints.NTranslation
     [~,Jacobian,~,~,funCount] = Joint_Translation([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Translation,Flags);
 end
+% For the Translation joints
+for jointCount=1:Joints.NSphRev
+    [~,Jacobian,~,~,funCount] = Joint_CompSphRev([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.CompSphRev,Flags);
+end
 % For the Translation Revolute Composite joint
 for jointCount=1:Joints.NTraRev
     [~,Jacobian,~,~,funCount] = Joint_CompTraRev([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);

@@ -1,4 +1,4 @@
-%% ============================Multibody System Software=============================
+ %% ============================Multibody System Software=============================
 %This is a multibody simulator, that can be used to solve problems involving Spatial Bodies.
 %INPUTS:
 %    - File:  template_mbs excel file must be edited as exemplified this is

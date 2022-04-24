@@ -83,7 +83,7 @@ end
 
 % Right-hand-side velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+2)=0;
+    niu(funCount:funCount+2,1)=0;
 end
 
 % Right-hand-side acceleration equations
@@ -95,7 +95,7 @@ if(Flags.Acceleration == 1)
     Ldi = Bodies(i).Ld;
     Ldj = Bodies(j).Ld;
 
-    gamma(funCount:funCount+2) = 2*Gdj*Ldj'*spj - 2*Gdi*Ldi'*spi;
+    gamma(funCount:funCount+2,1) = 2*Gdj*Ldj'*spj - 2*Gdi*Ldi'*spi;
 end
 %% Joint Formulation - Dynamic Problem
 % Jacobian Matrix

@@ -49,12 +49,12 @@ end
 
 % Form the r.h.s velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+6) = 0;
+    niu(funCount:funCount+6,1) = 0;
 end
 
 % Form the r.h.s. acceleration equations
 if(Flags.Acceleration == 1)
-    gamma(funCount:funCount+6) = 0;
+    gamma(funCount:funCount+6,1) = 0;
 end
 %% Dynamic Problem
 

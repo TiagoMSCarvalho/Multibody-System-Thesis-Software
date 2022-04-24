@@ -118,7 +118,7 @@ end
 
 % Right-hand-side velocity equations
 if(Flags.Velocity == 1)
-    niu(funCount:funCount+4) = 0;
+    niu(funCount:funCount+4,1) = 0;
 end
 
 % Right-hand-side acceleration equations
@@ -139,9 +139,9 @@ if(Flags.Acceleration == 1)
  
     %Following the logic above (Jac) hj will be written in relation to
     %sj and hi will be written in relation to qi and ti
-    gamma(funCount:funCount+2) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi; 
-    gamma(funCount+3) = qig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*qi) - 2*qid'*sjd;
-    gamma(funCount+4) = tig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*ti) - 2*tid'*sjd;
+    gamma(funCount:funCount+2,1) = 2*Gdj*Ldj.'*spj - 2*Gdi*Ldi.'*spi; 
+    gamma(funCount+3,1) = qig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*qi) - 2*qid'*sjd;
+    gamma(funCount+4,1) = tig'*(-2*Gdj*Ldj.'*sj) + sjg'*(-2*Gdi*Ldi.'*ti) - 2*tid'*sjd;
 end
 %% Joint Formulation - Dynamic Problem
 % Jacobian Matrix
