@@ -29,6 +29,7 @@ end
 for i = 1:NBodies
     %% Moment of Inertia Calculus and Inertia covertion to global (taking into acc body mov)
     Mass = Bodies(i).Mass;
+    Mass = eye(3)*Mass;
     Inertia = Bodies(i).Inertia;
     A = Bodies(i).A;
     I = diag(Inertia);

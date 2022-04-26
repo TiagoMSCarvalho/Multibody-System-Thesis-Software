@@ -39,11 +39,11 @@ ddisp = rdj + spjd - rdi - spid;
 [lmag,lun] = unitvector(displacement);
 lengthrateofchange = (1/lmag)*(displacement'*ddisp);
 % Force Magnitude Calculus
-if ~isnan(Damper(forcescount).Function)
+if ~isnan(Damper(forcescount).Constant)
     % Linear Spring
     c = Damper(forcescount).Constant; %damping coefficient
     force = c*lengthrateofchange;
-elseif isnan(Damper(forcescount).Function)
+elseif isnan(Damper(forcescount).Constant)
     % Non Linear Spring:
         %Function Input: Velocity of compression ( lengthrateofchange)
         %Function Output: Damper Force
@@ -77,8 +77,8 @@ end
 forcei = force*lun;
 forcej = -force*lun;
 %Moments Created by the Damper
-momenti = cross(spig,forcei);
-momentj = cross(spjg,forcej);
+momenti = cross(spi,forcei);
+momentj = cross(spj,forcej);
 % Allocation of the force to the vector
 % Body i
 i1 = 6*(i-1)+1;

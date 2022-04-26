@@ -41,7 +41,7 @@ for jointCount=1:Joints.NSphRev
 end
 % For the Tra Rev Composite joint
 for jointCount=1:Joints.NTraRev
-    [fun,Jacobian,~,~,funCount] = Joint_CompTraRev(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);
+    [fun,Jacobian,~,~,funCount] = Joint_CompTraRev(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.CompTraRev,Flags);
 end
 % For the Simple Constraints
 for jointCount=1:Joints.NSimple

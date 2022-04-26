@@ -55,13 +55,15 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
         poiacc(i1:i1+2,1) = Impose_Column(rddp);
         poiacc(i1+3:i1+5,1) = wd;
     end
-    [b,~] = size(acc);
-    for j = 1:b
-        DataP(j).Velocity = poivel(j);
-        DataP(j).Acceleration = poiacc(j);
-    end    
-    %% Stores said data struct in a cell array per number of iteration
-    Points{1,it} = DataP;
+    if Joints.NPoint ~= 0
+        [b,~] = size(acc);
+        for j = 1:b
+            DataP(j).Velocity = poivel(j);
+            DataP(j).Acceleration = poiacc(j);
+        end    
+        %% Stores said data struct in a cell array per number of iteration
+        Points{1,it} = DataP;
+    end
     CoM{1,it} = DataC;
     it = it+1;
 end

@@ -46,7 +46,7 @@ end
 
 % For the Translation Revolute Composite joints
 for jointCount=1:Joints.NTraRev
-    [fun,~,~,~,funCount] = Joint_CompTraRev(fun,[],[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);
+    [fun,~,~,~,funCount] = Joint_CompTraRev(fun,[],[],[],funCount,jointCount, Bodies, Joints.CompTraRev,Flags);
 end
 
 % For the Simple Constraints

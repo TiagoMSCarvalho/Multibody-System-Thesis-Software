@@ -38,7 +38,7 @@ for jointCount=1:Joints.NSphRev
 end
 % For the Translation Revolute Composite joint
 for jointCount=1:Joints.NTraRev
-    [~,Jacobian,~,~,funCount] = Joint_CompTraRev([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.TraRev,Flags);
+    [~,Jacobian,~,~,funCount] = Joint_CompTraRev([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.CompTraRev,Flags);
 end 
 % For the Simple Constraints
 for jointCount=1:Joints.NSimple

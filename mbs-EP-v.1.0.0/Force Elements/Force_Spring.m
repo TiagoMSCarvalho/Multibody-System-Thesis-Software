@@ -17,15 +17,22 @@ spig = Ai*spi;
 spjg = Aj*spj;
 % Initial Displacement
 idisplacement = Spring(forcescount).InitialDisplacement;
+%Force Direction Vector = Initial Direction Vector
+[~,lun] = unitvector(idisplacement);
 
 %% Vector Calculus and formulation
 displacement = rj + spjg -ri - spig;
 deltax = displacement - idisplacement;
+%Displacement Magnitude (allows to mutiply constant per magnitude);
+[deltaxmag,~] = unitvector(deltax);
+if deltax <0
+    deltaxmag = - deltaxmag;
+end
 % Force Magnitude Calculus
 if ~isnan(Spring(forcescount).Constant)
     % Linear Spring
     k = Spring(forcescount).Constant; %Stiffness Constant
-    force = k*deltax; %Hooke Law
+    force = k*deltaxmag; %Hooke Law
 elseif isnan(Spring(forcescount).Constant)
     %Non Linear Spring
         %Function Input: Displacement of the Spring
@@ -37,36 +44,34 @@ elseif isnan(Spring(forcescount).Constant)
     Noffun = Spring.Noffun;
     if Noffun == 1
         dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
-        force = dfunc(deltax);
+        force = dfunc(deltaxmag);
     elseif Noffun == 2
         if lengthrateofchange <= Spring(forcescount).Intmin
             dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
-            force = dfunc(deltax);
+            force = dfunc(deltaxmag);
         elseif lenthrateofchange > Spring(forcescount).Intmin
             dfunc = str2func(ForceFunction.Spring(forcescount).Function2);
-            force = dfunc(deltax);
+            force = dfunc(deltaxmag);
         end
     elseif Noffun == 3
         if lengthrateofchange <= Spring(forcescount).Intmin
             dfunc = str2fun(ForceFunction.Spring(forcescount).Function1);
-            force = dfunc(lengthrateofchange);
+            force = dfunc(deltaxmag);
         elseif lengthrateofchange < Spring(forcescount).Intmax && lengthrateofchange > Spring(forcescount).Intmin
             dfunc = str2fun(ForceFunction.Spring(forcescount).Function2);
-            force = dfunc(lengthrateofchange);
+            force = dfunc(deltaxmag);
         elseif lengthrateofchange >= Spring(forcescount).Intmax
             dfunc = str2fun(ForceFunction.Spring(forcescount).Function3);
-            force = dfunc(lengthrateofchange);
+            force = dfunc(deltaxmag);
         end
     end
 end
-%Force Direction Vector
-[~,lun] = unitvector(displacement);
 %Force Vectors
 forcei = force*lun;
 forcej = -force*lun;
 %Moments Created by the Translational Spring
-momenti = cross(spig,forcei);
-momentj = cross(spjg,forcej);
+momenti = cross(spi,forcei);
+momentj = cross(spj,forcej);
 % Allocation of the force to the vector
 % Body i
 i1 = 6*(i-1)+1;

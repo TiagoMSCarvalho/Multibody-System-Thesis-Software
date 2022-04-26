@@ -280,7 +280,7 @@ end
 JointTypes = raw(relevant_lines,2); %Column 2 has the type of joints, in strings (Excel)
 % Matrix of doubles with all the joint numerical information to be parsed later
 %cell2mat -> Converts the data to a matrix
-JointInfo = cell2mat(raw(relevant_lines,4:14));
+JointInfo = cell2mat(raw(relevant_lines,4:17));
 % Determine the number of Joints ans Bodies for the cycles
 n_Joints = size(JointTypes,1); %Size (Struct,1) , 1st dim of the struct
 % Initialize the joint type counts as 0
@@ -353,7 +353,7 @@ elseif strcmp(JointType,'Translation')
 elseif strcmp(JointType,'SphRev')
     Joints.NSphRev = Joints.SphRev + 1;
     Joints = ProcessSphRev(Joints,JointInfo,Joints.NSphRev,Bodies);
-elseif strcmp(JoinType,'TraRev')
+elseif strcmp(JointType,'TraRev')
     Joints.NTraRev = Joints.NTraRev + 1;
     Joints = ProcessTraRev(Joints,JointInfo,Joints.NTraRev, Bodies);
 elseif strcmp(JointType,'Simple')
@@ -472,6 +472,7 @@ spi = sp - Bodies(i).r;
 spi = EarthtoBody(spi,pi);
 spj = sp - Bodies(j).r;
 spj = EarthtoBody(spj,pj);
+s = s - sp;
 si = EarthtoBody(s,pi);
 sj = EarthtoBody(s,pj);
 % Save the joint location in each bodies' reference
@@ -572,11 +573,11 @@ end
 
 function Joints = ProcessTraRev(Joints,JointsInfo,jointCount,Bodies)
 % Body numbers
-Joints.TraRev(jointCount).Body1 = JointsInfo(1);
-Joints.TraRev(jointCount).Body2 = JointsInfo(2);
+Joints.CompTraRev(jointCount).Body1 = JointsInfo(1);
+Joints.CompTraRev(jointCount).Body2 = JointsInfo(2);
 % Pass body numbers to easier to use variables
-i = Joints.TraRev(jointCount).Body1;
-j = Joints.TraRev(jointCount).Body2;
+i = Joints.CompTraRev(jointCount).Body1;
+j = Joints.CompTraRev(jointCount).Body2;
 % Location of joint center in fixed reference
 sp1 = Impose_Column(JointsInfo(3:5));
 sp2 = Impose_Column(JointsInfo(6:8));
@@ -593,13 +594,16 @@ spi = EarthtoBody(spi,pi);
 spj = sp2 - Bodies(j).r;
 spj = EarthtoBody(spj,pj);
 % Save the joint location in each bodies' reference
-Joints.CompSpherical(jointCount).spi = spi;
-Joints.CompSpherical(jointCount).spj = spj;
+Joints.CompTraRev(jointCount).spi = spi;
+Joints.CompTraRev(jointCount).spj = spj;
 %Joint Axis
 si_earth = si_earth - sp1;
 sj_earth = sj_earth - sp2;
 si = EarthtoBody(si_earth,pi);
 sj = EarthtoBody(sj_earth,pj);
+%Storage of Joint Axis
+Joints.CompTraRev(jointCount).si = si;
+Joints.CompTraRev(jointCount).sj = sj;
 end
 
 function Joints = ProcessSimple (Joints,JointsInfo,jointCount)
@@ -645,7 +649,7 @@ end
 
 function [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies)
 
-[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:P100');
+[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:R100');
 relevant_lines_forces = [];
 for i = 1:size(rawforces,1)
     if isnumeric(rawforces{i,4})
@@ -658,7 +662,7 @@ end
 ForcesTypes = rawforces(relevant_lines_forces,2); 
 %cell2mat was deleted, it will be done within the processing functions to
 %allow the processing of the nonlinear function.
-ForcesRaw = rawforces(relevant_lines_forces,4:16);
+ForcesRaw = rawforces(relevant_lines_forces,4:18);
 n_Forces = size(ForcesTypes,1);
 
 % Initialize the force joint type at 0.
@@ -690,32 +694,33 @@ end
 end
 
 function [Forces,ForceFunction] = ProcessSpring(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
-ForcesInfo = cell2mat(ForcesRaw(1,1:6));
-ForceFunction.Spring(ForcesCount).Function1 = ForcesRaw{1,7};
-ForceFunction.Spring(ForcesCount).Function2 = ForcesRaw{1,8};
-ForceFunction.Spring(ForcesCount).Function3 = ForcesRaw{1,9};
-ForcesInterval = cell2mat(ForcesRaw(1,10:12));
+ForcesInfo = cell2mat(ForcesRaw(1,1:9));
+ForceFunction.Spring(ForcesCount).Function1 = ForcesRaw{1,10};
+ForceFunction.Spring(ForcesCount).Function2 = ForcesRaw{1,11};
+ForceFunction.Spring(ForcesCount).Function3 = ForcesRaw{1,12};
+ForcesInterval = cell2mat(ForcesRaw(1,13:15));
 Forces.Spring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Spring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
 i = Forces.Spring(ForcesCount).Body1;
 j = Forces.Spring(ForcesCount).Body2;
 % Location of joint center in fixed reference
-sp = Impose_Column(ForcesInfo(3:5));
+spi = Impose_Column(ForcesInfo(3:5));
+spj = Impose_Column(ForcesInfo(6:8));
 % Get euler parameter for each body frame
 pi = Bodies(i).p;
 pj = Bodies(j).p;
 % Transform joint location on fixed reference to the bodies' local
 % reference
-spig = sp - Bodies(i).r;
+spig = spi - Bodies(i).r;
 spi = EarthtoBody(spig,pi);
-spjg = sp - Bodies(j).r;
+spjg = spj - Bodies(j).r;
 spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Spring(ForcesCount).spi = spi;
 Forces.Spring(ForcesCount).spj = spj;
 %Save Constant
-Forces.Spring(ForcesCount).Constant = ForcesInfo(6);
+Forces.Spring(ForcesCount).Constant = ForcesInfo(9);
 %% Initial Displacement
 % Bodies numbers
 i = Forces.Spring(ForcesCount).Body1;
@@ -765,32 +770,33 @@ end
 end
 
 function [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
-ForcesInfo = cell2mat(ForcesRaw(1,1:6));
-ForceFunction.Damper(ForcesCount).Function1 = ForcesRaw{1,7};
-ForceFunction.Damper(ForcesCount).Function2 = ForcesRaw{1,8};
-ForceFunction.Damper(ForcesCount).Function3 = ForcesRaw{1,9};
-ForcesInterval = cell2mat(ForcesRaw(1,10:12));
+ForcesInfo = cell2mat(ForcesRaw(1,1:9));
+ForceFunction.Damper(ForcesCount).Function1 = ForcesRaw{1,10};
+ForceFunction.Damper(ForcesCount).Function2 = ForcesRaw{1,11};
+ForceFunction.Damper(ForcesCount).Function3 = ForcesRaw{1,12};
+ForcesInterval = cell2mat(ForcesRaw(1,13:15));
 Forces.Damper(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Damper(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
 i = Forces.Damper(ForcesCount).Body1;
 j = Forces.Damper(ForcesCount).Body2;
 % Location of joint center in fixed reference
-sp = Impose_Column(ForcesInfo(3:5));
+spi = Impose_Column(ForcesInfo(3:5));
+spj = Impose_Column(ForcesInfo(6:8));
 % Get euler parameter for each body frame
 pi = Bodies(i).p;
 pj = Bodies(j).p;
 % Transform joint location on fixed reference to the bodies' local
 % reference
-spig = sp - Bodies(i).r;
+spig = spi - Bodies(i).r;
 spi = EarthtoBody(spig,pi);
-spjg = sp - Bodies(j).r;
+spjg = spj - Bodies(j).r;
 spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Damper(ForcesCount).spi = spi;
 Forces.Damper(ForcesCount).spj = spj;
 %Save Constant
-Forces.Damper(ForcesCount).Constant = ForcesInfo(6);
+Forces.Damper(ForcesCount).Constant = ForcesInfo(9);
 %% Initial Displacement
 % Bodies numbers
 i = Forces.Damper(ForcesCount).Body1;
