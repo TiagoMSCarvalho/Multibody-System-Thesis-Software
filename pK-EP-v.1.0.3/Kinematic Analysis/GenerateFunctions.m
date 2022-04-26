@@ -53,6 +53,4 @@ end
 for jointCount=1:Joints.NDriver
     [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
 end
-    
-display(fun)    
 end
