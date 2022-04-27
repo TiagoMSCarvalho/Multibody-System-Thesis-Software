@@ -10,16 +10,16 @@ function [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,dri
      i2 = 7*NBodies + 6*NBodies;
      vu = y(i1:i2,1);
 %% phi(qu) Calculation
-     % Non Linear Opts Solver
-     opts=optimoptions('fsolve');
-     opts.Algorithm='levenberg-marquardt';
-     opts.Diagnostics = 'off';
-     opts.Display = 'iter';
-     opts.FiniteDifferenceType = 'central';
-     opts.FunctionTolerance = 1e-10;
-     opts.StepTolerance = 1e-4;
-     opts.OptimalityTolerance = 1e-4;
-     opts.InitDamping = 1;
+%      % Non Linear Opts Solver
+%      opts=optimoptions('fsolve');
+%      opts.Algorithm='levenberg-marquardt';
+%      opts.Diagnostics = 'off';
+%      opts.Display = 'iter';
+%      opts.FiniteDifferenceType = 'central';
+%      opts.FunctionTolerance = 1e-10;
+%      opts.StepTolerance = 1e-4;
+%      opts.OptimalityTolerance = 1e-4;
+%      opts.InitDamping = 1;
      % Flags definition
      Flags.Position = 1;
      Flags.Jacobian = 1;
@@ -28,8 +28,8 @@ function [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,dri
      Flags.Dynamic = 0;
      Flags.AccelDyn = 0;
      %Calculus of the phi(qu)
-     dcconstrains = @(q)RKposdc(Joints,Bodies,NBodies,Flags,qu,driverfunctions,tf); %t0 -> tf;
-     [qc] = fsolve(dcconstrains,qu,opts); 
+     qc = RKposdc(Joints,Bodies,NBodies,Flags,qu,driverfunctions,tf); %t0 -> tf;
+%      [qc] = fsolve(dcconstrains,qu,opts); 
      %Update of the body postures with the correction for t + timestep (qc)
      Bodies = UpdateBodyPostures(qc,NBodies,Bodies);
      

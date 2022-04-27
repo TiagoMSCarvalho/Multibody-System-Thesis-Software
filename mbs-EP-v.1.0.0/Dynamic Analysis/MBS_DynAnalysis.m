@@ -25,5 +25,11 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
     y = Impose_Column(y(a,:));
     %% Direct Correction of the calculated qu and vu
     [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,driverfunctions,tf); %DCJac Eliminado.
+%      qu = y(1:7*NBodies,1);
+%      i1 = 7*NBodies + 1;
+%      i2 = 7*NBodies + 6*NBodies;
+%      vu = y(i1:i2,1);
+%      Bodies = UpdateBodyPostures(qu,NBodies,Bodies);
+%      Bodies = UpdateVelocities(vu,NBodies,Bodies,SimType);
 end
 
