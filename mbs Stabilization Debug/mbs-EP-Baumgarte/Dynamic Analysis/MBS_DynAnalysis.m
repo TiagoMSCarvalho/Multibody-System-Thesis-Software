@@ -12,7 +12,7 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
         [Bodies] = DynDriverVel(Bodies,Joints.Driver,jointCount,t0,driverfunctions);
     end
     % Function to calculate the Dynamic Initial Acceleration (2nd output is the lagrange multipliers).
-    [DynAcc,~,~,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata,ForceFunction);
+    [DynAcc,~,~,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,t0,driverfunctions,debugdata,ForceFunction,TimeStep);
     %Function that retrieves the generalized coordinate Jacobian
     %[DCJac] = DCGenJac(NBodies,Bodies,Joints,driverfunctions,t0);
     % Update of the variables (Stores t - Timestep)
@@ -23,13 +23,12 @@ function [Bodies,Points,CoM,DynAcc,it] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,
     [vt,y] = ode45(rkfunc,[t0,tf],initial,opts);
     [a,~] = size(vt);
     y = Impose_Column(y(a,:));
-    %% Direct Correction of the calculated qu and vu
-    [~,~,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,driverfunctions,tf); %DCJac Eliminado.
-%      qu = y(1:7*NBodies,1);
-%      i1 = 7*NBodies + 1;
-%      i2 = 7*NBodies + 6*NBodies;
-%      vu = y(i1:i2,1);
-%      Bodies = UpdateBodyPostures(qu,NBodies,Bodies);
-%      Bodies = UpdateVelocities(vu,NBodies,Bodies,SimType);
+    %% Update of the calculated qu and vu
+    qu = y(1:7*NBodies,1);
+    i1 = 7*NBodies + 1;
+    i2 = 7*NBodies + 6*NBodies;
+    vu = y(i1:i2,1);
+    Bodies = UpdateBodyPostures(qu,NBodies,Bodies);
+    Bodies = UpdateVelocities(vu,NBodies,Bodies,SimType);
 end
 
