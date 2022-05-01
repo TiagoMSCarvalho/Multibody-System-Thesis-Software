@@ -4,8 +4,6 @@ function [qc] = RKposdc(Joints,Bodies,NBodies,Flags,qu,driverfunctions,t)
 %Direct Correction is now seperated due to the fact that the position
 %correction needs to be solved iteratively.
 
-%Update of the body postures
-Bodies = UpdateBodyPostures(qu,NBodies,Bodies);
 funCount=1;
 fun = [];
 Jacobian = [];
@@ -58,8 +56,8 @@ for jointCount=1:Joints.NDriver
     [fun,Jacobian,~,~,funCount] = Driver_Constraints(fun,Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
 end
 
-deltaq = -(Jacobian'*(inv(Jacobian*Jacobian')))*fun;
+deltaq = -(Jacobian'*pinv(Jacobian*Jacobian')*fun);
+%deltaq = -(Jacobian'*inv(Jacobian*Jacobian')*fun); it was replaced due to RCond issues.
 qc = qu + deltaq;
-%phiqc = qu - pinv(Jacobian,1e-4)*fun; %System to solve, equivalent to phi(qc);
 
 end

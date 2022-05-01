@@ -79,7 +79,7 @@ for i = 1:NBodies
         end
     end
     % Calculus of the moment created by Forces not applied to the CoM
-    if all(Bodies(i).ForcePoA == 0)
+    if all(Bodies(i).ForcePoA == 0) || isnan(Bodies(i).ForcePoA)
         ForceMoment = zeros(1,3);
     else
         PoA = Bodies(i).ForcePoA - Bodies(i).r;

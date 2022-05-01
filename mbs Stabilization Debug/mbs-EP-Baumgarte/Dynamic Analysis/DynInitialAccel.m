@@ -76,8 +76,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     % Falta fazer o Force_TSpring que depende da atualização das variaveis
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction);
 %% Stabilization Method - Baumgart Version
-    alpha = 224;
-    beta = 224;
+    alpha = 150;
+    beta = 150;
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
     gamma = Impose_Column(gamma) - 2*alpha*(Jacobian*q0d) - beta^2*fun;
