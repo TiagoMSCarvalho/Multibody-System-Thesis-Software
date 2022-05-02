@@ -25,6 +25,9 @@ end
 for forcescount = 1:Forces.NDamper
     [forceel] = Force_Damper(forcescount,Bodies,Forces.Damper,ForceFunction);
 end
+for forcescount = 1:Forces.NActuator
+    [forceel] = Force_Actuator(forcescount,Bodies,Forces.Actuator,ForceFunction,time);
+end
 %Allocation of the forces to the bodies and calculus of: swJw and weight
 for i = 1:NBodies
     %% Moment of Inertia Calculus and Inertia covertion to global (taking into acc body mov)

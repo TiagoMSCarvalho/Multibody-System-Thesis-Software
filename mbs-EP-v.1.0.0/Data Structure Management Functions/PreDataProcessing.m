@@ -670,6 +670,7 @@ n_Forces = size(ForcesTypes,1);
 Forces.NSpring = 0;
 Forces.NTSpring = 0;
 Forces.NDamper = 0;
+Forces.NActuator = 0;
 
 ForceFunction = [];
 
@@ -691,6 +692,10 @@ end
 if strcmp(ForcesType,'Damper')
     Forces.NDamper = Forces.NDamper + 1;
     [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,Forces.NDamper,Bodies,ForceFunction);
+end
+if strcmp(ForcesType,'Actuator')
+    Forces.NActuator = Forces.NActuator + 1;
+    [Forces,ForceFunction] = ProcessActuator(Forces,ForcesRaw,Forces.NActuator,Bodies,ForceFunction);
 end
 end
 
@@ -810,6 +815,31 @@ Forces.Damper(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 Forces.Damper(ForcesCount).Noffun = ForcesInterval(1);
 Forces.Damper(ForcesCount).Intmin = ForcesInterval(2);
 Forces.Damper(ForcesCount).Intmax = ForcesInterval(3);
+end
+
+function [Forces,ForceFunction] = ProcessActuator(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
+ForcesInfo = cell2mat(ForcesRaw(1,1:8));
+ForceFunction.Actuator(ForcesCount).Function = ForcesRaw{1,9};
+Forces.Actuator(ForcesCount).Body1 = ForcesInfo(1);
+Forces.Actuator(ForcesCount).Body2 = ForcesInfo(2);
+% Pass body numbers to easier to use variables
+i = Forces.Damper(ForcesCount).Body1;
+j = Forces.Damper(ForcesCount).Body2;
+% Location of joint center in fixed reference
+spi = Impose_Column(ForcesInfo(3:5));
+spj = Impose_Column(ForcesInfo(6:8));
+% Get euler parameter for each body frame
+pi = Bodies(i).p;
+pj = Bodies(j).p;
+% Transform joint location on fixed reference to the bodies' local
+% reference
+spig = spi - Bodies(i).r;
+spi = EarthtoBody(spig,pi);
+spjg = spj - Bodies(j).r;
+spj = EarthtoBody(spjg,pj);
+% Save the joint location in each bodies' reference
+Forces.Actuator(ForcesCount).spi = spi;
+Forces.Actuator(ForcesCount).spj = spj;
 end
 
 function [GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename)
