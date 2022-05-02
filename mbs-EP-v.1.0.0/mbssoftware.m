@@ -28,7 +28,7 @@
 clc
 addpath(genpath(pwd))
 clearvars %clear all decreases code performance
-addpath('Data Structure Management Functions','Joints and Constraints','Kinematic Analysis','Dynamic Analysis','Auxiliary Functions','Excel Files','Force Elements','Post Processing Parameters Functions');
+addpath('Data Structure Management Functions','Joints and Constraints','Kinematic Analysis','Dynamic Analysis','Auxiliary Functions','Excel Files','Force Elements','Post Processing');
 JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','Translation','SphRev','TraRev','Ground','Driver','Simple','Points'};
 ForcesTypes = {'Spring','TSpring','Damper'};
 
