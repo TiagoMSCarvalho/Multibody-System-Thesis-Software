@@ -22,6 +22,6 @@ function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,
     [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType);
     [Bodies] = AccelerationPreDataTreat(qd,NBodies,Bodies);
     [Bodies,acc] = Acceleration_Analysis(Jacobian,Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType);
-    [Points,it] = KinDataStorage(Points,Bodies,Joints,vel,acc,it);
+    [CoM,Points,it] = KinDataStorage(CoM,Points,NBodies,Bodies,Joints,vel,acc,it);
 
 end

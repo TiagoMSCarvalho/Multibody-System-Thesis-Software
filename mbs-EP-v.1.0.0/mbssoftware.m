@@ -54,7 +54,7 @@ it = 1;
 %% Solvers
 if strcmp(SimType,"Kin") == 1
 % Storage of the first values for the Kinematic Analysis
-    [Points,it] = KinDataStorage(Points,Bodies,Joints,[],[],it);    
+    [CoM,Points,it] = KinDataStorage(CoM,Points,NBodies,Bodies,Joints,[],[],it);    
 %% Kinematic Solver    
 % Fsolve Opts (Justification is Found in The Mendeley) - Kin
     opts=optimoptions('fsolve');
@@ -68,7 +68,7 @@ if strcmp(SimType,"Kin") == 1
     
  % Calcs (t in seconds) 
     for t=tini:TimeStep:RunTime
-        [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType);
+        [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType,CoM);
     end
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
