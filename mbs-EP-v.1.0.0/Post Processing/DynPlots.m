@@ -3,13 +3,13 @@ function [] = DynPlots(GraphicsType,BodiesGraph,JointsGraph,RunTime,TimeStep,CoM
 %simulation.
 
 %% Inputs Treatment
-posgraph = GraphicsType.posgraph;
-travelgraph = GraphicsType.travelgraph;
-angvelgraph = GraphicsType.angvelgraph;
-traaccelgraph = GraphicsType.traaccelgraph;
-angaccelgraph = GraphicsType.angaccelgraph;
-comgraph = GraphicsType.comgraph;
-pointsgraph = GraphicsType.pointsgraph;
+posgraph = GraphicsType.posgraph{1,1};
+travelgraph = GraphicsType.travelgraph{1,1};
+angvelgraph = GraphicsType.angvelgraph{1,1};
+traaccelgraph = GraphicsType.traaccelgraph{1,1};
+angaccelgraph = GraphicsType.angaccelgraph{1,1};
+comgraph = GraphicsType.comgraph{1,1};
+pointsgraph = GraphicsType.pointsgraph{1,1};
 a = size(CoM,2);
 b = size(BodiesGraph,1);
 c = size(Points,2);
@@ -45,25 +45,29 @@ if strcmp(comgraph,'Yes') == 1 || strcmp(comgraph,'yes') == 1 || strcmp(comgraph
                     xpos(1,j) = pos(1,1);
                     ypos(1,j) = pos(2,1);
                     zpos(1,j) = pos(3,1);
-            elseif strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
+            end
+            if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
                     %Translational Velocity Info
                     travel = CoM{1,j}(nbod).TraVel;
                     xvel(1,j) = travel(1,1);
                     yvel(1,j) = travel(2,1);
                     zvel(1,j) = travel(3,1);
-            elseif strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
+            end
+            if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
                     %Angular Velocity Info
                     angvel = CoM{1,j}(nbod).AngVel;
                     wxvel(1,j) = angvel(1,1);
                     wyvel(1,j) = angvel(2,1);
                     wzvel(1,j) = angvel(3,1);
-            elseif strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
+            end
+            if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
                     %Translational Acceleration Info
                     traaccel = CoM{1,j}(nbod).TraAccel;
                     xaccel(1,j) = traaccel(1,1);
                     yaccel(1,j) = traaccel(2,1);
                     zaccel(1,j) = traaccel(3,1);
-            elseif strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
+            end
+            if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
                     angaccel = CoM{1,j}(nbod).AngAccel;
                     wxaccel(1,j) = angaccel(1,1);
                     wyaccel(1,j) = angaccel(2,1);
@@ -74,88 +78,97 @@ if strcmp(comgraph,'Yes') == 1 || strcmp(comgraph,'yes') == 1 || strcmp(comgraph
         %% Lines of Code Responsible for the Plots
         if strcmp(posgraph,'Yes') == 1 || strcmp(posgraph,'yes') == 1
             % Position Plots
-            figure('Name','Positions','NumberTitle','off');
+            str = 'CoM:Position Body ' + string(nbod);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,xpos,'r');
-            title('Position in x');
+            title('CoM Position in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,ypos,'b');
-            title('Position in y');
+            title('CoM Position in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zpos,'k');
-            title('Position in z');
+            title('CoM Position in z');
+        end
 
-        elseif strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
+        if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
             % Translational Velocity Plots
-            figure('Name','Translational Velocities','NumberTitle','off');
+            str = 'CoM:Translational Velocities ' + string(nbod);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
-            plot(xavisvec,xvel,'r');
-            title('Velocity in x');
+            plot(xaxisvec,xvel,'r');
+            title('CoM Velocity in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,yvel,'b');
-            title('Velocity in y');
+            title('CoM Velocity in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zvel,'k');
-            title('Velocity in z');
-        elseif strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
+            title('CoM Velocity in z');
+        end
+        if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
             % Angular Velocity Plots
-            figure('Name','Angular Velocities','NumberTitle','off');
+            str = 'CoM:Angular Velocities ' + string(nbod);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,wxvel,'r');
-            title('Angular Velocity in x');
+            title('CoM Angular Velocity in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,wyvel,'b');
-            title('Angular Velocity in y');
+            title('CoM Angular Velocity in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,wzvel,'k');
-            title('Angular Velocity in z');
+            title('CoM Angular Velocity in z');
+        end
 
-        elseif strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
+        if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
             % Translational Acceleration Plots
-            figure('Name','Translational Accelerations','NumberTitle','off');
+            str = 'CoM:Translational Accelerations ' + string(nbod);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,xaccel,'r');
-            title('Acceleration in x')
+            title('CoM Acceleration in x')
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,yaccel,'b');
-            title('Acceleration in y')
+            title('CoM Acceleration in y')
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zaccel,'k');
-            title('Acceleration in z')
-        elseif strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
+            title('CoM Acceleration in z')
+        end
+        if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
             % Angular Acceleration Plots
-            figure('Name','Angular Accelerations','NumberTitle','off');
+            str = 'CoM:Angular Accelerations ' + string(nbod);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,wxaccel,'r');
-            title('Angular Acceleration in x')
+            title('CoM Angular Acceleration in x')
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,wyaccel,'b');
-            title('Angular Acceleration in y')
+            title('CoM Angular Acceleration in y')
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,wzaccel,'k');
-            title('Angular Acceleration in z')
+            title('CoM Angular Acceleration in z')
         end     
     end
 %% Plots Points Info    
 elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcmp(pointsgraph,'YES') == 1
     %% Plots Points Information
     for i = 1:c
-        nbod = JointsGraph{i,1};
+        npoint = JointsGraph{i,1};
         %% Pre Allocation of Vectors.
         xpos = zeros(1,a);
         ypos = zeros(1,a);
@@ -181,25 +194,29 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
                     xpos(1,j) = pos(1,1);
                     ypos(1,j) = pos(2,1);
                     zpos(1,j) = pos(3,1);
-            elseif strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
+            end
+            if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
                     %Translational Velocity Info
                     travel = Points{1,j}(nbod).TraVel;
                     xvel(1,j) = travel(1,1);
                     yvel(1,j) = travel(2,1);
                     zvel(1,j) = travel(3,1);
-            elseif strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
+            end
+            if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
                     %Angular Velocity Info
                     angvel = Points{1,j}(nbod).AngVel;
                     wxvel(1,j) = angvel(1,1);
                     wyvel(1,j) = angvel(2,1);
                     wzvel(1,j) = angvel(3,1);
-            elseif strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
+            end
+            if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
                     %Translational Acceleration Info
                     traaccel = Points{1,j}(nbod).TraAccel;
                     xaccel(1,j) = traaccel(1,1);
                     yaccel(1,j) = traaccel(2,1);
                     zaccel(1,j) = traaccel(3,1);
-            elseif strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
+            end
+            if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
                     angaccel = Points{1,j}(nbod).AngAccel;
                     wxaccel(1,j) = angaccel(1,1);
                     wyaccel(1,j) = angaccel(2,1);
@@ -210,81 +227,89 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
         %% Lines of Code Responsible for the Plots
         if strcmp(posgraph,'Yes') == 1 || strcmp(posgraph,'yes') == 1
             % Position Plots
-            figure('Name','Points Positions','NumberTitle','off');
+            str = 'Points:Position Point ' + str(npoint);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,xpos,'r');
-            title('Position in x');
+            title('Point Position in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,ypos,'b');
-            title('Position in y');
+            title('Point Position in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zpos,'k');
-            title('Position in z');
+            title('Point Position in z');
+        end
 
-        elseif strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
+        if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
             % Translational Velocity Plots
-            figure('Name','Points Translational Velocities','NumberTitle','off');
+            str = 'Points:Translational Velocity Point ' + str(npoint);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xavisvec,xvel,'r');
-            title('Velocity in x');
+            title('Point Velocity in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,yvel,'b');
-            title('Velocity in y');
+            title('Point Velocity in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zvel,'k');
-            title('Velocity in z');
-        elseif strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
+            title('Point Velocity in z');
+        end
+        if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
             % Angular Velocity Plots
-            figure('Name','Points Angular Velocities','NumberTitle','off');
+            str = 'Points:Angular Velocity Point ' + str(npoint);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,wxvel,'r');
-            title('Angular Velocity in x');
+            title('Point Angular Velocity in x');
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,wyvel,'b');
-            title('Angular Velocity in y');
+            title('Point Angular Velocity in y');
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,wzvel,'k');
-            title('Angular Velocity in z');
-
-        elseif strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
+            title('Point Angular Velocity in z');
+        end
+        if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
             % Translational Acceleration Plots
-            figure('Name','Points Translational Accelerations','NumberTitle','off');
+            str = 'Points:Translational Acceleration Point ' + str(npoint);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,xaccel,'r');
-            title('Acceleration in x')
+            title('Point Acceleration in x')
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,yaccel,'b');
-            title('Acceleration in y')
+            title('Point Acceleration in y')
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,zaccel,'k');
-            title('Acceleration in z')
-        elseif strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
+            title('Point Acceleration in z')
+        end
+        if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
             % Angular Acceleration Plots
-            figure('Name','Points Angular Accelerations','NumberTitle','off');
+            str = 'Points:Angular Acceleration Point ' + str(npoint);
+            figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
             plot(xaxisvec,wxaccel,'r');
-            title('Angular Acceleration in x')
+            title('Point Angular Acceleration in x')
             subplot(3,1,2)
             axis auto
             plot(xaxisvec,wyaccel,'b');
-            title('Angular Acceleration in y')
+            title('Point Angular Acceleration in y')
             subplot(3,1,3)
             axis auto
             plot(xaxisvec,wzaccel,'k');
-            title('Angular Acceleration in z')
+            title('Point Angular Acceleration in z')
         end     
     end   
 end

@@ -846,7 +846,7 @@ function [GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename)
 
 [~,~,posgraph] = xlsread(filename,'SimParam','D13');
 [~,~,travelgraph] = xlsread(filename,'SimParam','D14');
-[~,~,angvelgraph] = xlsread(filname,'SimParam','D15');
+[~,~,angvelgraph] = xlsread(filename,'SimParam','D15');
 [~,~,traaccelgraph] = xlsread(filename,'SimParam','D16');
 [~,~,angaccelgraph] = xlsread(filename,'SimParam','D17');
 [~,~,comgraph] = xlsread(filename,'SimParam','D18');
