@@ -39,7 +39,7 @@ filename = 'template_mbs';
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
 Points = [];
 CoM = [];
-[Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
+[Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction,GraphicsType,BodiesGraph,JointsGraph] = PreDataProcessing(filename,JointTypes,ForcesTypes); %reads the excel file
 NBodies = length(Bodies);
 clc
 
@@ -80,7 +80,5 @@ elseif strcmp(SimType,"Dyn") == 1
         [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction);
     end
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
-end
-
-
-    
+    DynPlots(GraphicsType,BodiesGraph,JointsGraph,RunTime,TimeStep,CoM,Points);
+end    

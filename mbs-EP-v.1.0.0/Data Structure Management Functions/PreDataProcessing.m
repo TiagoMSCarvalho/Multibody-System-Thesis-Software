@@ -10,13 +10,14 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction] = PreDataProcessing(filename,JointTypes,ForcesTypes)
+function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction,GraphicsType,BodiesGraph,JointsGraph] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
     [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies);
 end
+[GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename);
 end
 %% Simulation Parameters
 function [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename)%for the coordinate transf.
@@ -809,4 +810,48 @@ Forces.Damper(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 Forces.Damper(ForcesCount).Noffun = ForcesInterval(1);
 Forces.Damper(ForcesCount).Intmin = ForcesInterval(2);
 Forces.Damper(ForcesCount).Intmax = ForcesInterval(3);
+end
+
+function [GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename)
+
+[~,~,posgraph] = xlsread(filename,'SimParam','D13');
+[~,~,travelgraph] = xlsread(filename,'SimParam','D14');
+[~,~,angvelgraph] = xlsread(filname,'SimParam','D15');
+[~,~,traaccelgraph] = xlsread(filename,'SimParam','D16');
+[~,~,angaccelgraph] = xlsread(filename,'SimParam','D17');
+[~,~,comgraph] = xlsread(filename,'SimParam','D18');
+[~,~,pointsgraph] = xlsread(filename,'SimParam','D19');
+[~,~,rawbodiesg] = xlsread(filename,'SimParam','D20:D100');
+[~,~,rawjointsg] = xlsread(filename,'SimParam','H20:H100');
+
+GraphicsType.posgraph = posgraph;
+GraphicsType.travelgraph = travelgraph;
+GraphicsType.angvelgraph = angvelgraph;
+GraphicsType.traaccelgraph = traaccelgraph;
+GraphicsType.angaccelgraph = angaccelgraph;
+GraphicsType.comgraph = comgraph;
+GraphicsType.pointsgraph = pointsgraph;
+
+relevant_lines_bodiesg = [];
+for i=1:size(rawbodiesg,1) %Number of Lines of raw
+    if isnumeric(rawbodiesg{i,1})
+        if ~isnan(rawbodiesg{i,1}) %Not Nan -> 1 if it is not empty, it is 0 for strings
+            relevant_lines_bodiesg = [relevant_lines_bodiesg,i]; %Stores that data line in this vector
+        end
+    end
+end
+
+BodiesGraph = rawbodiesg(relevant_lines_bodiesg,1);
+
+relevant_lines_jointsg = [];
+for i=1:size(rawjointsg,1) %Number of Lines of raw
+    if isnumeric(rawjointsg{i,1})
+        if ~isnan(rawjointsg{i,1}) %Not Nan -> 1 if it is not empty, it is 0 for strings
+            relevant_lines_jointsg = [relevant_lines_jointsg,i]; %Stores that data line in this vector
+        end
+    end
+end
+
+JointsGraph = rawjointsg(relevant_lines_jointsg,1);
+
 end

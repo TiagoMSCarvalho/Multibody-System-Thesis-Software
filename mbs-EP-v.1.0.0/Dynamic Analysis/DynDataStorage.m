@@ -4,23 +4,13 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
     %% Creates a struct name Data to Store
     DataP = struct([]);
     DataC = struct([]);
-    comvel = []; %Center of Mass Velocity
-    comacc = []; %Center of Mass Acceleration
-    poivel = []; %Points of Interest Velocity
-    poiacc = []; %Points of Interest Acceleration
     %% Storage of the Center of Mass Data
     for k = 1:NBodies
-        i1 = 6*(k-1)+1;
         DataC(k).Position = Bodies(k).r;
-        comvel(i1:i1+2,1) = Bodies(k).rd;
-        comvel(i1+3:i1+5,1) = Bodies(k).w;
-        comacc(i1:i1+2,1) = Bodies(k).rdd;
-        comacc(i1+3:i1+5,1) = Bodies(k).wd;
-    end
-    [a,~] = size(comvel);
-    for j = 1:a
-        DataC(j).Velocity = comvel(j);
-        DataC(j).Acceleration = comacc(j);
+        DataC(k).TraVel = Bodies(k).rd;
+        DataC(k).AngVel = Bodies(k).w;
+        DataC(k).TraAccel = Bodies(k).rdd;
+        DataC(k).AngAccel = Bodies(k).wd;
     end
     %% Storage of the Joints Data
     % Storage of the velocity values in a vector
@@ -45,26 +35,23 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
         rd = Impose_Column(vel(i1:i1+2));
         w = Impose_Column(vel(i1+3:i1+5));
         rdp = rd + cross(w,spi_earth);
-        poivel(i1:i1+2,1) = Impose_Column(rdp);
-        poivel(i1+3:i1+5,1) = w;
+        poivel = Impose_Column(rdp);
+        % Velocity Storage
+        DataP(k).TraVel = poivel;
+        DataP(k).AngVel = w;
         %% Acceleration Calculus
         rdd = Impose_Column(acc(i1:i1+2));
         wd = Impose_Column(acc(i1+3:i1+5));
         cwr = cross(w,spi_earth);
         rddp = rdd + cross(wd,spi_earth) + cross(w,cwr);
-        poiacc(i1:i1+2,1) = Impose_Column(rddp);
-        poiacc(i1+3:i1+5,1) = wd;
+        poiacc = Impose_Column(rddp);
+        DataP(k).TraAccel = poiacc;
+        DataP(k).AngAccel = wd;
+        % Acceleration Storage
     end
-    if Joints.NPoint ~= 0
-        [b,~] = size(acc);
-        for j = 1:b
-            DataP(j).Velocity = poivel(j);
-            DataP(j).Acceleration = poiacc(j);
-        end    
-        %% Stores said data struct in a cell array per number of iteration
-        Points{1,it} = DataP;
-    end
+%% Storage of the Previous Data correspondent for each iteration
     CoM{1,it} = DataC;
+    Points{1,it} = DataP;
     it = it+1;
 end
 
