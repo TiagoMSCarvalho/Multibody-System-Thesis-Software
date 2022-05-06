@@ -97,7 +97,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     augmass = [massmatrix,-Jacobian';Jacobian,zeros(a,a)];
 %% Solving the Initial Acceleration Problem System
     %Solvin the Linear Problem
-    iapsol = augmass\rhs;
+    %iapsol = pinv(augmass)*rhs; %acrescentar condição com \
+    iapsol = pinv(augmass)*rhs;
     %Allocating the solution to its respective vectors
     i1 = 6*NBodies;
     i2 = 6*NBodies + size(Jacobian,1);

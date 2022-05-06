@@ -29,10 +29,13 @@ swj = SkewMatrix3(wj);
 % Derivatives of the global spi and spj
 spid = Ai*swi*spi;
 spjd = Aj*swj*spj;
+%Skew spi and spj
+sspi = SkewMatrix3(spig);
+sspj = SkewMatrix3(spjg);
 
 %% Vector Calculus and formulation
 % Displacement and Delta Calculus
-displacement = rj + spjg -ri - spig;
+displacement = rj + spjg - ri - spig;    
 % Displacement derivative
 ddisp = rdj + spjd - rdi - spid;
 % Force Direction Vector

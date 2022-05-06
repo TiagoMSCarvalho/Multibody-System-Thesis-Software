@@ -51,7 +51,9 @@ qi = Ai'*qig;
 sqi = SkewMatrix4(qi);
 
 % 2 non-colinear vector that are perpendicular to the vector si
-[qj,~] = PerpendicularVectors(sj);
+%[qj,~] = PerpendicularVectors(sj);
+[~,ui] = unitvector(qi);
+qj = cross(ui,sj);
 %Perpendicular vectors in the global frame
 %Body j
 qjg = Aj*qj;

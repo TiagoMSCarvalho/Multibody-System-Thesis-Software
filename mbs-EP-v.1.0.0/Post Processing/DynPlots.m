@@ -1,4 +1,4 @@
-function [] = DynPlots(GraphicsType,BodiesGraph,JointsGraph,RunTime,TimeStep,CoM,Points)
+function [] = DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points)
 %This function is responsible for plotting the graphics for the dynamic
 %simulation.
 
@@ -13,6 +13,7 @@ pointsgraph = GraphicsType.pointsgraph{1,1};
 a = size(CoM,2);
 b = size(BodiesGraph,1);
 c = size(Points,2);
+d = size(PointsGraph,2);
 xaxisvec = 0:TimeStep:RunTime;
 
 %% Retrieval and Plot information
@@ -167,57 +168,57 @@ if strcmp(comgraph,'Yes') == 1 || strcmp(comgraph,'yes') == 1 || strcmp(comgraph
 %% Plots Points Info    
 elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcmp(pointsgraph,'YES') == 1
     %% Plots Points Information
-    for i = 1:c
-        npoint = JointsGraph{i,1};
+    for i = 1:d
+        npoint = PointsGraph{i,1};
         %% Pre Allocation of Vectors.
-        xpos = zeros(1,a);
-        ypos = zeros(1,a);
-        zpos = zeros(1,a);
-        xvel = zeros(1,a);
-        yvel = zeros(1,a);
-        zvel = zeros(1,a);
-        wxvel = zeros(1,a);
-        wyvel = zeros(1,a);
-        wzvel = zeros(1,a);
-        xaccel = zeros(1,a);
-        yaccel = zeros(1,a);
-        zaccel = zeros(1,a);
-        wxaccel = zeros(1,a);
-        wyaccel = zeros(1,a);
-        wzaccel = zeros(1,a);
+        xpos = zeros(1,c);
+        ypos = zeros(1,c);
+        zpos = zeros(1,c);
+        xvel = zeros(1,c);
+        yvel = zeros(1,c);
+        zvel = zeros(1,c);
+        wxvel = zeros(1,c);
+        wyvel = zeros(1,c);
+        wzvel = zeros(1,c);
+        xaccel = zeros(1,c);
+        yaccel = zeros(1,c);
+        zaccel = zeros(1,c);
+        wxaccel = zeros(1,c);
+        wyaccel = zeros(1,c);
+        wzaccel = zeros(1,c);
 
         %% Retrieving the plot y axis from the data cell structs
-        for j = 1:a
+        for j = 1:c
             if strcmp(posgraph,'Yes') == 1 || strcmp(posgraph,'yes') == 1
                     %Position Info
-                    pos = Points{1,j}(nbod).Position;
+                    pos = Points{1,j}(npoint).Position;
                     xpos(1,j) = pos(1,1);
                     ypos(1,j) = pos(2,1);
                     zpos(1,j) = pos(3,1);
             end
             if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
                     %Translational Velocity Info
-                    travel = Points{1,j}(nbod).TraVel;
+                    travel = Points{1,j}(npoint).TraVel;
                     xvel(1,j) = travel(1,1);
                     yvel(1,j) = travel(2,1);
                     zvel(1,j) = travel(3,1);
             end
             if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
                     %Angular Velocity Info
-                    angvel = Points{1,j}(nbod).AngVel;
+                    angvel = Points{1,j}(npoint).AngVel;
                     wxvel(1,j) = angvel(1,1);
                     wyvel(1,j) = angvel(2,1);
                     wzvel(1,j) = angvel(3,1);
             end
             if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
                     %Translational Acceleration Info
-                    traaccel = Points{1,j}(nbod).TraAccel;
+                    traaccel = Points{1,j}(npoint).TraAccel;
                     xaccel(1,j) = traaccel(1,1);
                     yaccel(1,j) = traaccel(2,1);
                     zaccel(1,j) = traaccel(3,1);
             end
             if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
-                    angaccel = Points{1,j}(nbod).AngAccel;
+                    angaccel = Points{1,j}(npoint).AngAccel;
                     wxaccel(1,j) = angaccel(1,1);
                     wyaccel(1,j) = angaccel(2,1);
                     wzaccel(1,j) = angaccel(3,1);
@@ -227,7 +228,7 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
         %% Lines of Code Responsible for the Plots
         if strcmp(posgraph,'Yes') == 1 || strcmp(posgraph,'yes') == 1
             % Position Plots
-            str = 'Points:Position Point ' + str(npoint);
+            str = 'Points:Position Point ' + string(npoint);
             figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
@@ -245,7 +246,7 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
 
         if strcmp(travelgraph,'Yes') == 1 || strcmp(travelgraph,'yes') == 1
             % Translational Velocity Plots
-            str = 'Points:Translational Velocity Point ' + str(npoint);
+            str = 'Points:Translational Velocity Point ' + string(npoint);
             figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
@@ -262,7 +263,7 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
         end
         if strcmp(angvelgraph,'Yes') == 1 || strcmp(angvelgraph,'yes') == 1
             % Angular Velocity Plots
-            str = 'Points:Angular Velocity Point ' + str(npoint);
+            str = 'Points:Angular Velocity Point ' + string(npoint);
             figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
@@ -279,7 +280,7 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
         end
         if strcmp(traaccelgraph,'Yes') == 1 || strcmp(traaccelgraph,'yes') == 1
             % Translational Acceleration Plots
-            str = 'Points:Translational Acceleration Point ' + str(npoint);
+            str = 'Points:Translational Acceleration Point ' + string(npoint);
             figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto
@@ -296,7 +297,7 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
         end
         if strcmp(angaccelgraph,'Yes') == 1 || strcmp(angaccelgraph,'yes') == 1
             % Angular Acceleration Plots
-            str = 'Points:Angular Acceleration Point ' + str(npoint);
+            str = 'Points:Angular Acceleration Point ' + string(npoint);
             figure('Name',str,'NumberTitle','off');
             subplot(3,1,1)
             axis auto

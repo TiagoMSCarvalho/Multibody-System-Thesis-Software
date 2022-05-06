@@ -10,14 +10,14 @@
 % For the Bodies, for now, the information is Body Name and the Joints in
 % which the Bodies are involved (number of joint)
 %% Main function caller
-function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction,GraphicsType,BodiesGraph,JointsGraph] = PreDataProcessing(filename,JointTypes,ForcesTypes)
+function [Bodies,Joints,Forces,SimParam,Grav,UnitsSystem,debugdata,ang,driverfunctions,dynfunc,ForceFunction,GraphicsType,BodiesGraph,PointsGraph] = PreDataProcessing(filename,JointTypes,ForcesTypes)
 [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename);%reads the number of time iterations and motions
 [Bodies,~,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimType);
 [Joints,driverfunctions] = ReadJointsInfo(filename,Bodies);
 if strcmp(SimType,"Dyn") == 1
     [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies);
 end
-[GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename);
+[GraphicsType,BodiesGraph,PointsGraph] = ReadGraphicsInfo(filename);
 end
 %% Simulation Parameters
 function [SimParam,SimType,Grav,UnitsSystem] = SimulationInfo(filename)%for the coordinate transf.
@@ -650,7 +650,7 @@ end
 
 function [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies)
 
-[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:R100');
+[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:S100');
 relevant_lines_forces = [];
 for i = 1:size(rawforces,1)
     if isnumeric(rawforces{i,4})
@@ -663,7 +663,7 @@ end
 ForcesTypes = rawforces(relevant_lines_forces,2); 
 %cell2mat was deleted, it will be done within the processing functions to
 %allow the processing of the nonlinear function.
-ForcesRaw = rawforces(relevant_lines_forces,4:18);
+ForcesRaw = rawforces(relevant_lines_forces,4:19);
 n_Forces = size(ForcesTypes,1);
 
 % Initialize the force joint type at 0.
@@ -700,11 +700,11 @@ end
 end
 
 function [Forces,ForceFunction] = ProcessSpring(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
-ForcesInfo = cell2mat(ForcesRaw(1,1:9));
-ForceFunction.Spring(ForcesCount).Function1 = ForcesRaw{1,10};
-ForceFunction.Spring(ForcesCount).Function2 = ForcesRaw{1,11};
-ForceFunction.Spring(ForcesCount).Function3 = ForcesRaw{1,12};
-ForcesInterval = cell2mat(ForcesRaw(1,13:15));
+ForcesInfo = cell2mat(ForcesRaw(1,1:10));
+ForceFunction.Spring(ForcesCount).Function1 = ForcesRaw{1,11};
+ForceFunction.Spring(ForcesCount).Function2 = ForcesRaw{1,12};
+ForceFunction.Spring(ForcesCount).Function3 = ForcesRaw{1,13};
+ForcesInterval = cell2mat(ForcesRaw(1,14:16));
 Forces.Spring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Spring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -725,8 +725,10 @@ spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Spring(ForcesCount).spi = spi;
 Forces.Spring(ForcesCount).spj = spj;
+%Save Null Length
+Forces.Spring(ForcesCount).NullLength = ForcesInfo(9);
 %Save Constant
-Forces.Spring(ForcesCount).Constant = ForcesInfo(9);
+Forces.Spring(ForcesCount).Constant = ForcesInfo(10);
 %% Initial Displacement
 % Bodies numbers
 i = Forces.Spring(ForcesCount).Body1;
@@ -842,7 +844,7 @@ Forces.Actuator(ForcesCount).spi = spi;
 Forces.Actuator(ForcesCount).spj = spj;
 end
 
-function [GraphicsType,BodiesGraph,JointsGraph] = ReadGraphicsInfo(filename)
+function [GraphicsType,BodiesGraph,PointsGraph] = ReadGraphicsInfo(filename)
 
 [~,~,posgraph] = xlsread(filename,'SimParam','D13');
 [~,~,travelgraph] = xlsread(filename,'SimParam','D14');
@@ -882,6 +884,6 @@ for i=1:size(rawjointsg,1) %Number of Lines of raw
     end
 end
 
-JointsGraph = rawjointsg(relevant_lines_jointsg,1);
+PointsGraph = rawjointsg(relevant_lines_jointsg,1);
 
 end

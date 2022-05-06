@@ -3,7 +3,11 @@
 %acceleration
 %Pre Allocation of the Vectors
 vectorg = zeros(6*NBodies,1);
-forceel = zeros(6*NBodies,1);
+forceel1 = zeros(6*NBodies,1);
+forceel2 = zeros(6*NBodies,1);
+forceel3 = zeros(6*NBodies,1);
+forceel4 = zeros(6*NBodies,1);
+
 %Allocation of the gravity properties and vector
 gdir = string(Grav.Direction);
 gmag = cell2mat(Grav.Magnitude);
@@ -17,16 +21,16 @@ end
 
 %Calculus of the Force Elements
 for forcescount = 1:Forces.NSpring
-    [forceel] = Force_Spring(forcescount,Bodies,Forces.Spring,ForceFunction);
+    [forceel1] = Force_Spring(forcescount,Bodies,Forces.Spring,ForceFunction);
 end
 for forcescount = 1:Forces.NTSpring
-    [forceel] = Force_TSpring(forcescount,Bodies,Forces.TSpring);
+    [forceel2] = Force_TSpring(forcescount,Bodies,Forces.TSpring);
 end
 for forcescount = 1:Forces.NDamper
-    [forceel] = Force_Damper(forcescount,Bodies,Forces.Damper,ForceFunction);
+    [forceel3] = Force_Damper(forcescount,Bodies,Forces.Damper,ForceFunction);
 end
 for forcescount = 1:Forces.NActuator
-    [forceel] = Force_Actuator(forcescount,Bodies,Forces.Actuator,ForceFunction,time);
+    [forceel4] = Force_Actuator(forcescount,Bodies,Forces.Actuator,ForceFunction,time);
 end
 %Allocation of the forces to the bodies and calculus of: swJw and weight
 for i = 1:NBodies
@@ -99,7 +103,7 @@ for i = 1:NBodies
     end
 end
 
-vectorg = vectorg + forceel;
+vectorg = vectorg + forceel1 + forceel2 + forceel3 + forceel4;
 
 end
 

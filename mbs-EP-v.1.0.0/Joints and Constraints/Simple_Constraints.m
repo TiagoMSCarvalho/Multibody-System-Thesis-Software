@@ -69,7 +69,7 @@ end
 if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     i1 = 6*(i-1)+1;
     i2  = i1+5;
-    Jacobian(funCount,i1:i2)=[0,0,0,0,0,0,0];
+    Jacobian(funCount,i1:i2)=[0,0,0,0,0,0];
     Jacobian(funCount,i1+direction-1)=1;
 end
 
