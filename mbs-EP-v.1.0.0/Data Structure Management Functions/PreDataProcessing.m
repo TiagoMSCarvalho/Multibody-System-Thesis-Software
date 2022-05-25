@@ -130,8 +130,8 @@ function A = AxisVectorsAmatrix(i,Point_along_x,Point_along_y,Origin)
         x_norm = v1norm; %Attribuition of the x axis.
         
         %Determination of the y axis (perpendicular to z)
-        y_vector = coss(x_norm,z_norm);
-        y_norm = y_vector/norm(y_vector);
+        y_vector = v2norm;%coss(x_norm,z_norm);
+        y_norm = v2norm;%y_vector/norm(y_vector);
         
         x = y_norm(1);
         y = y_norm(2);

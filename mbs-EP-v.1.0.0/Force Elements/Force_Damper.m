@@ -1,5 +1,7 @@
-function [forceel] = Force_Damper(forcescount,Bodies,Damper,ForceFunction)
+function [forceel3] = Force_Damper(forcescount,NBodies,Bodies,Damper,ForceFunction,forceel3)
 %% Initial variable definitions
+%forceel
+forceel = zeros(6*NBodies,1);
 % Bodies numbers
 i = Damper(forcescount).Body1;
 j = Damper(forcescount).Body2;
@@ -91,4 +93,6 @@ forceel(i1+3:i1+5,1) = momenti;
 i2 = 6*(j-1)+1;
 forceel(i2:i2+2,1) = forcej;
 forceel(i2+3:i2+5,1) = momentj;
+%Add to the existing vector
+forceel3 = forceel3 + forceel;
 end

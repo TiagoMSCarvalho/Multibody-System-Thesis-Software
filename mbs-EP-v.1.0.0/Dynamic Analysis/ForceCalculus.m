@@ -21,16 +21,16 @@ end
 
 %Calculus of the Force Elements
 for forcescount = 1:Forces.NSpring
-    [forceel1] = Force_Spring(forcescount,Bodies,Forces.Spring,ForceFunction);
+    [forceel1] = Force_Spring(forcescount,NBodies,Bodies,Forces.Spring,ForceFunction,forceel1);
 end
 for forcescount = 1:Forces.NTSpring
-    [forceel2] = Force_TSpring(forcescount,Bodies,Forces.TSpring);
+    [forceel2] = Force_TSpring(forcescount,NBodies,Bodies,Forces.TSpring,forceel2);
 end
 for forcescount = 1:Forces.NDamper
-    [forceel3] = Force_Damper(forcescount,Bodies,Forces.Damper,ForceFunction);
+    [forceel3] = Force_Damper(forcescount,NBodies,Bodies,Forces.Damper,ForceFunction,forceel3);
 end
 for forcescount = 1:Forces.NActuator
-    [forceel4] = Force_Actuator(forcescount,Bodies,Forces.Actuator,ForceFunction,time);
+    [forceel4] = Force_Actuator(forcescount,NBodies,Bodies,Forces.Actuator,ForceFunction,time,forceel4);
 end
 %Allocation of the forces to the bodies and calculus of: swJw and weight
 for i = 1:NBodies
@@ -57,7 +57,8 @@ for i = 1:NBodies
             end
         elseif ischar(cellforce{1,j1})
             inputfunc = convertCharsToStrings(cellforce{1,j1});
-            inputfunc = str2func(inputfunc);            
+            inputfunc = str2func(inputfunc); 
+            sym t;
             if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                 forcevec(1,j1) = inputfunc(time)*10^3;
             elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
@@ -78,6 +79,7 @@ for i = 1:NBodies
         elseif ischar(celltorque{1,j2})
             inputfunc = convertCharsToStrings(celltorque{1,j2});
             inputfunc = str2func(inputfunc);
+            sym t;
             if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                 forcetor(1,j2) = inputfunc(time)*10^3;
             elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1

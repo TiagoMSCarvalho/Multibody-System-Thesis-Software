@@ -13,7 +13,7 @@
 %    points, then updating their position
 
 
-function [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType)
+function [Bodies,Points,CoM,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType)
 
     %System Constrain check
     [debugdata] = SystemDofCalc(NBodies,Joints,debugdata);

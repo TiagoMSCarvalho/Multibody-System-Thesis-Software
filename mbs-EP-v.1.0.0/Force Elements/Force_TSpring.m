@@ -1,5 +1,7 @@
-function [forceel] = Force_TSpring(forcescount,Bodies,TSpring)
+function [forceel2] = Force_TSpring(forcescount,NBodies,Bodies,TSpring,forceel2)
 %% Initial variable definitions
+%forceel vector
+forceel = zeros(6*NBodies,1);
 %Bodies numbers
 i = TSpring(forcescount).Body1;
 j = TSpring(forcescount).Body2;
@@ -51,5 +53,6 @@ elseif t~=0 %Calculus of the Displacement
     forceel(i2:i2+2,1) = 0;
     forceel(i2+3:i2+5,1) = -torque;    
 end
-
+%Add to the existing vector
+forceel2 = forceel2 + forceel;
 end

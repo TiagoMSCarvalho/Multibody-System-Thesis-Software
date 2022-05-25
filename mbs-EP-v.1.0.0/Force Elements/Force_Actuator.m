@@ -1,5 +1,7 @@
-function [forceel] = Force_Actuator(forcescount,Bodies,Actuator,ForceFunction,time)
+function [forceel4] = Force_Actuator(forcescount,NBodies,Bodies,Actuator,ForceFunction,time,forceel4)
 %% Initial variable definitions
+%forceel
+forceel = zeros(6*NBodies,1);
 % Bodies numbers
 i = Actuator(forcescount).Body1;
 j = Actuator(forcescount).Body2;
@@ -41,4 +43,6 @@ forceel(i1+3:i1+5,1) = momenti;
 i2 = 6*(j-1)+1;
 forceel(i2:i2+2,1) = forcej;
 forceel(i2+3:i2+5,1) = momentj;
+%Add to the existing vector
+forceel4 = forceel4 + forceel; 
 end

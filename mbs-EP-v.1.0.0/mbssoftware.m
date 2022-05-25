@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'mcpherson_2d';
+filename = 'Suspended_ball';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -68,7 +68,7 @@ if strcmp(SimType,"Kin") == 1
     
  % Calcs (t in seconds) 
     for t=tini:TimeStep:RunTime
-        [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType,CoM);
+        [Bodies,Points,CoM,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType,CoM);
     end
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1

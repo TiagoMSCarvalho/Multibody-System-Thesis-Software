@@ -1,5 +1,7 @@
-function [forceel] = Force_Spring(forcescount,Bodies,Spring,ForceFunction)
+function [forceel1] = Force_Spring(forcescount,NBodies,Bodies,Spring,ForceFunction,forceel1)
 %% Initial variable definitions
+%forceel vector
+forceel = zeros(6*NBodies,1);
 % Bodies numbers
 i = Spring(forcescount).Body1;
 j = Spring(forcescount).Body2;
@@ -87,4 +89,6 @@ forceel(i1+3:i1+5,1) = momenti;
 i2 = 6*(j-1)+1;
 forceel(i2:i2+2,1) = forcej;
 forceel(i2+3:i2+5,1) = momentj;
+%Add to the existing vector
+forceel1 = forceel1 + forceel;
 end
