@@ -16,7 +16,7 @@
 function [Bodies,Points,CoM,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions,SimType)
 
     %System Constrain check
-    [debugdata] = SystemDofCalc(NBodies,Joints,debugdata);
+    [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType);
     % Process the input data
     [Bodies] = Position_Analysis(Joints,NBodies,Bodies,t,opts,ang,driverfunctions);
     [Bodies,Jacobian,vel,qd] = Velocity_Analysis(Joints,NBodies,Bodies,debugdata,ang,t,driverfunctions,SimType);

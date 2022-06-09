@@ -48,7 +48,7 @@ it = 1;
 %How to pick the solver!? Justification
 opts=optimoptions('fsolve');
 %opts.PlotFcn='optimplotfval';  
-opts.Algorithm='levenberg-marquardt';
+opts.Algorithm='trust-region-dogleg';
 opts.Diagnostics = 'off';
 opts.Display = 'iter';
 opts.ScaleProblem = 'Jacobian';

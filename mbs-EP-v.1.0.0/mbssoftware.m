@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'Suspended_ball';
+filename = 'mcpherson_2d';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -58,7 +58,7 @@ if strcmp(SimType,"Kin") == 1
 %% Kinematic Solver    
 % Fsolve Opts (Justification is Found in The Mendeley) - Kin
     opts=optimoptions('fsolve');
-    opts.Algorithm='levenberg-marquardt';
+    opts.Algorithm='trust-region-dogleg';
     opts.Diagnostics = 'off';   
     opts.Display = 'iter';
     opts.ScaleProblem = 'Jacobian';

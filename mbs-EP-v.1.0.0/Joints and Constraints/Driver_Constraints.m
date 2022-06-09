@@ -87,7 +87,7 @@ if( Flags.Position == 1)
 end
 
 %% Form the Jacobian Matrix
-if (Flags.Jacobian == 1)
+if (Flags.Jacobian == 1) && (Flags.Dynamic == 0)
     i1 = 7*(i-1)+1;
     i2  = i1+6;
     Jacobian(funCount,i1:i2)=[0,0,0,0,0,0,0];
@@ -99,7 +99,7 @@ if (Flags.Jacobian == 1)
 end
 
 %% Form the r.h.s velocity equations
-if(Flags.Velocity == 1)
+if(Flags.Velocity == 1) 
     der = diff(inputfunc,t);
     dfuncdt = matlabFunction(der);
     if strcmp(functype,'Sinusoidal') == 1
@@ -206,8 +206,8 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     Jacobian(funCount,i1:i2)=[0,0,0,0,0,0];
     Jacobian(funCount,i1+direction-1) = 1;
 end
-
-if(Flags.AccelDyn == 1)
+%mesmo problema que tinha anteriormente
+if(Flags.AccelDyn == 1) && (time ~= 0)
     der  = diff(inputfunc,t);
     dfuncdt = matlabFunction(der);
     if strcmp(functype,'Sinusoidal') == 1

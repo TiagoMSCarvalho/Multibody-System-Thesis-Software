@@ -20,8 +20,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     Flags.AccelDyn = 1;
     funCount = 1;
     Jacobian = [];
-    gamma = zeros(debugdata(1).cdof - NBodies,1);
-    Ctt = zeros(debugdata(1).cdof - NBodies,1);
+    gamma = zeros(debugdata(1).cdof,1);
+    Ctt = zeros(debugdata(1).cdof,1);
 % Assembly of the Jacobian and rhs acceleration vector.
     % For the Ground Constraints
     for jointCount=1:Joints.NGround
@@ -65,7 +65,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     end
     % For the Driving Constraints
     for jointCount=1:Joints.NDriver
-        [~,Jacobian,~,Ctt,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
+        [~,Jacobian,~,Ctt,funCount] = Driver_Constraints([],Jacobian,[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
     end
 
 %% Function Responsible for the Force Vectors    
