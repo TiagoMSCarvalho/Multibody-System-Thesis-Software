@@ -18,7 +18,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
     %% Runga-Kutta Implementation RKAuxFunction, Aux function that feeds the inputs to ode45.
     opts = odeset('RelTol',1e-6,'AbsTol',1e-6);
     rkfunc = @(t,y)RKAuxFunction(DynAcc,NBodies,Bodies);
-    [vt,y] = ode113(rkfunc,[t0,tf],initial,opts);
+    [vt,y] = ode45(rkfunc,[t0,tf],initial,opts);
     [a,~] = size(vt);
     y = Impose_Column(y(a,:));
     %% Direct Correction of the calculated qu and vu
