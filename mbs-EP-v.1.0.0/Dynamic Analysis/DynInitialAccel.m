@@ -67,9 +67,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     for jointCount=1:Joints.NDriver
         [~,Jacobian,~,Ctt,funCount] = Driver_Constraints([],Jacobian,[],Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
     end
-
 %% Function Responsible for the Force Vectors    
-    % Falta fazer o Force_TSpring que depende da atualização das variaveis
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction);
 %% Assemblying the force vector and acceleration vector
     vetorg = Impose_Column(vetorg);
@@ -78,8 +76,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
         Ctt = Impose_Column(Ctt);
         gamma = gamma - Ctt;
     end
-    rhs = [vetorg;gamma];
-    
+    rhs = [vetorg;gamma];    
 %% Augmented Mass Matrix Assembly
     % Mass Matrix
     massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation

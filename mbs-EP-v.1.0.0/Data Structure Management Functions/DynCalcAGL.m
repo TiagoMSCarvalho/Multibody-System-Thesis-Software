@@ -21,6 +21,9 @@ for i=1:NBodies
                     -e2,e3,e0,-e1;
                     -e3,-e2,e1,e0];
     
+    % From Nikravesh Article 1982 L is assumed to be also matrix B and can
+    % be use to write the mass matrix for Euler Parameters.
+    
     Bodies(i).L = [ -e1,e0,e3,-e2;
                     -e2,-e3,e0,e1;
                     -e3,e2,-e1,e0];

@@ -57,7 +57,8 @@ for jointCount=1:Joints.NDriver
 end
 
 deltaq = -(Jacobian'*pinv(Jacobian*Jacobian')*fun);
-%deltaq = -(Jacobian'*inv(Jacobian*Jacobian')*fun); it was replaced due to RCond issues.
+%deltaq= - pinv(Jacobian)*fun;
+%pinv = Jacobian'*(Jacobian*Jacobian')^-1
 qc = qu + deltaq;
 
 end

@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'mcpherson_2d';
+filename = 'flyball_governor';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -72,6 +72,8 @@ if strcmp(SimType,"Kin") == 1
     end
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
+    %Initial Conditions Correction Debug
+    [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType);
     for t = tini:TimeStep:RunTime
     %NOTE: Runga-Kutta will be use to perform the Velocity and Position
     %Analysis then the Direct Correction will be implemented see:
