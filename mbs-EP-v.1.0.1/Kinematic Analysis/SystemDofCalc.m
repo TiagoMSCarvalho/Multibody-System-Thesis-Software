@@ -1,10 +1,10 @@
-function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType)
+function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType,coord)
 %This function calculates the number of DoFs to ensure that the multibody is properly constrained;
     %This function is also responsible for warning the user for an issue
     %with the contrains to facilitate the problem debug.
     %Keep in mind that for Kinematic Analyis the Jacobian matrix must be
     %squared and the odofs result should be 0, (Wichita Thesis)
-    if strcmp(SimType,"Kin") || strcmp(SimType,"kin")
+    if strcmp(SimType,"Kin") || strcmp(SimType,"kin") || coord == 7
         bdof = 7; % Euler Parameters imply 7 coord
         cdof = 7; % Global Reference Constraint
 
@@ -57,7 +57,7 @@ function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType)
         debugdata.tdof = numberofdofs; 
         debugdata.cdof = cdof;
         debugdata.odof = OverallDofs;
-    elseif strcmp(SimType,"Dyn") || strcmp(SimType,"dyn")
+    elseif strcmp(SimType,"Dyn") || strcmp(SimType,"dyn") || coord ==6
         bdof = 6;
         cdof = 6;
         

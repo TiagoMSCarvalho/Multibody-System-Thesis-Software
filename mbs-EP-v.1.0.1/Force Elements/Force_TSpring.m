@@ -1,7 +1,7 @@
 function [forceel2] = Force_TSpring(forcescount,NBodies,Bodies,TSpring,forceel2)
 %% Initial variable definitions
 %forceel vector
-forceel = zeros(6*NBodies,1);
+forceel = zeros(7*NBodies,1);
 %Bodies numbers
 i = TSpring(forcescount).Body1;
 j = TSpring(forcescount).Body2;
@@ -19,11 +19,11 @@ axg = TSpring(forcescount).s;
 % (e1,e2,e3) sin(phi/2) - no excel define-se o eixo da mola
 %% Vector Calculus and formulation - Torsional
 % Calculus of each vector displacement (new si and sj)
-i1 = 6*(i-1)+1;
-i2 = 6*(j-1)+1;
+i1 = 7*(i-1)+1;
+i2 = 7*(j-1)+1;
 if t == 0
-    forceel(i1:i1+5,1) = 0;
-    forceel(i2:i2+5,1) = 0;
+    forceel(i1:i1+6,1) = 0;
+    forceel(i2:i2+6,1) = 0;
  
 elseif t~=0 %Calculus of the Displacement
     if axg(1) == 1
@@ -49,9 +49,9 @@ elseif t~=0 %Calculus of the Displacement
         torque = kt * (phi-t0);
     end
     forceel(i1:i1+2,1) = 0;
-    forceel(i1+3:i1+5,1) = torque;
+    forceel(i1+3:i1+6,1) = 2*Bodies(i).L'*torque;
     forceel(i2:i2+2,1) = 0;
-    forceel(i2+3:i2+5,1) = -torque;    
+    forceel(i2+3:i2+6,1) = -2*Bodies(j).L'*torque;    
 end
 %Add to the existing vector
 forceel2 = forceel2 + forceel;

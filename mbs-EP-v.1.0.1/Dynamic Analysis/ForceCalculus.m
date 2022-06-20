@@ -1,12 +1,12 @@
  function [vectorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction)
 %Assemblies the Vector g to enable the calculation of the initial
 %acceleration
-%Pre Allocation of the Vectors
-vectorg = zeros(6*NBodies,1);
-forceel1 = zeros(6*NBodies,1);
-forceel2 = zeros(6*NBodies,1);
-forceel3 = zeros(6*NBodies,1);
-forceel4 = zeros(6*NBodies,1);
+%Pre Allocation of the Vectors (Euler Parameters)
+vectorg = zeros(7*NBodies,1);
+forceel1 = zeros(7*NBodies,1);
+forceel2 = zeros(7*NBodies,1);
+forceel3 = zeros(7*NBodies,1);
+forceel4 = zeros(7*NBodies,1);
 
 %Allocation of the gravity properties and vector
 gdir = string(Grav.Direction);
@@ -38,12 +38,19 @@ for i = 1:NBodies
     Mass = Bodies(i).Mass;
     Mass = eye(3)*Mass;
     Inertia = Bodies(i).Inertia;
-    A = Bodies(i).A;
     I = diag(Inertia);
     w = Bodies(i).w;
-    sw = SkewMatrix3(w);
-    Ia = A*I*A';
-    wJw = sw*Ia*w;
+    pd = 0.5*Bodies(i).L'*w;
+    pd = Impose_Column(pd);
+    %Definition of Ld
+    e0d = pd(1); 
+    e1d = pd(2);
+    e2d = pd(3);
+    e3d = pd(4);
+    e = [e1d;e2d;e3d];
+    Ld = [-e,-SkewMatrix3(e) + e0d*eye(3)];
+    %Calculo do wJw para EP
+    wJw = 8*Ld'*I*Bodies(i).L*pd;
     %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
     % Force
     forcevec = zeros(1,3);
@@ -87,21 +94,22 @@ for i = 1:NBodies
             end
         end
     end
+    forcetor = 2*Bodies(i).L'*forcetor;
     % Calculus of the moment created by Forces not applied to the CoM
     if all(Bodies(i).ForcePoA == 0) || isnan(Bodies(i).ForcePoA)
-        ForceMoment = zeros(1,3);
+        ForceMoment = zeros(1,4);
     else
         PoA = Bodies(i).ForcePoA - Bodies(i).r;
-        ForceMoment = cross(PoA,forcevec);
+        ForceMoment = 2*Bodies(i).L'*(cross(PoA,forcevec));
     end
     %% Allocation of the force vectors values
-    i1 = 6*(i-1)+1;
+    i1 = 7*(i-1)+1;
     if isnan(gmag)
         vectorg(i1:i1+2,1) = Impose_Column(forcevec);
-        vectorg(i1+3:i1+5,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);        
+        vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);        
     elseif ~isnan(gmag)
         vectorg(i1:i1+2,1) = Impose_Column(forcevec) + Mass*Impose_Column(g);
-        vectorg(i1+3:i1+5,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);
+        vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);
     end
 end
 
