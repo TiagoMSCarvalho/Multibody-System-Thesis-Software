@@ -1,4 +1,4 @@
- %% ============================Multibody System Software=============================
+%% ============================Multibody System Software=============================
 %This is a multibody simulator, that can be used to solve problems involving Spatial Bodies.
 %INPUTS:
 %    - File:  template_mbs excel file must be edited as exemplified this is
@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor';
+filename = 'crank_slider_gravity_spring_damper';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration

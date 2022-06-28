@@ -1,4 +1,4 @@
-function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions)
+function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord)
 %% Pré-setup of the variables
     funCount = 1;
     fun = [];
@@ -50,8 +50,10 @@ function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,de
         [fun,Jacobian,niu,gamma,funCount] = Simple_Constraints(fun,Jacobian,niu,gamma,funCount,jointCount, Bodies, Joints.Simple,Flags);
     end
     %Euler Parameter Constraints
-    for NBod = 2:NBodies %takes the first body, ground out of the equation
-        [fun,Jacobian,niu,gamma,funCount] = EulerParameterConstraint(fun,Jacobian,niu,gamma,funCount,NBod,Bodies,Flags);
+    if coord == 7
+        for NBod = 2:NBodies %takes the first body, ground out of the equation
+            [fun,Jacobian,niu,gamma,funCount] = EulerParameterConstraint(fun,Jacobian,niu,gamma,funCount,NBod,Bodies,Flags);
+        end
     end
     % For the Driving Constraints
     for jointCount=1:Joints.NDriver

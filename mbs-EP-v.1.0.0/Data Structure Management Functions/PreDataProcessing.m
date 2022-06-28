@@ -853,8 +853,10 @@ function [GraphicsType,BodiesGraph,PointsGraph] = ReadGraphicsInfo(filename)
 [~,~,angaccelgraph] = xlsread(filename,'SimParam','D17');
 [~,~,comgraph] = xlsread(filename,'SimParam','D18');
 [~,~,pointsgraph] = xlsread(filename,'SimParam','D19');
-[~,~,rawbodiesg] = xlsread(filename,'SimParam','D20:D100');
-[~,~,rawjointsg] = xlsread(filename,'SimParam','H20:H100');
+[~,~,anigraph] = xlsread(filename,'SimParam','D20');
+[~,~,video] = xlsread(filename,'SimParam','D21');
+[~,~,rawbodiesg] = xlsread(filename,'SimParam','D22:D100');
+[~,~,rawjointsg] = xlsread(filename,'SimParam','H22:H100');
 
 GraphicsType.posgraph = posgraph;
 GraphicsType.travelgraph = travelgraph;
@@ -863,6 +865,8 @@ GraphicsType.traaccelgraph = traaccelgraph;
 GraphicsType.angaccelgraph = angaccelgraph;
 GraphicsType.comgraph = comgraph;
 GraphicsType.pointsgraph = pointsgraph;
+GraphicsType.anigraph = anigraph;
+GraphicsType.video = video;
 
 relevant_lines_bodiesg = [];
 for i=1:size(rawbodiesg,1) %Number of Lines of raw

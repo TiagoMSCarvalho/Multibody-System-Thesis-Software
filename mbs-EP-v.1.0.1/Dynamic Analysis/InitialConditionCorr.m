@@ -3,7 +3,7 @@ function [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType)
 %% Correction    
 fun = 1;
 count = 0;
-while fun > 1e-20
+while count < 4
 
     %Pre Setup of the variables
     qi = CreateAuxiliaryBodyStructure(NBodies,Bodies);
@@ -143,6 +143,7 @@ while fun > 1e-20
     
     
     deltaq = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*fun;
+    %deltaq = -pinv(Jacobian)*fun;
 
     q = qi + deltaq;
 
@@ -296,6 +297,7 @@ end
     epsilon = Jacobian*v0;
     
     deltav = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*epsilon;
+    %deltav = -pinv(Jacobian)*epsilon;
     
     v = v0 + deltav;
     

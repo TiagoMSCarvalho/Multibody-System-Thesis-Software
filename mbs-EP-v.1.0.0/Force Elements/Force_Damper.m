@@ -84,6 +84,7 @@ forcej = -force*lun;
 %Moments Created by the Damper
 momenti = cross(spi,forcei);
 momentj = cross(spj,forcej);
+
 % Allocation of the force to the vector
 % Body i
 i1 = 6*(i-1)+1;

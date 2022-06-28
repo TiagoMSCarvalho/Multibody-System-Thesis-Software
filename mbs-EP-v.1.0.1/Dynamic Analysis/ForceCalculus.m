@@ -94,7 +94,7 @@ for i = 1:NBodies
             end
         end
     end
-    forcetor = 2*Bodies(i).L'*forcetor;
+    forcetor = 2*Bodies(i).L'*Impose_Column(forcetor);
     % Calculus of the moment created by Forces not applied to the CoM
     if all(Bodies(i).ForcePoA == 0) || isnan(Bodies(i).ForcePoA)
         ForceMoment = zeros(1,4);

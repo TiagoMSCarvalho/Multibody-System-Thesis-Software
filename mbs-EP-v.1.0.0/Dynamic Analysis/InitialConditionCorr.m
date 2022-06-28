@@ -2,8 +2,8 @@ function [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType)
 %Function used for the debug of the initial conditions problem.    
 %% Correction    
 fun = 1;
-count = 0;
-while fun > 1e-20
+%count = 0;
+while fun > 1*10^-30
 
     %Pre Setup of the variables
     qi = CreateAuxiliaryBodyStructure(NBodies,Bodies);
@@ -142,7 +142,8 @@ while fun > 1e-20
     end
     
     
-    deltaq = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*fun;
+    %deltaq = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*fun;
+    deltaq = -pinv(Jacobian)*fun;
 
     q = qi + deltaq;
 
@@ -150,7 +151,7 @@ while fun > 1e-20
     
     %Confirmation fun w/ the new q
     
-        %Pre Setup of the variables
+    %Pre Setup of the variables
     qi = CreateAuxiliaryBodyStructure(NBodies,Bodies);
     Bodies = DynCalcAGL(qi,NBodies,Bodies);
     % Flags Position
@@ -214,7 +215,7 @@ while fun > 1e-20
         [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
     end
     
-    count = count + 1;
+    %count = count + 1;
 
 end
 
@@ -295,7 +296,8 @@ end
     
     epsilon = Jacobian*v0;
     
-    deltav = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*epsilon;
+    %deltav = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*epsilon;
+    deltav = -pinv(Jacobian)*epsilon;
     
     v = v0 + deltav;
     

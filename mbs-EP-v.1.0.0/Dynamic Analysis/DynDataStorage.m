@@ -54,4 +54,3 @@ function [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,i
     Points{1,it} = DataP;
     it = it+1;
 end
-

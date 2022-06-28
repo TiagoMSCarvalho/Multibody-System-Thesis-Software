@@ -38,12 +38,12 @@ for i = 1:NBodies
     Mass = Bodies(i).Mass;
     Mass = eye(3)*Mass;
     Inertia = Bodies(i).Inertia;
-    A = Bodies(i).A;
+    %A = Bodies(i).A;
     I = diag(Inertia);
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
-    Ia = A*I*A';
-    wJw = sw*Ia*w;
+    %Ia = A*I*A'; MTS
+    wJw = sw*I*w; %Pode estar um erro aqui ser I pg 238 Nikra
     %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
     % Force
     forcevec = zeros(1,3);
