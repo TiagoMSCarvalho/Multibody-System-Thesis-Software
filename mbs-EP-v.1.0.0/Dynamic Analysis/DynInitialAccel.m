@@ -82,7 +82,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation
     for i = 1:NBodies
         Mass = Bodies(i).Mass;
-        A = Bodies(i).A;
+        %A = Bodies(i).A;
         Inertia = Bodies(i).Inertia;
         %Irat = A*diag(Inertia)*A'; %Inertia convertion to Global Inertia Tensor (Nikra) - Rotated Theorem (Paulo Flores)
         %pagina 238 NikraVesh (Body Inertia -MTS)
@@ -93,7 +93,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     end
     % Joining the new Jacobian with the Mass Matrix
     [a,~] = size(Jacobian);
-    augmass = [massmatrix,-Jacobian';Jacobian,zeros(a,a)];
+    augmass = [massmatrix,Jacobian';Jacobian,zeros(a,a)];
 %% Solving the Initial Acceleration Problem System
     %Solvin the Linear Problem
     %iapsol = pinv(augmass,1e-6)*rhs;
@@ -102,7 +102,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     i1 = 6*NBodies;
     i2 = 6*NBodies + size(Jacobian,1);
     DynAcc = iapsol(1:i1,1);
-    LagMulti = iapsol(i1+1:i2,1); 
+    LagMulti = -iapsol(i1+1:i2,1); 
 %% Update and storage of the acceleration value for the t - deltat time.
     [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType);
 end

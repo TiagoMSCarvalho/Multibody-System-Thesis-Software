@@ -1,4 +1,4 @@
-function [phid] = RKveldc(Joints,Bodies,Flags,driverfunctions,t)
+function [phid] = DCVel(Joints,Bodies,Flags,driverfunctions,t)
 %Calculates the Jacobian for the velocity direct correction.
 %Direct Correction is now seperated due to the fact that the position
 %correction needs to be solved iteratively.

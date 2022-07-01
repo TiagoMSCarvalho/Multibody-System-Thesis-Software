@@ -1,7 +1,7 @@
-function [yd] = RKAuxFunction(DynAcc,NBodies,Bodies)
+function [yd] = IntAuxFunction(DynAcc,NBodies,Bodies)
 % This function is responsible for receiving the t0 initial accelerations
 % and velocities, reallocate them to the yd (derivatives vector) that will
-% be fed to ODE45 Runga-Kutta algorithm for integration.
+% be fed to the ODE113 or ODE15 algorithm for integration.
 
 %Calculus of the Euler Parameters derivatives to have qu in generalized coordinates
     qd = [];

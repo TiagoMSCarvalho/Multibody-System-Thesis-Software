@@ -42,7 +42,7 @@ for i = 1:NBodies
     I = diag(Inertia);
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
-    %Ia = A*I*A'; MTS
+    %Ia = A*I*A'; %MTS
     wJw = sw*I*w; %Pode estar um erro aqui ser I pg 238 Nikra
     %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
     % Force

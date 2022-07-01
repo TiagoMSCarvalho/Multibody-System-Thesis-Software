@@ -1,4 +1,4 @@
-    function [qc,vc,Bodies] = RKDirectCorrection(y,NBodies,Bodies,Joints,SimType,driverfunctions,tf)
+    function [qc,vc,Bodies] = DirectCorrection(y,NBodies,Bodies,Joints,SimType,driverfunctions,tf)
 %This function implements the Direct Correction stated in the Constraint Violation
     % Equations that are implemented:
         % qc = qu - D'*inv(D*D') * phi(qu);
@@ -20,7 +20,7 @@
      %Update of the body postures
      Bodies = UpdateBodyPostures(qu,NBodies,Bodies);
      %Calculus of the phi(qu)
-     qc = RKposdc(Joints,Bodies,NBodies,Flags,qu,driverfunctions,tf); %t0 -> tf;
+     qc = DCPos(Joints,Bodies,NBodies,Flags,qu,driverfunctions,tf); %t0 -> tf;
      %Update of the body postures with the correction for t + timestep (qc)
      Bodies = UpdateBodyPostures(qc,NBodies,Bodies);
      
@@ -36,7 +36,7 @@
      %Update Velocities
      Bodies = UpdateVelocities(vu,NBodies,Bodies,SimType);
      %Calculus of the phid(qc,vu)
-     [phid] = RKveldc(Joints,Bodies,Flags,driverfunctions,tf);
+     [phid] = DCVel(Joints,Bodies,Flags,driverfunctions,tf);
      % vu correction
      vc = vu - pinv(phid,1e-6)*(phid*vu);
      %vc = vu - phid'*pinv(phid*phid')*(phid*vu);
