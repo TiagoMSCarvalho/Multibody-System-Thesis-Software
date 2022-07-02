@@ -31,15 +31,15 @@ swj = SkewMatrix3(wj);
 % Derivatives of the global spi and spj
 spid = Ai*swi*spi;
 spjd = Aj*swj*spj;
-%Skew spi and spj
+%Skew Matrix
 sspi = SkewMatrix3(spig);
 sspj = SkewMatrix3(spjg);
 
 %% Vector Calculus and formulation
 % Displacement and Delta Calculus
-displacement = rj + spjg - ri - spig;    
+displacement = (rj + spjg) + (- ri - spig);    
 % Displacement derivative
-ddisp = rdj + spjd - rdi - spid;
+ddisp = (rdj + spjd) + (- rdi - spid);
 % Force Direction Vector
 [lmag,lun] = unitvector(displacement);
 lengthrateofchange = (1/lmag)*(displacement'*ddisp);
@@ -82,8 +82,9 @@ end
 forcei = force*lun;
 forcej = -force*lun;
 %Moments Created by the Damper
-momenti = cross(spi,forcei);
-momentj = cross(spj,forcej);
+%NOTE: Use of Skew Matrix instead of cross function is more stable.
+momenti = sspi*forcei;
+momentj = sspj*(-forcej);
 
 % Allocation of the force to the vector
 % Body i
@@ -97,4 +98,5 @@ forceel(i2+3:i2+5,1) = momentj;
 
 %Add to the existing vector
 forceel3 = forceel3 + forceel;
+
 end

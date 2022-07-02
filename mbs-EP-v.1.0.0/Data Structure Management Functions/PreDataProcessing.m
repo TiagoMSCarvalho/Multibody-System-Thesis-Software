@@ -794,11 +794,14 @@ spj = Impose_Column(ForcesInfo(6:8));
 % Get euler parameter for each body frame
 pi = Bodies(i).p;
 pj = Bodies(j).p;
+% Bodies position vectors
+ri = Impose_Column(Bodies(i).r);
+rj = Impose_Column(Bodies(j).r);
 % Transform joint location on fixed reference to the bodies' local
 % reference
-spig = spi - Bodies(i).r;
+spig = spi - ri; %Triangle rule
 spi = EarthtoBody(spig,pi);
-spjg = spj - Bodies(j).r;
+spjg = spj - rj;
 spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Damper(ForcesCount).spi = spi;
@@ -806,12 +809,6 @@ Forces.Damper(ForcesCount).spj = spj;
 %Save Constant
 Forces.Damper(ForcesCount).Constant = ForcesInfo(9);
 %% Initial Displacement
-% Bodies numbers
-i = Forces.Damper(ForcesCount).Body1;
-j = Forces.Damper(ForcesCount).Body2;
-% Bodies position vectors
-ri = Impose_Column(Bodies(i).r);
-rj = Impose_Column(Bodies(j).r);
 % Displacement Calculus and Storage
 Forces.Damper(ForcesCount).InitialDisplacement = rj + spjg - ri - spig;
 Forces.Damper(ForcesCount).Noffun = ForcesInterval(1);

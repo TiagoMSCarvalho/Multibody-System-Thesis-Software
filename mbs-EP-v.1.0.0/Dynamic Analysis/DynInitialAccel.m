@@ -1,7 +1,7 @@
 function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time,driverfunctions,debugdata,ForceFunction)
 %This function uses the inputs of initial position, initial velocities and
-%forces to calculate the initial acceleration that will be fed to the
-%Runge-Kutta ODE45 solver.
+%forces to calculate the initial acceleration that will be fed to the ODE
+%Solver.
 
 %% Set Up of the variables needed to construct the Matrix - Dynamic Modified Jacobian
 % Pre Allocation of the q0 vector, for the calc of AGL
@@ -95,8 +95,8 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     [a,~] = size(Jacobian);
     augmass = [massmatrix,Jacobian';Jacobian,zeros(a,a)];
 %% Solving the Initial Acceleration Problem System
-    %Solvin the Linear Problem
-    %iapsol = pinv(augmass,1e-6)*rhs;
+    %Solving the Linear Problem
+    %In alternative to augmass\rhs;
     iapsol = lsqminnorm(augmass,rhs,1e-6);
     %Allocating the solution to its respective vectors
     i1 = 6*NBodies;
