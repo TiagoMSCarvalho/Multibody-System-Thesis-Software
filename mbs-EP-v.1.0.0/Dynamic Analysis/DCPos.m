@@ -5,9 +5,9 @@ function [qc] = DCPos(Joints,Bodies,NBodies,Flags,qu,driverfunctions,t)
 %correction needs to be solved iteratively.
 
 count = 0;
-delta = 5;
+deltamax = 5;
 
-while delta > 1*10^-6
+%while deltamax > 1*10^-3
     funCount=1;
     fun = [];
     Jacobian = [];
@@ -66,7 +66,7 @@ while delta > 1*10^-6
     qc = qu + deltaq;
     
     delta = qc - qu;
-    delta = max(abs(delta));
+    deltamax = max(abs(delta));
     
     Bodies = UpdateBodyPostures(qc,NBodies,Bodies);
     
@@ -74,6 +74,6 @@ while delta > 1*10^-6
     qu = CreateAuxiliaryBodyStructure(NBodies,Bodies);
 
     count = count+1;
-end
+%end
 
 end

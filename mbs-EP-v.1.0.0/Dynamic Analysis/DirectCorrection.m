@@ -41,6 +41,7 @@
      vc = vu - pinv(phid,1e-6)*(phid*vu);
      %vc = vu - phid'*pinv(phid*phid')*(phid*vu);
      %Update of body velocities with the correction for t + timestep (vc)
+
      Bodies = UpdateVelocities(vc,NBodies,Bodies,SimType);
      
 end
