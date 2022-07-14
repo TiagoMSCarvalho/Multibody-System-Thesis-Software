@@ -73,7 +73,7 @@ if strcmp(SimType,"Kin") == 1
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
     %Initial Conditions Correction Debug
-    %[Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType);
+    [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType);
     for t = tini:TimeStep:RunTime
     %Integrator:
     %Adams-Bashfort-Moulton predictor corrector is used to perform

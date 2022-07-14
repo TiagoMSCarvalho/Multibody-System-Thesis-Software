@@ -7,7 +7,7 @@ function [qc] = DCPos(Joints,Bodies,NBodies,Flags,qu,driverfunctions,t)
 count = 0;
 deltamax = 5;
 
-%while deltamax > 1*10^-3
+while deltamax > 1*10^-3
     funCount=1;
     fun = [];
     Jacobian = [];
@@ -74,6 +74,6 @@ deltamax = 5;
     qu = CreateAuxiliaryBodyStructure(NBodies,Bodies);
 
     count = count+1;
-%end
+end
 
 end

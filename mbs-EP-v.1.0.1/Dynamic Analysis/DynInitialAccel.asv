@@ -100,7 +100,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while beta > 1e-6 % Second Condition to avoid infinite loops
+    while beta < 1e-3 % Second Condition to avoid infinite loops
         if lagit > 1
            qddi = qddi1; 
         end
@@ -109,7 +109,7 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
         rhslag = massmatrix*qddi + Jacobian'*alpha*(gamma - 2*omega*mu*(Jacobian*qd - niu) - omega^2*fun);
         qddi1 = pinv(lhslag)*rhslag;
         beta = alpha*(Jacobian*qddi1 - gamma + 2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
-        [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
+        Bodies = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
         lagit = lagit + 1; %Iteration Counter
     end
 
