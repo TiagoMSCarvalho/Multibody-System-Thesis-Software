@@ -1,4 +1,4 @@
-function [] = DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points)
+function [] = DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints)
 %This function is responsible for plotting the graphics for the dynamic
 %simulation.
 
@@ -10,6 +10,8 @@ traaccelgraph = GraphicsType.traaccelgraph{1,1};
 angaccelgraph = GraphicsType.angaccelgraph{1,1};
 comgraph = GraphicsType.comgraph{1,1};
 pointsgraph = GraphicsType.pointsgraph{1,1};
+anigraph = GraphicsType.anigraph{1,1};
+video = GraphicsType.video{1,1};
 a = size(CoM,2);
 b = size(BodiesGraph,1);
 c = size(Points,2);
@@ -313,6 +315,89 @@ elseif strcmp(pointsgraph,'Yes') == 1 || strcmp(pointsgraph,'yes') == 1 || strcm
             title('Point Angular Acceleration in z')
         end     
     end   
+end
+%% 3D Animation Plot Only
+if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph,'Yes') == 1
+       
+    NPoint = Joints.NPoint; %Number of Points
+    
+    %% Initiate the 3D Plot
+    % first get the grid for the inital iteration
+    MyGrid = horzcat( Points{1,1}.Position );
+    % build the connectivity
+    MyPoints = [1:(Joints.NPoint-1); 2:Joints.NPoint];
+    
+    figure
+    m = plot3( reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
+               reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
+               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'r');
+    
+    axis auto
+    grid on
+    
+    % set limits...
+    xlim([-1000 1000])
+    ylim([-500 1000])
+    zlim([-10 10])
+    
+    %% plot the other timesteps
+    for f = 2:length(Points)
+        
+        pause(TimeStep)
+        
+        MyGrid = horzcat( Points{1,f}.Position );
+        
+        m.XData = reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        m.YData = reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        m.ZData = reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        
+    end
+end
+
+%% Animation 3D Plot with Video
+if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph,'Yes') == 1) && (strcmp(video,'Yes') ==1 || strcmp(video,'YES') == 1 || strcmp(video,'Yes') == 1)
+       
+    NPoint = Joints.NPoint; %Number of Points
+    
+    %% Initialize video
+    myVideo = VideoWriter('myVideoFile'); %open video file
+    myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
+    open(myVideo)
+    
+    %% Initiate the 3D Plot
+    % first get the grid for the inital iteration
+    MyGrid = horzcat( Points{1,1}.Position );
+    % build the connectivity
+    MyPoints = [1:(Joints.NPoint-1); 2:Joints.NPoint];
+    
+    figure
+    m = plot3( reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
+               reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
+               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'r');
+    
+    axis auto
+    grid on
+    
+    % set limits...
+    xlim([-1000 1000])
+    ylim([-500 1000])
+    zlim([-10 10])
+    
+    %% plot the other timesteps
+    for f = 2:length(Points)
+        
+        pause(TimeStep)
+        
+        MyGrid = horzcat( Points{1,f}.Position );
+        
+        m.XData = reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        m.YData = reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        m.ZData = reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
+        
+        frame = getframe(gcf); %get frame
+        writeVideo(myVideo, frame);
+    end
+    close(myVideo)
 end
 end
 

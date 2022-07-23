@@ -1,7 +1,11 @@
-function [forceel1] = Force_Spring(forcescount,NBodies,Bodies,Spring,ForceFunction,forceel1)
+function [forceel1] = Force_Spring(forcescount,NBodies,Bodies,Spring,ForceFunction,forceel1,coord)
 %% Initial variable definitions
 %forceel vector
-forceel = zeros(7*NBodies,1);
+if coord == 7
+    forceel = zeros(7*NBodies,1);
+elseif coord == 6
+    forceel = zeros(6*NBodies,1);
+end
 % Bodies numbers
 i = Spring(forcescount).Body1;
 j = Spring(forcescount).Body2;
@@ -81,14 +85,25 @@ forcej = -force*lun;
 momenti = sspi*forcei;
 momentj = sspj*forcej;
 % Allocation of the force to the vector
-% Body i
-i1 = 7*(i-1)+1;
-forceel(i1:i1+2,1) = forcei;
-forceel(i1+3:i1+6,1) = 2*Bodies(i).L'*momenti;
-% Body j
-i2 = 7*(j-1)+1;
-forceel(i2:i2+2,1) = forcej;
-forceel(i2+3:i2+6,1) = 2*Bodies(j).L'*momentj;
+if coord == 7
+    % Body i
+    i1 = 7*(i-1)+1;
+    forceel(i1:i1+2,1) = forcei;
+    forceel(i1+3:i1+6,1) = 2*Bodies(i).L'*momenti;
+    % Body j
+    i2 = 7*(j-1)+1;
+    forceel(i2:i2+2,1) = forcej;
+    forceel(i2+3:i2+6,1) = 2*Bodies(j).L'*momentj;
+elseif coord == 6
+    % Body i
+    i1 = 6*(i-1)+1;
+    forceel(i1:i1+2,1) = forcei;
+    forceel(i1+3:i1+5,1) = momenti;
+    % Body j
+    i2 = 6*(j-1)+1;
+    forceel(i2:i2+2,1) = forcej;
+    forceel(i2+3:i2+5,1) = momentj;
+end
 %Add to the existing vector
 forceel1 = forceel1 + forceel;
 end

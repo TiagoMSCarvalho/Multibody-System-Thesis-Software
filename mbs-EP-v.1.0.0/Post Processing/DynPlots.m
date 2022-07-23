@@ -399,3 +399,4 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     end
     close(myVideo)
 end
+end

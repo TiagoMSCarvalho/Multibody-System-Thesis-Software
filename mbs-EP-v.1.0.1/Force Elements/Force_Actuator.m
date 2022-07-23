@@ -1,7 +1,11 @@
-function [forceel4] = Force_Actuator(forcescount,NBodies,Bodies,Actuator,ForceFunction,time,forceel4)
+function [forceel4] = Force_Actuator(forcescount,NBodies,Bodies,Actuator,ForceFunction,time,forceel4,coord)
 %% Initial variable definitions
 %forceel
-forceel = zeros(7*NBodies,1);
+if coord == 7
+    forceel = zeros(7*NBodies,1);
+elseif coord == 6
+    forceel = zeros(6*NBodies,1);
+end
 % Bodies numbers
 i = Actuator(forcescount).Body1;
 j = Actuator(forcescount).Body2;
@@ -34,15 +38,25 @@ forcej = -force*lun;
 %Moments Created by the Damper
 momenti = cross(spi,forcei);
 momentj = cross(spj,forcej);
-% Allocation of the force to the vector
-% Body i
-i1 = 7*(i-1)+1;
-forceel(i1:i1+2,1) = forcei;
-forceel(i1+3:i1+6,1) = 2*Bodies(i).L'*momenti;
-% Body j
-i2 = 7*(j-1)+1;
-forceel(i2:i2+2,1) = forcej;
-forceel(i2+3:i2+6,1) = 2*Bodies(j).L'*momentj;
+%Allocation of the force to the vector
+if coord == 7
+    % Body i
+    i1 = 7*(i-1)+1;
+    forceel(i1:i1+2,1) = forcei;
+    forceel(i1+3:i1+6,1) = 2*Bodies(i).L'*momenti;
+    % Body j
+    i2 = 7*(j-1)+1;
+    forceel(i2:i2+2,1) = forcej;
+    forceel(i2+3:i2+6,1) = 2*Bodies(j).L'*momentj;
+elseif coord == 6
+    i1 = 6*(i-1)+1;
+    forceel(i1:i1+2,1) = forcei;
+    forceel(i1+3:i1+5,1) = momenti;
+    % Body j
+    i2 = 6*(j-1)+1;
+    forceel(i2:i2+2,1) = forcej;
+    forceel(i2+3:i2+5,1) = momentj; 
+end
 %Add to the existing vector
 forceel4 = forceel4 + forceel; 
 end

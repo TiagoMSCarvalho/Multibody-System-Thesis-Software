@@ -142,7 +142,7 @@ while deltamax > 1e-3
     end
     
     
-    deltaq = -pinv(Jacobian)*fun;
+    deltaq = Jacobian\fun;
 
     q = qi + deltaq;
     

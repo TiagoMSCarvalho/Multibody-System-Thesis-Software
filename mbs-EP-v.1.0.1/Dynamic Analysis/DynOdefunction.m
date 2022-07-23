@@ -1,23 +1,33 @@
-function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,time,driverfunctions,debugdata,ForceFunction)
+function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction)
 %This function uses the inputs of initial position, initial velocities and
 %forces to calculate the initial acceleration that will be fed to the
 %Integrator.
 
+%% Update the Structs with the variables that are given by the odesolver.
+    time = t;
+%Position
+    Bodies = UpdateBodyPostures(y(1:7*NBodies), NBodies, Bodies);
+
+
 %% Set Up of the variables needed to construct the Matrix - Dynamic Modified Jacobian
 % Pre Allocation of the q0 vector, for the calc of AGL
-    q0 = CreateAuxiliaryBodyStructure(NBodies,Bodies);
-    
+    q0 = CreateAuxiliaryBodyStructure(NBodies,Bodies);    
 % Calculation of the Matrixes A, G and L
     Bodies = DynCalcAGL(q0,NBodies,Bodies);
-    
 % Calculus of the dofs
     coord = 7;
     [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,[],coord);
+%% Velocity Update
 
-% Calculus of the G and L matrices derivatives
-
-    [Bodies] = DynIAGdLdcalc(NBodies,Bodies);
+    for i = 1:NBodies
+       i2 = 7*(i-1) + 1 + 7*NBodies;
+       Bodies(i).rd = y(i2:i2+2,1);
+       pd = y(i2+3:i2+6,1);
+       Bodies(i).w = 2*Bodies(i).L*pd;
+    end
     
+% Calculus of the G and L matrices derivatives
+    [Bodies] = DynIAGdLdcalc(NBodies,Bodies);
 % Change w field to allow Kinematic Functions to Run on the RHS Accel (Can
 % be Optimized)
 
@@ -71,28 +81,29 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     end
     
 %% Function Responsible for the Force Vectors
-    [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction);
+    [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
 %% Solving First Iteration to start the Augmented Process
     [dim1,dim2] = size(massmatrix);
     wogmass = massmatrix(8:dim1,8:dim2);
     [dim3,~] = size(vetorg);
     wogvetor = vetorg(8:dim3,1);
-    qddwog = pinv(wogmass)*wogvetor;
+    qddwog = lsqminnorm(wogmass,wogvetor);
     [dim4,~] = size(qddwog);
-    qdd0(8:dim4+7,1) = qddwog;
+    qdd0(8:dim4+7,1) = qddwog; 
     
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
     alpha = 1*10^7;
     omega = 10;
     mu = 1;
-    
+
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
-    beta = 1;
+    deltamax = 1;
     qddi = qdd0;
-    lagit = 1; % Augmented Lagrangian Formula Iteration Numver
+    lagit = 1; % Augmented Lagrangian Formula Iteration Number
+    lhslag = massmatrix + Jacobian'*alpha*Jacobian;
     % Flags to retrieve gamma
     Flags.Position = 0;
     Flags.Jacobian = 0;
@@ -100,68 +111,23 @@ function [DynAcc,LagMulti,Jacobian,Bodies] = DynInitialAccel(NBodies,Bodies,dynf
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while beta > 1e-6 % Second Condition to avoid infinite loops
+    while deltamax > 1e-3 % Second Condition to avoid infinite loops
         if lagit > 1
            qddi = qddi1; 
         end
         [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
-        lhslag = massmatrix + Jacobian'*alpha*Jacobian;
         rhslag = massmatrix*qddi + Jacobian'*alpha*(gamma - 2*omega*mu*(Jacobian*qd - niu) - omega^2*fun);
-        qddi1 = pinv(lhslag)*rhslag;
+        qddi1 = gaussianelim(lhslag,rhslag);
         beta = alpha*(Jacobian*qddi1 - gamma + 2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
+        %betamax = abs(max(beta));
+        qdd = qddi1;
+        deltaqdd = qddi1 - qddi;
+        deltamax = abs(max(deltaqdd));
         [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
         lagit = lagit + 1; %Iteration Counter
     end
 
-%% Transformation of the Acceleration Vector from 7 to 6 coordinates
-    for i = 1:NBodies
-        i1 = 6*(i-1)+1;
-        i2 = 7*(i-1)+1;
-        DynAcc(i1:i1+2,1) = qddi(i2:i2+2,1);
-        wd = 2*Bodies(i).L*qddi(i2+3:i2+6,1);
-        DynAcc(i1+3:i1+5,1) = wd;
-    end
-
-%% Update and storage of the acceleration value for the t - deltat time.
-    [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType,[]);
-    
-%% Augmented Mass Matrix Assembly for the Lagrange Calculation (6 Coord)
-    % Mass Matrix
-    massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation
-    for i = 1:NBodies
-        Mass = Bodies(i).Mass;
-        %A = Bodies(i).A;
-        Inertia = Bodies(i).Inertia;
-        %Irat = A*diag(Inertia)*A'; %Inertia convertion to Global Inertia Tensor (Nikra) - Rotated Theorem (Paulo Flores)
-        i1 = 6*(i-1)+1;
-        massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
-        massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia); 
-    end
-    
-%% Pre-setup 6 coordinates Dof
-%Calculus of the dofs
-    coord = 6;
-    [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,[],coord);
-    
-%% 6 coordinate Jacobian for the Lagrange Multipliers
-    Flags.Position = 0;
-    Flags.Jacobian = 1;
-    Flags.Velocity = 0;
-    Flags.Acceleration = 0;
-    Flags.Dynamic = 1;
-    Flags.AccelDyn = 0;
-    
-    [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
-
-%% Force Vetor Torque transformation back to 6 coordinates (Nikra Art)
-    for i = 1:NBodies
-       i1 = 6*(i-1)+1;
-       i2 = 7*(i-1)+1;
-       forcevectg(i1:i1+2,1) = vetorg(i2:i2+2,1);
-       forcevectg(i1+3:i1+5,1) = 0.5*Bodies(i).L*vetorg(i2+3:i2+6,1);
-    end
-    
-%% Lagrange Mutipliers Calculus
-    rhs = forcevectg - massmatrix*DynAcc;
-    LagMulti = (Jacobian')\rhs;
+    yd = [qd;qdd];
+display(time);
 end
+

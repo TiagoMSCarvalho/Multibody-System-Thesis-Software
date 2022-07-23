@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor_damper';
+filename = 'flyball_governor_damper_spring';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -72,15 +72,10 @@ if strcmp(SimType,"Kin") == 1
     end
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
-    %Initial Conditions Correction Debug
+    %% Initial Conditions Consistency Check
     [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType);
-    for t = tini:TimeStep:RunTime
-    %NOTE: Runga-Kutta will be use to perform the Velocity and Position
-    %Analysis then the Direct Correction will be implemented see:
-    %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
-    %"On the constrains violation in forward dynamics of multibody systems pg 18  
-        [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction);
-    end
-    [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
+    %% Calling the function that will solve the dynamic problem.
+    [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime);
+    %% Final Plots
     DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points);
 end    
