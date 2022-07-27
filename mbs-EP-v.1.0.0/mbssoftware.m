@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor_gravity_damper';
+filename = 'flyball_governor_gravity_spring_damper';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -89,6 +89,7 @@ elseif strcmp(SimType,"Dyn") == 1
     %"Development and Appplication of a Computational Dynamic and Kinematic Constrained Multibody System Simulations" page 77
     %"On the constrains violation in forward dynamics of multibody systems pg 18  
         [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,t,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction);
+    display(t);
     end
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints);

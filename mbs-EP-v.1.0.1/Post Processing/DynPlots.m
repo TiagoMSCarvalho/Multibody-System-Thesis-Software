@@ -330,7 +330,7 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     figure
     m = plot3( reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
                reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
-               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'r');
+               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'-o','Color','r');
     
     axis auto
     grid on

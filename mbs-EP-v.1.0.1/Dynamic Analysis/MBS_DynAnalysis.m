@@ -8,7 +8,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     
     tic;
-    opts = odeset('RelTol',1e-6,'AbsTol',1e-6);
+    opts = odeset('RelTol',1e-5,'MaxStep',abs(t0-tf)*10^-4,'Refine',6);
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),[t0:TimeStep:tf],y0,opts);
     computationtime = toc;
     [a,~] = size(timevector);
@@ -69,7 +69,9 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        end
        rhs = [vetorg;gamma]; %Erro force vector esta a ser calculado em 7 coord, resolver depois
        %% Calculus of the Acceleration vector
-       iapsol = lsqminnorm(augmass,rhs,1e-6);
+       %iapsol = lsqminnorm(augmass,rhs,1e-6);
+       [L,U] = lu(augmass);
+       iapsol = U\(L\rhs);
        %% Allocation of the Acceleration Results
        i3 = 6*NBodies;
        i4 = 6*NBodies + size(Jacobian,1);

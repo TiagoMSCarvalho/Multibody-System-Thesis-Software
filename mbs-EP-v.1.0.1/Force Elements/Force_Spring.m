@@ -28,8 +28,9 @@ nl = Spring(forcescount).NullLength;
 % Force Direction Vector = Initial Direction Vector
 [~,lun] = unitvector(idisplacement);
 %Skew Matrix
-sspi = SkewMatrix3(spig);
-sspj = SkewMatrix3(spjg);
+sspi = SkewMatrix3(spi);
+sspj = SkewMatrix3(spj);
+
 
 %% Vector Calculus and formulation
 displacement = rj + spjg -ri - spig;
@@ -82,8 +83,8 @@ end
 forcei = force*lun;
 forcej = -force*lun;
 %Moments Created by the Translational Spring
-momenti = sspi*forcei;
-momentj = sspj*forcej;
+momenti = cross(spi,forcei);
+momentj = cross(spj,forcej);
 % Allocation of the force to the vector
 if coord == 7
     % Body i
@@ -98,11 +99,11 @@ elseif coord == 6
     % Body i
     i1 = 6*(i-1)+1;
     forceel(i1:i1+2,1) = forcei;
-    forceel(i1+3:i1+5,1) = momenti;
+    forceel(i1+3:i1+5,1) = sspi*Ai*forcei;
     % Body j
     i2 = 6*(j-1)+1;
     forceel(i2:i2+2,1) = forcej;
-    forceel(i2+3:i2+5,1) = momentj;
+    forceel(i2+3:i2+5,1) = sspj*Aj*forcej;
 end
 %Add to the existing vector
 forceel1 = forceel1 + forceel;
