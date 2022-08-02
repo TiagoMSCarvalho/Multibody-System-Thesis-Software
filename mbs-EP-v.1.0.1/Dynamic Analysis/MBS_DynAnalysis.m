@@ -8,9 +8,10 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     
     tic;
-    opts = odeset('RelTol',1e-5,'MaxStep',abs(t0-tf)*10^-4,'Refine',6);
-    [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),[t0:TimeStep:tf],y0,opts);
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-8,'MaxStep',abs(t0-tf)); %Refine -> Number of Outputs
+    [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
+    display(computationtime)
     [a,~] = size(timevector);
     
     %% Pre-setup 6 coordinates Dof
@@ -50,8 +51,6 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        Flags.Acceleration = 0;
        Flags.Dynamic = 1;
        Flags.AccelDyn = 1;
-       funCount = 1;
-       Jacobian = [];
        gamma = zeros(debugdata(1).cdof,1);
        Ctt = zeros(debugdata(1).cdof,1);
        [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
@@ -70,13 +69,12 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        rhs = [vetorg;gamma]; %Erro force vector esta a ser calculado em 7 coord, resolver depois
        %% Calculus of the Acceleration vector
        %iapsol = lsqminnorm(augmass,rhs,1e-6);
-       [L,U] = lu(augmass);
-       iapsol = U\(L\rhs);
+       iapsol = augmass\rhs;
        %% Allocation of the Acceleration Results
        i3 = 6*NBodies;
-       i4 = 6*NBodies + size(Jacobian,1);
+       %i4 = 6*NBodies + size(Jacobian,1); Lagrangian
        DynAcc = iapsol(1:i3,1);
-       LagMulti = -iapsol(i3+1:i4,1);  %For later usage
+       %LagMulti = -iapsol(i3+1:i4,1);  %For later usage
        %% Update of the calculate Accelerations for previous storage
        [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType,[]);
        %% Storage of this step calculus

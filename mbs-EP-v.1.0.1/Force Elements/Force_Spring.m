@@ -81,7 +81,7 @@ elseif isnan(Spring(forcescount).Constant)
 end
 %Force Vectors
 forcei = force*lun;
-forcej = -force*lun;
+forcej = force*lun;
 %Moments Created by the Translational Spring
 momenti = cross(spi,forcei);
 momentj = cross(spj,forcej);
