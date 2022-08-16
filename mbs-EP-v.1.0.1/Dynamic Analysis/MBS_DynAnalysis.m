@@ -8,7 +8,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     
     tic;
-    opts = odeset('RelTol',1e-6,'AbsTol',1e-8,'MaxStep',abs(t0-tf)); %Refine -> Number of Outputs
+    opts = odeset('RelTol',1e-9,'AbsTol',1e-9,'MaxStep',abs(t0-tf)*10^-2); %Refine -> Number of Outputs
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
     display(computationtime)
@@ -79,6 +79,5 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType,[]);
        %% Storage of this step calculus
        [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
-    end
-    
+    end  
 end

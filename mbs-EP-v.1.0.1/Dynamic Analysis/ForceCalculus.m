@@ -47,10 +47,13 @@ if coord == 7
         Mass = eye(3)*Mass;
         Inertia = Bodies(i).Inertia;
         I = diag(Inertia);
+%         B = Bodies(i).L;
         w = Bodies(i).w;
+%         sw = SkewMatrix3(w);
+%         wJw = 2*B'*(sw*I*w);
         pd = 0.5*Bodies(i).L'*w;
         pd = Impose_Column(pd);
-        %Definition of Ld
+%        Definition of Ld
         e0d = pd(1); 
         e1d = pd(2);
         e2d = pd(3);
@@ -107,7 +110,7 @@ if coord == 7
         if all(Bodies(i).ForcePoA == 0) || isnan(Bodies(i).ForcePoA)
             ForceMoment = zeros(1,4);
         else
-            PoA = Bodies(i).ForcePoA - Bodies(i).r;
+            PoA = Bodies(i).ForcePoA - Bodies(i).r; %ALTERAR PARA Skew*A'*Force;
             ForceMoment = 2*Bodies(i).L'*(cross(PoA,forcevec));
         end
         %% Allocation of the force vectors values

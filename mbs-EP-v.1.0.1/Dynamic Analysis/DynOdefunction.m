@@ -8,7 +8,6 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %Position
     Bodies = UpdateBodyPostures(y(1:7*NBodies), NBodies, Bodies);
 
-
 %% Set Up of the variables needed to construct the Matrix - Dynamic Modified Jacobian
 % Pre Allocation of the q0 vector, for the calc of AGL
     q0 = CreateAuxiliaryBodyStructure(NBodies,Bodies);    
@@ -84,35 +83,21 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
 %% Solving First Iteration to start the Augmented Process
-%     [dim1,dim2] = size(massmatrix);
-%     wogmass = massmatrix(8:dim1,8:dim2);
-%     [dim3,~] = size(vetorg);
-%     wogvetor = vetorg(8:dim3,1);
-%     qddwog = lsqminnorm(wogmass,wogvetor);
-%     [dim4,~] = size(qddwog);
-%     qdd0(8:dim4+7,1) = qddwog; 
-      %k = rank(massmatrix);
-      %[U,s,V] = csvd(massmatrix,'full');
-      %[qdd0,~,~] = tsvd(U,s,V,vetorg,k);
-      qdd0 = lsqminnorm(massmatrix,vetorg);
-    
+    qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
+   
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
     alpha = 1e9;
-    omega = 25;
-    mu = 2;
-
+    omega = 100;
+    mu = 12.5;
+    
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
     deltamax = 1;
     qddi = qdd0;
-    lagit = 1; % Augmented Lagrangian Formula Iteration Number
+    lagit = 0; % Augmented Lagrangian Formula Iteration Number
     lhslag = massmatrix + Jacobian'*alpha*Jacobian;
-    dlhslag = decomposition(lhslag,'CheckCondition',false);
-    opts.POSDEF = true;opts.SYM = true;
-    %R = chol(lhslag);
-    %[U,s,V] = csvd(lhslag,'full');
-    %k = rank(lhslag);
+    
     % Flags to retrieve gamma
     Flags.Position = 0;
     Flags.Jacobian = 0;
@@ -121,19 +106,19 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     while deltamax > 1e-2 % Second Condition to avoid infinite loops
-        if lagit > 1
+        if lagit >= 1
            qddi = qddi1; 
         end
         [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
-        rhslag = massmatrix*qddi + Jacobian'*alpha*(gamma - 2*omega*mu*(Jacobian*qd - niu) - omega^2*fun);
-        [qddi1,r] = linsolve(lhslag,rhslag,opts);
+        rhslag = massmatrix*qddi - Jacobian'*alpha*(- gamma +  2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
+        %qddi1 = gaussianelim(lhslag,rhslag);
+        qddi1 = lsqminnorm(lhslag,rhslag);
         qdd = qddi1;
         deltaqdd = qddi1 - qddi;
         deltamax = abs(max(deltaqdd));
         [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
         lagit = lagit + 1; %Iteration Counter
     end
-
     yd = [qd;qdd];
 display(time);
 end

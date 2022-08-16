@@ -54,7 +54,7 @@ end
     wogmass = massmatrix(8:dim1,8:dim2);
     [dim3,~] = size(vetorg);
     wogvetor = vetorg(8:dim3,1);
-    qddwog = pinv(wogmass)*wogvetor;
+    qddwog = lsqminnorm(wogmass,wogvetor);
     [dim4,~] = size(qddwog);
     qdd0(8:dim4+7,1) = qddwog;
     
@@ -63,7 +63,7 @@ end
         i1 = 6*(i-1)+1;
         i2 = 7*(i-1)+1;
         DynAcc(i1:i1+2,1) = qdd0(i2:i2+2,1);
-        wd = 2*Bodies(i).L*qdd0(i2+3:i2+6,1);
+        wd = 2*Bodies(i).L*qdd0(i2+3:i2+6,1); 
         DynAcc(i1+3:i1+5,1) = wd;
     end
 
