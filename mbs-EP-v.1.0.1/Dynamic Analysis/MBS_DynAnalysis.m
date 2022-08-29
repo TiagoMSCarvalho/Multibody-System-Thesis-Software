@@ -8,7 +8,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
     [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
     
     tic;
-    opts = odeset('RelTol',1e-9,'AbsTol',1e-9,'MaxStep',abs(t0-tf)*10^-2); %Refine -> Number of Outputs
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',abs(t0-tf)*10^-2); %Refine -> Number of Outputs
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
     display(computationtime)
@@ -53,7 +53,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        Flags.AccelDyn = 1;
        gamma = zeros(debugdata(1).cdof,1);
        Ctt = zeros(debugdata(1).cdof,1);
-       [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
+       [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
        % Augmented Mass Matrix
        [b,~] = size(Jacobian);
        augmass = [massmatrix,Jacobian';Jacobian,zeros(b,b)];
@@ -68,8 +68,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        end
        rhs = [vetorg;gamma]; %Erro force vector esta a ser calculado em 7 coord, resolver depois
        %% Calculus of the Acceleration vector
-       %iapsol = lsqminnorm(augmass,rhs,1e-6);
-       iapsol = augmass\rhs;
+       iapsol = lsqminnorm(augmass,rhs,1e-8);
        %% Allocation of the Acceleration Results
        i3 = 6*NBodies;
        %i4 = 6*NBodies + size(Jacobian,1); Lagrangian

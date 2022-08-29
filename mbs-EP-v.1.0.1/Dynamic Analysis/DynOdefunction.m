@@ -46,7 +46,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     
-    [fun,~,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
+    [fun,~,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
     
     %Jacobian Matrix
     Flags.Position = 0;
@@ -56,7 +56,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     
-    [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
+    [~,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
     
 %% Mass Matrix Assembly for Euler Parameters
     massmatrix = zeros(7*NBodies,7*NBodies); %Pre-Allocation
@@ -83,13 +83,19 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
 %% Solving First Iteration to start the Augmented Process
-    qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
+    [dim1,dim2] = size(massmatrix);
+    [dim3,~] = size(vetorg);
+    qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);
+    %[X,~,~] = regress(vetorg(8:dim3,1)',massmatrix(8:dim1,8:dim2)','TIKH','GCV');
+    %qdd0(8:dim3,1) = X';
+    
    
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
-    alpha = 1e9;
-    omega = 100;
-    mu = 12.5;
+    dim = size(Jacobian,1);
+    alpha = 1e7*eye(dim);
+    omega = 20*eye(dim);
+    mu = 1*eye(dim);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
@@ -105,18 +111,18 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while deltamax > 1e-2 % Second Condition to avoid infinite loops
+    while deltamax > 1e-5 % Second Condition to avoid infinite loops
         if lagit >= 1
            qddi = qddi1; 
         end
-        [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
+        [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
         rhslag = massmatrix*qddi - Jacobian'*alpha*(- gamma +  2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
-        %qddi1 = gaussianelim(lhslag,rhslag);
-        qddi1 = lsqminnorm(lhslag,rhslag);
+        qddi1 = gaussian_elimination(lhslag,rhslag); % -> Penso que o ruído vem daqui.
         qdd = qddi1;
         deltaqdd = qddi1 - qddi;
         deltamax = abs(max(deltaqdd));
         [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
+        %[vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
         lagit = lagit + 1; %Iteration Counter
     end
     yd = [qd;qdd];

@@ -1,4 +1,4 @@
-function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord)
+function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time)
 %% Pré-setup of the variables
     funCount = 1;
     fun = [];

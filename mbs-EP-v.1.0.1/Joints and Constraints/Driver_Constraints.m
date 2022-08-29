@@ -37,8 +37,8 @@ direction = Driver(jointCount).direction;
 functype = driverfunctions(jointCount).Type;
 inputfunc = driverfunctions(jointCount).functions;
 %This piece of codes is what enables to have constant drivers inputs.
-if isnumeric(inputfunc{1,1})
-    inputfunc = inputfunc{1,1};
+if strcmp(functype,"Numeric") == 1 || strcmp(functype,"numeric") == 1
+    inputfunc = str2double(inputfunc{1,1});
 elseif ischar(inputfunc{1,1})
     inputfunc = convertCharsToStrings(inputfunc{1,1});
     inputfunc = str2func(inputfunc);
@@ -48,8 +48,7 @@ rotaxis = unitvector(Driver(jointCount).rotaxis);
 vectordir = unitvector(Driver(jointCount).rotaxis);
 syms t ; %Creates the symbolic variable t to allow the functioning of the diff function;
 
-%Falta implementar vectores que não coincidam com um dos eixos globais. (Discutir com o prof)
-
+%It is needed to remake for the numeric case ( a constant).
 
 
 %% Form the position constraint equations

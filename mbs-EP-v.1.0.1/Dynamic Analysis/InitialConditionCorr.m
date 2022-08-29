@@ -1,4 +1,4 @@
-function [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType)
+function [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType,driverfunctions)
 %Function used for the debug of the initial conditions problem.    
 %% Correction    
 fun = 1;
@@ -66,7 +66,7 @@ while deltamax > 1e-3
     end
     % For the Driver Constraints
     for jointCount=1:Joints.NDriver
-        [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
+        [fun,~,~,~,funCount] = Driver_Constraints(fun,[],[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,0,driverfunctions);
     end
     %% Jacobian
         Flags.Position = 0;
@@ -125,7 +125,7 @@ while deltamax > 1e-3
     end
     % For the Driver Constraints
     for jointCount=1:Joints.NDriver
-        [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,t,driverfunctions);
+        [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,0,driverfunctions);
     end
 
     %% Augmented Mass Matrix Assembly
@@ -141,9 +141,9 @@ while deltamax > 1e-3
         massmatrix(i1+3:i1+6,i1+3:i1+6) = Irat; 
     end
     
+    % fun is omega
     
-    deltaq = Jacobian\fun;
-
+    deltaq = -pinv(Jacobian)*fun;
     q = qi + deltaq;
     
     delta = q - qi;
@@ -169,12 +169,12 @@ end
     massmatrix = zeros(6*NBodies,6*NBodies); %Pre-Allocation
     for i = 1:NBodies
         Mass = Bodies(i).Mass;
-        A = Bodies(i).A;
+        %A = Bodies(i).A;
         Inertia = Bodies(i).Inertia;
-        Irat = A*diag(Inertia)*A'; %Inertia convertion to Global Inertia Tensor (Nikra) - Rotated Theorem (Paulo Flores)
+        %Irat = A*diag(Inertia)*A'; %Inertia convertion to Global Inertia Tensor (Nikra) - Rotated Theorem (Paulo Flores)
         i1 = 6*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
-        massmatrix(i1+3:i1+5,i1+3:i1+5) = Irat; 
+        massmatrix(i1+3:i1+5,i1+3:i1+5) = diag(Inertia);
     end
     
     % Assembly of the Jacobian.
@@ -220,7 +220,7 @@ end
     end
     % For the Driving Constraints
     for jointCount=1:Joints.NDriver
-        [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
+        [~,Jacobian,~,~,funCount] = Driver_Constraints([],Jacobian,[],[],funCount,jointCount, Bodies, Joints.Driver,Flags,0,driverfunctions); 
     end
 
     for i = 1:NBodies
@@ -230,8 +230,7 @@ end
     
     epsilon = Jacobian*v0;
     
-    deltav = -pinv(massmatrix)*Jacobian'*pinv(Jacobian*pinv(massmatrix)*Jacobian')*epsilon;
-    %deltav = -pinv(Jacobian)*epsilon;
+    deltav = -pinv(Jacobian)*epsilon;
     
     v = v0 + deltav;
     

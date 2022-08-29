@@ -336,9 +336,9 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     grid on
     
     % set limits...
-    xlim([-1000 1000])
-    ylim([-500 1000])
-    zlim([-10 10])
+    xlim([-2000 2000])
+    ylim([-2000 2000])
+    zlim([-2000 2000])
     
     %% plot the other timesteps
     for f = 2:length(Points)

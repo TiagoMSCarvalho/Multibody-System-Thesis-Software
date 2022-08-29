@@ -105,21 +105,12 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while deltamax > 1e-2 % Second Condition to avoid infinite loops
-        if lagit >= 1
-           qddi = qddi1; 
-        end
-        [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
-        rhslag = massmatrix*qddi - Jacobian'*alpha*(- gamma +  2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
-        %qddi1 = gaussianelim(lhslag,rhslag);
-        qddi1 = lsqminnorm(lhslag,rhslag);
-        qdd = qddi1;
-        deltaqdd = qddi1 - qddi;
-        deltamax = abs(max(deltaqdd));
-        [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
-        lagit = lagit + 1; %Iteration Counter
-    end
-    yd = [qd;qdd];
+    
+    [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord);
+    rhslag = massmatrix*qddi - Jacobian*alpha*(-gamma + 2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
+    
+    yd = rhslag;
+    
 display(time);
 end
 

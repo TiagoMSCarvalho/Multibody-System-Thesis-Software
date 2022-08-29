@@ -47,10 +47,7 @@ if coord == 7
         Mass = eye(3)*Mass;
         Inertia = Bodies(i).Inertia;
         I = diag(Inertia);
-%         B = Bodies(i).L;
         w = Bodies(i).w;
-%         sw = SkewMatrix3(w);
-%         wJw = 2*B'*(sw*I*w);
         pd = 0.5*Bodies(i).L'*w;
         pd = Impose_Column(pd);
 %        Definition of Ld
@@ -129,11 +126,9 @@ elseif coord == 6
     Mass = Bodies(i).Mass;
     Mass = eye(3)*Mass;
     Inertia = Bodies(i).Inertia;
-    %A = Bodies(i).A;
     I = diag(Inertia);
     w = Bodies(i).w;
     sw = SkewMatrix3(w);
-    %Ia = A*I*A'; %MTS
     wJw = sw*I*w; %Pode estar um erro aqui ser I pg 238 Nikra
     %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
     % Force

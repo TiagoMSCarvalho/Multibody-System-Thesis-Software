@@ -73,7 +73,7 @@ if strcmp(SimType,"Kin") == 1
 %% Dynamic Solver
 elseif strcmp(SimType,"Dyn") == 1
     %% Initial Conditions Consistency Check
-    [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType);
+    [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType,driverfunctions);
     %% Calling the function that will solve the dynamic problem.
     [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime);
     %% Final Plots
