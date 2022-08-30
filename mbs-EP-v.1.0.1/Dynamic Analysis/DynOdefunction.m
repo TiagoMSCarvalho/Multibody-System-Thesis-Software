@@ -94,8 +94,8 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     %Values taken from Paulo Flores Art on Constraints
     dim = size(Jacobian,1);
     alpha = 1e7*eye(dim);
-    omega = 15*eye(dim);
-    mu = 10*eye(dim);
+    omega = 20*eye(dim);
+    mu = 1*eye(dim);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';

@@ -57,7 +57,9 @@ mbs-EP v1.0.0:
   - Implementation of the dynamic simulations:
   	- Solves the linear initial acceleration problem with the input of the q0 and rd0/w0 or q and rd/w for t0+timestep;
   	- Implements the ODE45 function (runge-Kutta algorithm with a method of 4th Order and Error Estimation of 5th Order) to integrate the DAE's of the velocity and acceleration;
+		- A standard Euler Integration would be enough for this version, it was a mistake to implement ODE45. However, the computational effort is not demanding enough to force a correction;
   	- Uses the algorithm of Direct Correction by S.Yoon to geometric eliminate the constraint violations of the joints;
+		- Due to this implementation this version is slow but extremly reliable;
   - The program is capable of receiving:
   	-  Linear and Non Linear Spring and Damper Functions (Up to 3 functions for 1 spring);
   	-  Capable of receiving Sinusoidal and Polynomial Driving Input Functions for Position, Velocity and Acceleration;
@@ -65,11 +67,22 @@ mbs-EP v1.0.0:
   	-  Run simulations with gravity or without it;
   	-  Simulate Steering forces and Bump Scenarios;
   	-  Simulate Tyre Vertical Forces by means of a prismatic joint and spring system;
+	-  Plot Kinematic and Dynamic 2d plots and plot a 3D animation
   - Limitations:
   	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;
   		- Would be needed an implementation of a Sideslip tyre force model;
-  - Being Implemented:
-  	-  SPH-REV Joint;
-  	-  PRI-REV Joint;
-  	-  REV-REV Joint; (maybe)
-  	-  Force Actuators;      
+	-  Algorithm does not have a Variable Step and Variable order, this implies that all the integration steps are the same and the program computation time is not efficient;
+	-  Symbolic toolbox is used for the inputs which causes the program to be even more inefficient;
+
+mbs-EP v1.0.1:
+  - Implementation of the following algorithms:
+	- Implementation of the Stabilization algorithm: Augmented Lagragian Formula which reduces the number of equations to half ( eliminates the lagrangian mutipliers);
+	- Implementation of the Integration predictor-corrector algorithm: Adams-Moulton-Bashforth which allows the program to have variable order of accuracy and variable step and consequently a higher efficiency;
+  - The program is capable of developing all the functions from mbs-EP v1.0.0 with a higher effiency and a lower computation time;
+  - Limitations:
+	- The user has to choose the parameters for the ALF algorithm which, if chosen incorrectly, can lead to instability and incorrect results at the worst case;
+	- The program still uses the symbolic toolbox for non linear inputs has a result the usage of this feature causes the program to become inefficient;
+
+mbs-EP v1.0.2:
+  - Overhaul of the Excel GUI and Pre Data Processing functions to allow the program to treat the nonlinear inputs has anonymous functions and discard the usage of the symbolic toolbox resulting in an increased efficiency;
+      
