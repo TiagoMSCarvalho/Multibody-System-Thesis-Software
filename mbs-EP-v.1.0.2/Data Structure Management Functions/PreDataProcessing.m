@@ -630,7 +630,7 @@ function Joints = ProcessDriver (Joints,JointsInfo,jointCount)
 Joints.Driver(jointCount).Body = JointsInfo(1);
 % Body position and degree constrained
 Joints.Driver(jointCount).direction = JointsInfo(2);
-Joints.Driver(jointCount).axis = JointsInfo(3:5); %Isto nao tem de ser definido como s - r?
+Joints.Driver(jointCount).axis = Impose_Column(JointsInfo(3:5)); %Isto nao tem de ser definido como s - r?
 %Axis of Application Rot or Translational
 end
 

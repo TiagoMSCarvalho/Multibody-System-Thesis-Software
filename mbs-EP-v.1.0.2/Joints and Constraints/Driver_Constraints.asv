@@ -205,7 +205,7 @@ if(Flags.Acceleration == 1)
         pdd = (1/2)*(G.'*accelvector) + (1/4)*(velvector'*velvector)*p; %This is what changes the value from -4.9 to -3.3 in accel;
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
-        if vectordir(1) ~= 0
+        if ´vectordir(1) ~= 0
            Ctt(funCount+j,1) = pdd(2);
            j = j + 1;
         end
@@ -213,7 +213,7 @@ if(Flags.Acceleration == 1)
             Ctt(funCount+j,1) = pdd(3);
             j = j + 1;
         end
-        if vectordir(3) ~= 0
+        if 
             Ctt(funCount+j,1) = pdd(4);
             j = j + 1;
         end
@@ -227,29 +227,29 @@ if (Flags.Jacobian == 1) && (Flags.Dynamic == 1)
     j = 0;
     %Translation
     if direction < 4
-        if vectordir(1) ~= 0 
+        if round(vectordir(1)) ~= 0 
             Jacobian(funCount+j,i1) = 1;
             j = j + 1;
         end
-        if vectordir(2) ~= 0
+        if round(vectordir(2)) ~= 0
             Jacobian(funCount+j,i1+1) = 1;
             j = j + 1;
         end
-        if vectordir(3) ~= 0
+        if round(vectordir(3)) ~= 0
             Jacobian(funCount+j,i1+2) = 1;
             j = j + 1;
         end
     %Rotation        
     elseif direction > 3
-        if vectordir(1) ~= 0
+        if round(vectordir(1)) ~= 0
             Jacobian(funCount+j,i1+3) = 1;
             j = j + 1;
         end
-        if vectordir(2) ~= 0
+        if round(vectordir(2)) ~= 0
             Jacobian(funCount+j,i1+4) = 1;
             j = j + 1;
         end
-        if vectordir(3) ~= 0
+        if round(vectordir(3)) ~= 0
             Jacobian(funCount+j,i1+5) = 1;
             j = j + 1;
         end
@@ -263,29 +263,29 @@ if(Flags.AccelDyn == 1) && (time ~= 0)
     j = 0;
     
     if direction < 4
-       if vectordir(1) ~= 0
+       if round(accelvector(1)) ~= 0
            Ctt(funCount+j,1) = accelvector(1);
            j = j +1;
        end
-       if vectordir(2) ~= 0
+       if round(accelvector(2)) ~= 0
            Ctt(funCount+j,1) = accelvector(2);
            j = j + 1;
        end
-       if vectordir(3) ~= 0
+       if round(accelvector(3)) ~= 0
            Ctt(funCount+j,1) = accelvector(3);
            j = j + 1;
        end
               
     elseif direction > 3
-        if vectordir(1) ~= 0
+        if round(accelvector(1)) ~= 0
             Ctt(funCount+j,1) = accelvector(1);
             j = j + 1;
         end
-        if vectordir(2) ~= 0 
+        if round(accelvector(2)) ~= 0 
             Ctt(funCount+j,1) = accelvector(2);
             j = j + 1;
         end
-        if vectordir(3) ~= 0
+        if round(accelvector(3)) ~= 0
             Ctt(funCount+j,1) = accelvector(3);
             j = j + 1;
         end        

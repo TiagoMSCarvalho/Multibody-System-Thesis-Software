@@ -43,7 +43,7 @@ function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType,coord)
         end
         %Accounts for the Tra-Rev
         for  i = 1:Joints.NTraRev
-            cdof = cdof + 5;
+            cdof = cdof + 4;
         end
 
         cdof = cdof + NBodies - 1; %Euler Parameter Constraints
