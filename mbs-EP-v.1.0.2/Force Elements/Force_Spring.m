@@ -49,11 +49,9 @@ elseif isnan(Spring(forcescount).Constant)
     %Non Linear Spring
         %Function Input: Displacement of the Spring
         %Function Output: Spring Force
-%     sym dx
-%     sfunc = str2func(ForceFunction.Spring(forcescount).Function);
-%     force = sfunc(displacement);
-    sym dx
-    Noffun = Spring.Noffun;
+%     Symbolic variable dx was taken out, the functions are now anonymous
+% the functions are define to work as F(displacement);
+    Noffun = Spring(forcescount).Noffun;
     if Noffun == 1
         dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
         force = dfunc(deltaxmag);
@@ -61,7 +59,7 @@ elseif isnan(Spring(forcescount).Constant)
         if lengthrateofchange <= Spring(forcescount).Intmin
             dfunc = str2func(ForceFunction.Spring(forcescount).Function1);
             force = dfunc(deltaxmag);
-        elseif lenthrateofchange > Spring(forcescount).Intmin
+        elseif lenthrateofchange > Spring(forcescount).Intmax
             dfunc = str2func(ForceFunction.Spring(forcescount).Function2);
             force = dfunc(deltaxmag);
         end
@@ -82,7 +80,7 @@ end
 forcei = force;
 forcej = -force;
 %Moments Created by the Translational Spring
-momenti = sspi*Ai'*forcei; %falta Ai aqui
+momenti = sspi*Ai'*forcei; 
 momentj = sspj*Aj'*forcej;
 % Allocation of the force to the vector
 if coord == 7

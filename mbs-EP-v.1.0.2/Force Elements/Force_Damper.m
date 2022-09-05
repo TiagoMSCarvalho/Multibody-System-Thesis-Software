@@ -56,7 +56,9 @@ elseif isnan(Damper(forcescount).Constant)
     % Non Linear Spring:
         %Function Input: Velocity of compression ( lengthrateofchange)
         %Function Output: Damper Force
-    sym x
+    % Sym x was deleted the functions are now anonymous and work as a
+    % function of F(dx), where dx is the velocity of compression or tension
+    % of the damper.
     Noffun = Damper(forcescount).Noffun;
     if Noffun == 1
         dfunc = str2func(Damper(forcescount).Function1);
@@ -65,7 +67,7 @@ elseif isnan(Damper(forcescount).Constant)
         if lengthrateofchange <= Damper(forcescount).Intmin
             dfunc = str2func(ForceFunction.Damper(forcescount).Function1);
             force = dfunc(lengthrateofchange);
-        elseif lenthrateofchange > Damper(forcescount).Intmin
+        elseif lenthrateofchange > Damper(forcescount).Intmax
             dfunc = str2func(ForceFunction.Damper(forcescount).Function2);
             force = dfunc(lenthrateofchange);
         end

@@ -73,7 +73,6 @@ if coord == 7
             elseif ischar(cellforce{1,j1})
                 inputfunc = convertCharsToStrings(cellforce{1,j1});
                 inputfunc = str2func(inputfunc); 
-                sym t;
                 if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                     forcevec(1,j1) = inputfunc(time)*10^3;
                 elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
@@ -144,7 +143,6 @@ elseif coord == 6
         elseif ischar(cellforce{1,j1})
             inputfunc = convertCharsToStrings(cellforce{1,j1});
             inputfunc = str2func(inputfunc); 
-            sym t;
             if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                 forcevec(1,j1) = inputfunc(time)*10^3;
             elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1

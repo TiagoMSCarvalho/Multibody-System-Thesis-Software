@@ -22,6 +22,8 @@ Aj = Bodies(j).A;
 % to the CoM (Pre Processing sp - r)
 spig = Ai*spi;
 spjg = Aj*spj;
+% Skew Matrix
+sspi = SkewMatrix3(spi);
 
 %% Vector Calculus and formulation
 % Displacement and Delta Calculus
@@ -29,15 +31,36 @@ displacement = rj + spjg -ri - spig;
 % Force Direction Vector
 [~,lun] = unitvector(displacement);
 %% Force Function Magnitude Calculus
-sym t
-dfunc = str2fun(ForceFunction.Actuator(forcescount).Function);
-force = dfunc(time);
+Noffun = Actuator(forcescount).Noffun;
+if Noffun == 1
+    dfunc = str2func(ForceFunction.Actuator(forcescount).Function1);
+    force = dfunc(time);
+elseif Noffun == 2
+    if time <= Actuator(forcescount).Intmin
+        dfunc = str2func(ForceFunction.Actuator(forcescount).Function1);
+        force = dfunc(time);
+    elseif time > Actuator(forcescount).Intmax
+        dfunc = str2func(ForceFunction.Actuator(forcescount).Function2);
+        force = dfunc(time);
+    end
+elseif Noffun == 3
+    if time <= Actuator(forcescount).Intmin
+        dfunc = str2func(ForceFunction.Actuator(forcescount).Function1);
+        force = dfunc(time);
+    elseif time < Actuator(forcescount).Intmax && time > Actuator(forcescount).Intmin
+        dfunc = str2func(ForceFunction.Actuator(forcescount).Function2);
+        force = dfunc(time);
+    elseif time >= Actuator(forcecount).Intmax
+        dfunc = str2func(ForceFunction.Actuator(forcescount).Function3);
+        force = dfunc(time);
+    end
+end
 %Force Vectors
 forcei = force*lun;
 forcej = -force*lun;
-%Moments Created by the Damper
-momenti = cross(spi,forcei);
-momentj = cross(spj,forcej);
+%Moments Created by the Actuator
+momenti = sspi*Ai'*forcei;
+momentj = sspj*Aj'*forcej;
 %Allocation of the force to the vector
 if coord == 7
     % Body i

@@ -308,7 +308,7 @@ JointInfo = cell2mat(rawdrivers(relevant_lines_drivers,4:8));
 n_Joints = size(JointTypes,1);
 
 %% Reads Functions from excel (strings), it is separated due to cell2mat
-[~,~,rawfunctions] = xlsread(filename,'Joints_Drivers','I2:J100');
+[~,~,rawfunctions] = xlsread(filename,'Joints_Drivers','I2:K100');
 relevant_lines_functions = [];
 for i = 2:size(rawdrivers,1)
     if ischar(rawfunctions{i,1})
@@ -320,8 +320,9 @@ end
 
 driverfunctions = [];
 for i = 1:size(relevant_lines_functions,2)
-    driverfunctions(i).functions = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),1));
-    driverfunctions(i).Type = rawfunctions(relevant_lines_functions(1,i),2);
+    driverfunctions(i).dispfunc = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),1));
+    driverfunctions(i).velfunc = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),2));
+    driverfunctions(i).accelfunc = convertCharsToStrings(rawfunctions(relevant_lines_functions(1,i),3));
 end
 
 for i = 1:n_Joints
@@ -629,7 +630,8 @@ function Joints = ProcessDriver (Joints,JointsInfo,jointCount)
 Joints.Driver(jointCount).Body = JointsInfo(1);
 % Body position and degree constrained
 Joints.Driver(jointCount).direction = JointsInfo(2);
-Joints.Driver(jointCount).rotaxis = JointsInfo(3:5);
+Joints.Driver(jointCount).axis = JointsInfo(3:5); %Isto nao tem de ser definido como s - r?
+%Axis of Application Rot or Translational
 end
 
 function Joints = ProcessPoint(Joints,JointsInfo,jointCount,Bodies) 
@@ -650,7 +652,7 @@ end
 
 function [Forces,ForceFunction] = ReadForcesInfo(filename,Bodies)
 
-[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:S100');
+[~,~,rawforces] = xlsread(filename,'Force_Elements','A2:Y100');
 relevant_lines_forces = [];
 for i = 1:size(rawforces,1)
     if isnumeric(rawforces{i,4})
@@ -663,7 +665,7 @@ end
 ForcesTypes = rawforces(relevant_lines_forces,2); 
 %cell2mat was deleted, it will be done within the processing functions to
 %allow the processing of the nonlinear function.
-ForcesRaw = rawforces(relevant_lines_forces,4:19);
+ForcesRaw = rawforces(relevant_lines_forces,4:25);
 n_Forces = size(ForcesTypes,1);
 
 % Initialize the force joint type at 0.
@@ -744,37 +746,61 @@ Forces.Spring(ForcesCount).Intmax = ForcesInterval(3);
 end
 
 function Forces = ProcessTSpring(Forces,ForcesRaw,ForcesCount,Bodies)
-ForcesInfo = cell2mat(ForcesRaw(1,1:13));
+ForcesInfo = cell2mat(ForcesRaw(1,1:16));
+ForceFunction.TSpring(ForcesCount).Function1 = ForcesRaw{1,17};
+ForceFunction.TSpring(ForcesCount).Function2 = ForcesRaw{1,18};
+ForceFunction.TSpring(ForcesCount).Function3 = ForcesRaw{1,19};
+ForcesInterval = cell2mat(ForcesRaw(1,20:22));
 Forces.TSpring(ForcesCount).Body1 = ForcesInfo(1);
 Forces.TSpring(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
 i = Forces.TSpring(ForcesCount).Body1;
 j = Forces.TSpring(ForcesCount).Body2;
-% Location of joint center in fixed reference
-axis = Impose_Column(ForcesInfo(3:5));
 % Get euler parameter for each body frame
 pi = Bodies(i).p;
 pj = Bodies(j).p;
-% Transform Spring Axis
-axi = EarthtoBody(axis,pi);
-axj = EarthtoBody(axis,pj);
+% Location of joint center in fixed reference
+sp = Impose_Column(ForcesInfo(3:5));
+% REV joint axis vector
+axis = Impose_Column(ForcesInfo(6:8));
+% Vectors si and sj
+si_earth = Impose_Column(ForcesInfo(9:11));
+sj_earth = Impose_Column(ForcesInfo(12:14));
+si_e = si_earth - sp;
+sj_e = sj_earth - sp;
+si = EarthtoBody(si_e,pi);
+sj = EarthtoBody(sj_e,pj);
+s = axis - sp;
+ui = EarthtoBody(s,pi);
+uj = EarthtoBody(s,pj);
 % Save spring axis in the local referential
-Forces.TSpring(ForcesCount).axi = axi;
-Forces.TSpring(ForcesCount).axj = axj;
-Forces.TSpring(ForcesCount).s = axis;
+Forces.TSpring(ForcesCount).si = si;
+Forces.TSpring(ForcesCount).sj = sj;
+Forces.TSpring(ForcesCount).s = s;
+Forces.TSpring(ForcesCount).ui = ui;
+Forces.TSpring(ForcesCount).uj = uj;
 %Save Constant
-Forces.TSpring(ForcesCount).Constant = ForcesInfo(6);
+Forces.TSpring(ForcesCount).Constant = ForcesInfo(15);
 %% Initial Displacement Rotational
-si = ForcesInfo(7:9);
-sj = ForcesInfo(10:12);
+si = ForcesInfo(6:8);
+sj = ForcesInfo(9:11);
 %Store si and sj in the forces struct
 Forces.TSpring(ForcesCount).si = si;
 Forces.TSpring(ForcesCount).sj = sj;
-if isnan(ForcesInfo(13))
-    Forces.TSpring(ForcesCount).theta0 = acos(dot(si,sj)/(norm(si)*norm(sj)));
-elseif ~isnan(ForcesInfo(13))
-    Forces.TSpring(ForcesCount).theta0 = ForcesInfo(13);
+if isnan(ForcesInfo(16))
+    theta0 = acos((si_e'*sj_e)/(dot(norm(si_e),norm(sj_e))));
+    signal = s'*SkewMatrix3(si_e)*sj_e;
+    if signal <= 0
+        Forces.TSpring(ForcesCount).theta0 = theta0 + pi;
+    else
+        Forces.TSpring(ForcesCount).theta0 = theta0;
+    end
+elseif ~isnan(ForcesInfo(16))
+    Forces.TSpring(ForcesCount).theta0 = ForcesInfo(16);
 end
+Forces.TSpring(ForcesCount).Noffun = ForcesInterval(1);
+Forces.TSpring(ForcesCount).Intmin = ForcesInterval(2);
+Forces.TSpring(ForcesCount).Intmax = ForcesInterval(3);
 end
 
 function [Forces,ForceFunction] = ProcessDamper(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
@@ -821,7 +847,10 @@ end
 
 function [Forces,ForceFunction] = ProcessActuator(Forces,ForcesRaw,ForcesCount,Bodies,ForceFunction)
 ForcesInfo = cell2mat(ForcesRaw(1,1:8));
-ForceFunction.Actuator(ForcesCount).Function = ForcesRaw{1,9};
+ForceFunction.Actuator(ForcesCount).Function1 = ForcesRaw{1,9};
+ForceFunction.Actuator(ForcesCount).Function2 = ForcesRaw{1,10};
+ForceFunction.Actuator(ForcesCount).Function3 = ForcesRaw{1,11};
+ForcesInterval = cell2mat(ForcesRaw(1,12:14));
 Forces.Actuator(ForcesCount).Body1 = ForcesInfo(1);
 Forces.Actuator(ForcesCount).Body2 = ForcesInfo(2);
 % Pass body numbers to easier to use variables
@@ -842,6 +871,9 @@ spj = EarthtoBody(spjg,pj);
 % Save the joint location in each bodies' reference
 Forces.Actuator(ForcesCount).spi = spi;
 Forces.Actuator(ForcesCount).spj = spj;
+Forces.Actuator(ForcesCount).Noffun = ForcesInterval(1);
+Forces.Actuator(ForcesCount).Intmin = ForcesInterval(2);
+Forces.Actuator(ForcesCount).Intmax = ForcesInterval(3);
 end
 
 function [GraphicsType,BodiesGraph,PointsGraph] = ReadGraphicsInfo(filename)
