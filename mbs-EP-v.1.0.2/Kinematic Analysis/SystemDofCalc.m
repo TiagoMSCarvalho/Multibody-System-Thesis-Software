@@ -35,11 +35,11 @@ function [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,SimType,coord)
         end
         %Accounts for the Sph-Sph
         for i = 1:Joints.NCompSpherical
-            cdof = cdof + 6;
+            cdof = cdof + 2;
         end
         %Accounts for the Sph-Rev
         for i = 1:Joints.NSphRev
-            cdof = cdof + 8;
+            cdof = cdof + 1;
         end
         %Accounts for the Tra-Rev
         for  i = 1:Joints.NTraRev

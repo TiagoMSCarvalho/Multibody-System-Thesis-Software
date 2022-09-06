@@ -85,17 +85,14 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %% Solving First Iteration to start the Augmented Process
     [dim1,dim2] = size(massmatrix);
     [dim3,~] = size(vetorg);
-    qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);
-    %[X,~,~] = regress(vetorg(8:dim3,1)',massmatrix(8:dim1,8:dim2)','TIKH','GCV');
-    %qdd0(8:dim3,1) = X';
-    
+    qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
    
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
     dim = size(Jacobian,1);
     alpha = 1e7*eye(dim);
-    omega = 15*eye(dim);
-    mu = 10*eye(dim);
+    omega = 25*eye(dim);
+    mu = 8*eye(dim);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
@@ -117,12 +114,11 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
         end
         [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
         rhslag = massmatrix*qddi - Jacobian'*alpha*(- gamma +  2*omega*mu*(Jacobian*qd - niu) + omega^2*fun);
-        qddi1 = gaussian_elimination(lhslag,rhslag); % -> Penso que o ruído vem daqui.
+        qddi1 = gaussian_elimination(lhslag,rhslag);
         qdd = qddi1;
         deltaqdd = qddi1 - qddi;
         deltamax = abs(max(deltaqdd));
         [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
-        %[vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
         lagit = lagit + 1; %Iteration Counter
     end
     yd = [qd;qdd];

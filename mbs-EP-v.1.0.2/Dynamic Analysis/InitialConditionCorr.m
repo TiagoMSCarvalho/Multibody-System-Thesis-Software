@@ -1,7 +1,6 @@
 function [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType,driverfunctions)
 %Function used for the debug of the initial conditions problem.    
 %% Correction    
-fun = 1;
 deltamax = 1;
 while deltamax > 1e-3
 
