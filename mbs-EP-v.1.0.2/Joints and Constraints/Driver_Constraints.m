@@ -155,9 +155,9 @@ if(Flags.Velocity == 1)
             Ct(funCount+j,1) = velvector(3);
             j = j + 1;
         end
-    elseif direction > 3
+    elseif direction > 3    
         G = Bodies(i).G;
-        pd = (1/2)*(G'*velvector);
+        pd = (1/2)*(G.'*velvector);
         %Allocation of p0;
         i1 = 7*(i-1)+1;
         Ct(i1+3,1) = pd(1);
@@ -202,7 +202,9 @@ if(Flags.Acceleration == 1)
     elseif direction > 3
         p = Bodies(i).p;
         G = Bodies(i).G;
-        pdd = (1/2)*(G.'*accelvector) + (1/4)*(velvector'*velvector)*p; %This is what changes the value from -4.9 to -3.3 in accel;
+        pdd = (1/2)*(G.'*accelvector) + (1/4)*(velvector'*velvector)*p; 
+        %This is what changes the value from -4.9 to -3.3 in accel ( it was
+        %changed for the dynamics be careful). Kin: + (1/4)
         i1 = 7*(i-1)+1;
         Ctt(i1+3,1) = pdd(1);
         if vectordir(1) ~= 0

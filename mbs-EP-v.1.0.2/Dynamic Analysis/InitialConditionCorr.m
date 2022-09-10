@@ -133,8 +133,8 @@ while deltamax > 1e-3
     for i = 1:NBodies
         Mass = Bodies(i).Mass;
         B = Bodies(i).L;
-        Inertia = Bodies(i).Inertia;
-        Irat = 4*B'*diag(Inertia)*B; %Nikra Article on the use of EP for 3D Dynamics
+        Inertia = diag(Bodies(i).Inertia);
+        Irat = 4.*B'*Inertia*B; %Nikra Article on the use of EP for 3D Dynamics
         i1 = 7*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
         massmatrix(i1+3:i1+6,i1+3:i1+6) = Irat; 

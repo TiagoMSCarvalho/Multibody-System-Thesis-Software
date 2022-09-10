@@ -93,7 +93,6 @@ if coord == 7
             elseif ischar(celltorque{1,j2})
                 inputfunc = convertCharsToStrings(celltorque{1,j2});
                 inputfunc = str2func(inputfunc);
-                sym t;
                 if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                     forcetor(1,j2) = inputfunc(time)*10^3;
                 elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
@@ -163,7 +162,6 @@ elseif coord == 6
         elseif ischar(celltorque{1,j2})
             inputfunc = convertCharsToStrings(celltorque{1,j2});
             inputfunc = str2func(inputfunc);
-            sym t;
             if strcmp(UnitsSystem,"mmks") == 1  || strcmp(UnitsSystem,"MMKS") == 1
                 forcetor(1,j2) = inputfunc(time)*10^3;
             elseif strcmp(UnitsSystem,"si") == 1 || strcmp(UnitsSystem,"SI") == 1 || strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1

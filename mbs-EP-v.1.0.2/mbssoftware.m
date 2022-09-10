@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor_damper_vel';
+filename = 'flyball_governor_damper_spring_vel';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration

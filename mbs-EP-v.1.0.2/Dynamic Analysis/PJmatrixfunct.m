@@ -57,7 +57,7 @@ function [fun,Jacobian,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,de
     end
     % For the Driving Constraints
     for jointCount=1:Joints.NDriver
-        [fun,Jacobian,niu,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
+        [fun,Jacobian,Ct,Ctt,funCount] = Driver_Constraints(fun,Jacobian,Ct,Ctt,funCount,jointCount, Bodies, Joints.Driver,Flags,time,driverfunctions); 
     end
     
     %% Assembly of the rhs vectors, if they are needed.
