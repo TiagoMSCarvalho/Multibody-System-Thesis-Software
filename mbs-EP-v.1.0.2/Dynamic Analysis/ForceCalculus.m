@@ -58,7 +58,7 @@ if coord == 7
         e = [e1d;e2d;e3d];
         Ld = [-e,-SkewMatrix3(e) + e0d*eye(3)];
         %Calculo do wJw para EP
-        wJw = 8*Ld'*I*Bodies(i).L*pd;
+        wJw = -8*Ld'*I*Bodies(i).L*pd; %Nikra Art Version
         %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
         % Force
         forcevec = zeros(1,3);
@@ -112,10 +112,10 @@ if coord == 7
         i1 = 7*(i-1)+1;
         if isnan(gmag)
             vectorg(i1:i1+2,1) = Impose_Column(forcevec);
-            vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);        
+            vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) + Impose_Column(wJw);        
         elseif ~isnan(gmag)
             vectorg(i1:i1+2,1) = Impose_Column(forcevec) + Mass*Impose_Column(g);
-            vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) - Impose_Column(wJw);
+            vectorg(i1+3:i1+6,1) = Impose_Column(forcetor) + Impose_Column(ForceMoment) + Impose_Column(wJw);
         end
     end
 elseif coord == 6

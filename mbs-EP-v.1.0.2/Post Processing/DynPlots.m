@@ -1,4 +1,4 @@
-function [] = DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints)
+function [] = DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints,UnitsSystem)
 %This function is responsible for plotting the graphics for the dynamic
 %simulation.
 
@@ -336,9 +336,15 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     grid on
     
     % set limits...
-    xlim([-1000 1000])
-    ylim([-1000 1000])
-    zlim([-1000 1000])
+    if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
+        xlim([-1 1])
+        ylim([-1 1])
+        zlim([-1 1])
+    elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
+        xlim([-1000 1000])
+        ylim([-1000 1000])
+        zlim([-1000 1000])
+    end
     
     %% plot the other timesteps
     for f = 2:length(Points)
@@ -361,7 +367,7 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     
     %% Initialize video
     myVideo = VideoWriter('myVideoFile'); %open video file
-    myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
+    myVideo.FrameRate = 144;  %can adjust this, 5 - 10 works well for me
     open(myVideo)
     
     %% Initiate the 3D Plot
@@ -378,10 +384,16 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     axis auto
     grid on
     
-    % set limits...
-    xlim([-1000 1000])
-    ylim([-500 1000])
-    zlim([-10 10])
+    % set limits... 
+    if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
+        xlim([-1 1])
+        ylim([-1 1])
+        zlim([-1 1])
+    elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
+        xlim([-1000 1000])
+        ylim([-1000 1000])
+        zlim([-1000 1000])
+    end
     
     %% plot the other timesteps
     for f = 2:length(Points)

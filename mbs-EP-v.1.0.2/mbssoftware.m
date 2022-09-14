@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor_simplified';
+filename = 'mcpherson_2d_si';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -77,5 +77,5 @@ elseif strcmp(SimType,"Dyn") == 1
     %% Calling the function that will solve the dynamic problem.
     [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime);
     %% Final Plots
-    DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints);
+    DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints,UnitsSystem);
 end    

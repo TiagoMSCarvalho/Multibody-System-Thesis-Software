@@ -134,15 +134,18 @@ while deltamax > 1e-3
         Mass = Bodies(i).Mass;
         B = Bodies(i).L;
         Inertia = diag(Bodies(i).Inertia);
-        Irat = 4.*B'*Inertia*B; %Nikra Article on the use of EP for 3D Dynamics
+        Irat = 4*B'*Inertia*B; %Nikra Article on the use of EP for 3D Dynamics
         i1 = 7*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
         massmatrix(i1+3:i1+6,i1+3:i1+6) = Irat; 
     end
     
     % fun is omega
-    
-    deltaq = -pinv(Jacobian)*fun;
+    % This may be changed between Min Sum of Squares vs Inertia Weigthed
+    % Correction ( The improvement of the latter is in relation to the ang
+    % velocities.
+    %deltaq = -pinv(Jacobian)*fun; %Min Sum of Squares
+    deltaq = -pinv(massmatrix)*(pinv(Jacobian)*fun); %Inertia Weigthed Correciton
     q = qi + deltaq;
     
     delta = q - qi;
@@ -229,7 +232,11 @@ end
     
     epsilon = Jacobian*v0;
     
-    deltav = -pinv(Jacobian)*epsilon;
+    % This may be changed between Min Sum of Squares vs Inertia Weigthed
+    % Correction ( The improvement of the latter is in relation to the ang
+    % velocities.
+    %deltav = -pinv(Jacobian)*epsilon; %Min Sum of Squares
+    deltav = -pinv(massmatrix)*(pinv(Jacobian)*epsilon); %Inertia Weigthed Corr
     
     v = v0 + deltav;
     

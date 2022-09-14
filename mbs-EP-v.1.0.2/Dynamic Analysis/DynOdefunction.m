@@ -64,7 +64,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
         Mass = Bodies(i).Mass;
         B = Bodies(i).L;
         Inertia = diag(Bodies(i).Inertia);
-        Irat = 4.*B'*Inertia*B; %Nikra Article on the use of EP for 3D Dynamics
+        Irat = 4*B'*Inertia*B; %Nikra Article on the use of EP for 3D Dynamics
         i1 = 7*(i-1)+1;
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
         massmatrix(i1+3:i1+6,i1+3:i1+6) = Irat; 
@@ -91,8 +91,8 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     %Values taken from Paulo Flores Art on Constraints
     dim = size(Jacobian,1);
     alpha = 1e7*eye(dim);
-    omega = 5*eye(dim);
-    mu = 1*eye(dim);
+    omega = 10*eye(dim);
+    mu = 1.5*eye(dim);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
@@ -108,7 +108,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while deltamax > 1e-4% Second Condition to avoid infinite loops
+    while deltamax > 1e-3% Second Condition to avoid infinite loops
         if lagit >= 1
            qddi = qddi1; 
         end
@@ -123,16 +123,6 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     end
     yd = [qd;qdd];
 
-%     Section Used for Acel Debug:
-%     for i = 1:NBodies
-%         i1 = 7*(i-1)+1;
-%         i2 = 6*(i-1)+1;
-%         L = Bodies(i).L;
-%         pdd = qddi1(i1+3:i1+6,1);
-%         aang = 2*L*pdd;
-%         acel(i2:i2+2,1) = qddi1(i1:i1+2,1);
-%         acel(i2+3:i2+5,1) = aang;     
-%     end
 display(time);
 end
 

@@ -54,7 +54,7 @@ end
     wogmass = massmatrix(8:dim1,8:dim2);
     [dim3,~] = size(vetorg);
     wogvetor = vetorg(8:dim3,1);
-    qddwog = lsqminnorm(wogmass,wogvetor);
+    qddwog = lsqminnorm(wogmass,wogvetor,1e-8);
     [dim4,~] = size(qddwog);
     qdd0(8:dim4+7,1) = qddwog;
     
