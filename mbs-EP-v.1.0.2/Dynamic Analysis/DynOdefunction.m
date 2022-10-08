@@ -102,7 +102,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     lhslag = massmatrix + Jacobian'*alpha*Jacobian;
     
     % Flags to retrieve gamma
-    Flags.Position = 0;
+    Flags.Position = 1;
     Flags.Jacobian = 0;
     Flags.Velocity = 1;
     Flags.Acceleration = 1;
