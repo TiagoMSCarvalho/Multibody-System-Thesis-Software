@@ -33,7 +33,7 @@ JointTypes = {'Spherical','CompSpherical','Universal','Revolute','Cylindrical','
 ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
-filename = 'flyball_governor_damper_spring';
+filename = 'flyball_governor_simplified';
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration
@@ -75,7 +75,18 @@ elseif strcmp(SimType,"Dyn") == 1
     %% Initial Conditions Consistency Check
     [Bodies] = InitialConditionCorr(NBodies,Bodies,Joints,SimType,driverfunctions);
     %% Calling the function that will solve the dynamic problem.
-    [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime);
+    [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime);
     %% Final Plots
     DynPlots(GraphicsType,BodiesGraph,PointsGraph,RunTime,TimeStep,CoM,Points,Joints,UnitsSystem);
+    
+    %% Violations Plots
+    figure
+    plot(timevector',pv)
+    ylabel('Positions Violations [mm]');
+    xlabel('Time [s]');
+    
+    figure
+    plot(timevector',vv);
+    ylabel('Velocity Violations [mm/s]');
+    xlabel('Time[s]');
 end    

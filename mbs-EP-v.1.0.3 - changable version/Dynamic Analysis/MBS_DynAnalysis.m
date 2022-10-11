@@ -1,14 +1,38 @@
-function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime)
+function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnalysis(NBodies,Bodies,dynfunc,Joints,Forces,Points,CoM,TimeStep,Grav,SimType,UnitsSystem,it,driverfunctions,debugdata,ForceFunction,tini,RunTime)
 %Calls the functions needed to solve the Foward Dynamic Problem
     % Prepares the initial conditions for the ode solver and calculates the
     % first acceleration for t=0, to store.
     [y0,t0,tf,DynAcc,Bodies] = InitialOdeSetup(NBodies,Bodies,tini,TimeStep,RunTime,dynfunc,Forces,Grav,UnitsSystem,ForceFunction,SimType);
     
+    %Velocity and Pos Constraints Violation
+    coord = 6;
+    time = 0;
+    pv = [];
+    vv = [];
+    [debugdata] = SystemDofCalc(NBodies,Joints,debugdata,[],coord);
+    Flags.Position = 1;
+    Flags.Jacobian = 1;
+    Flags.Velocity = 0;
+    Flags.Acceleration = 0;
+    Flags.Dynamic = 1;
+    Flags.AccelDyn = 0;
+    [fun,Jacobian,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
+    %display(fun);
+    for i = 1:NBodies
+           i1 = 6*(i-1)+1;
+           qd(i1:i1+2,1) = Bodies(i).r;
+           qd(i1+3:i1+5,1) = Bodies(i).w;
+    end
+    velvio = max(abs(Jacobian*qd));
+    posvio = max(abs(fun));
+    %velvio = (Jacobian*qd)'*(Jacobian*qd);
+    %posvio = fun'*fun;
+    
     % Update of the variables (Stores t - Timestep)
-    [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
+    [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it,pv,vv,posvio,velvio);
     
     tic;
-    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',abs(t0-tf)*10^-3); 
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',0.1*abs(t0-tf)); 
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
     display(computationtime)
@@ -76,7 +100,26 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata] = MBS_DynAnalysis(NBodies,Bodie
        %LagMulti = -iapsol(i3+1:i4,1);  %For later usage
        %% Update of the calculate Accelerations for previous storage
        [Bodies] = UpdateAccelerations(DynAcc,NBodies,Bodies,SimType,[]);
+       %% Violations Constraints Graphics:
+       for i = 1:NBodies
+           i1 = 6*(i-1)+1;
+           qd(i1:i1+2,1) = Bodies(i).r;
+           qd(i1+3:i1+5,1) = Bodies(i).w;
+       end
+       velvio = max(abs((Jacobian*qd)));
+       %velvio = (Jacobian*qd)'*(Jacobian*qd);
+       Flags.Position = 1;
+       Flags.Jacobian = 0;
+       Flags.Velocity = 0;
+       Flags.Acceleration = 0;
+       Flags.Dynamic = 0;
+       Flags.AccelDyn = 0;
+       [fun,~,~,~] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
+       %display(fun)
+       posvio = max(abs(fun));
+       %posvio = fun'*fun;
        %% Storage of this step calculus
-       [Points,CoM,it] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it);
+       [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it,pv,vv,posvio,velvio);
+       
     end  
 end

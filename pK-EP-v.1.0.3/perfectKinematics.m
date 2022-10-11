@@ -49,6 +49,8 @@ it = 1;
 opts=optimoptions('fsolve');
 %opts.PlotFcn='optimplotfval';  
 opts.Algorithm='trust-region-dogleg';
+%opts.Algorithm ='levenberg-marquardt';
+%opts.Algorithm = 'trust-region';
 opts.Diagnostics = 'off';
 opts.Display = 'iter';
 opts.ScaleProblem = 'Jacobian';
@@ -70,7 +72,10 @@ Ntotit = RunTime/TimeStep;
 tini = TimeStep; %Initial Time 0s + Initial Time, q0( pos for t = 0 s) is already stored.
 
 for t=tini:TimeStep:RunTime
+    tic;
     [Bodies,Points,debugdata,it] = MultiBody_3D_Kinematic_Analysis(NBodies,Bodies,Joints,Points,t,it,opts,debugdata,ang,driverfunctions);
+    computationtime = toc;
+    display(computationtime);
 end
 
 %% POST-PROCESSING

@@ -85,21 +85,25 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %% Solving First Iteration to start the Augmented Process
     [dim1,dim2] = size(massmatrix);
     [dim3,~] = size(vetorg);
-    qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
+    %qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
+    %qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
+    qdd0(8:dim3,1) = pinv(massmatrix(8:dim1,8:dim2))*vetorg(8:dim3,1); 
 
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
-    dim = size(Jacobian,1);
-    alpha = 1e7*eye(dim);
-    omega = 20*eye(dim);
-    mu = 1*eye(dim);
+    jdim1 = size(Jacobian,1);
+    jdim2 = size(Jacobian,2);
+    pdim = jdim1 - 7;
+    alpha = 1e7*eye(pdim);
+    omega = 10*eye(pdim);
+    mu = 1*eye(pdim);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
     deltamax = 1;
     qddi = qdd0;
     lagit = 0; % Augmented Lagrangian Formula Iteration Number
-    lhslag = massmatrix + Jacobian'*alpha*Jacobian;
+    lhslag = massmatrix(8:dim1,8:dim2) + Jacobian(8:jdim1,8:jdim2)'*alpha*Jacobian(8:jdim1,8:jdim2);
     
     % Flags to retrieve gamma
     Flags.Position = 1;
@@ -113,8 +117,8 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
            qddi = qddi1; 
         end
         [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
-        rhslag = massmatrix*qddi + Jacobian'*alpha*(gamma -  2*omega*mu*(Jacobian*qd - niu) - omega^2*fun);
-        qddi1 = gaussian_elimination(lhslag,rhslag);
+        rhslag = massmatrix(8:dim1,8:dim2)*qddi(8:dim3,1) + Jacobian(8:jdim1,8:jdim2)'*alpha*(gamma(8:jdim1,1) -  2*omega*mu*(Jacobian(8:jdim1,8:jdim2)*qd(8:dim3,1) - niu(8:jdim1,1)) - omega^2*fun(8:jdim1,1));
+        qddi1(8:dim3,1) = gaussian_elimination(lhslag,rhslag);
         qdd = qddi1;
         deltaqdd = qddi1 - qddi;
         deltamax = abs(max(deltaqdd));

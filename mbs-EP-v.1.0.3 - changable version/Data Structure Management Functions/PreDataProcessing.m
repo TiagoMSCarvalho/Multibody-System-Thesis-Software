@@ -106,7 +106,7 @@ function [Bodies,NBodies,debugdata,ang,dynfunc] = ReadBodiesInfo(filename,SimTyp
         Bodies(i).ForcePoA = Impose_Column(ForcePoA(i,:));
         dynfunc(i).forcefunc = dynfunctions(i,1:3); 
         dynfunc(i).torquefunc = dynfunctions(i,4:6);
-        end    
+        end
     end
     
 end
