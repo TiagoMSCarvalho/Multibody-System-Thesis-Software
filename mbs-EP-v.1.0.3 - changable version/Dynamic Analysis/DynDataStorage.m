@@ -1,4 +1,4 @@
-function [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,it,vv,pv,posvio,velvio)
+function [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,acc,it,pv,vv,posvio,velvio)
 %Stores data from each iteration regarding the points to be study.
 
     %% Creates a struct name Data to Store

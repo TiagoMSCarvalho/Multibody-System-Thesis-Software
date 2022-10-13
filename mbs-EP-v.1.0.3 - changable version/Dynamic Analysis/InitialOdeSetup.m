@@ -7,6 +7,9 @@ function [initial,t0,tf,DynAcc,Bodies] = InitialOdeSetup(NBodies,Bodies,tini,Tim
     tf = RunTime;
     time = t0;
     
+    qi = CreateAuxiliaryBodyStructure(NBodies,Bodies);
+    Bodies = DynCalcAGL(qi,NBodies,Bodies);
+    
 %% Storage of the initial solution y0.
 for i = 1:NBodies
         i1 = 7*(i-1)+1;

@@ -83,27 +83,26 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
 %% Solving First Iteration to start the Augmented Process
-    [dim1,dim2] = size(massmatrix);
-    [dim3,~] = size(vetorg);
+%     [dim1,dim2] = size(massmatrix);
+%     [dim3,~] = size(vetorg);
     %qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
-    %qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
-    qdd0(8:dim3,1) = pinv(massmatrix(8:dim1,8:dim2))*vetorg(8:dim3,1); 
+    qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
 
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
-    jdim1 = size(Jacobian,1);
-    jdim2 = size(Jacobian,2);
-    pdim = jdim1 - 7;
-    alpha = 1e7*eye(pdim);
-    omega = 10*eye(pdim);
-    mu = 1*eye(pdim);
+     jdim1 = size(Jacobian,1);
+%     jdim2 = size(Jacobian,2);
+%     pdim = jdim1 - 7;
+    alpha = 1e9*eye(jdim1);
+    omega = 100*eye(jdim1);
+    mu = 10*eye(jdim1);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';
     deltamax = 1;
     qddi = qdd0;
     lagit = 0; % Augmented Lagrangian Formula Iteration Number
-    lhslag = massmatrix(8:dim1,8:dim2) + Jacobian(8:jdim1,8:jdim2)'*alpha*Jacobian(8:jdim1,8:jdim2);
+    lhslag = massmatrix + Jacobian'*alpha*Jacobian;
     
     % Flags to retrieve gamma
     Flags.Position = 1;
@@ -112,13 +111,13 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while deltamax > 1e-3% Second Condition to avoid infinite loops
+    while deltamax > 1e-3
         if lagit >= 1
            qddi = qddi1; 
         end
         [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
-        rhslag = massmatrix(8:dim1,8:dim2)*qddi(8:dim3,1) + Jacobian(8:jdim1,8:jdim2)'*alpha*(gamma(8:jdim1,1) -  2*omega*mu*(Jacobian(8:jdim1,8:jdim2)*qd(8:dim3,1) - niu(8:jdim1,1)) - omega^2*fun(8:jdim1,1));
-        qddi1(8:dim3,1) = gaussian_elimination(lhslag,rhslag);
+        rhslag = massmatrix*qddi + Jacobian'*alpha*(gamma -  2*omega*mu*(Jacobian*qd - niu) - omega^2*fun);
+        qddi1 = gaussian_elimination(lhslag,rhslag);
         qdd = qddi1;
         deltaqdd = qddi1 - qddi;
         deltamax = abs(max(deltaqdd));

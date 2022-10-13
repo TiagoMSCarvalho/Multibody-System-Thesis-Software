@@ -107,6 +107,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
            qd(i1+3:i1+5,1) = Bodies(i).w;
        end
        velvio = max(abs((Jacobian*qd)));
+       display(Jacobian*qd);
        %velvio = (Jacobian*qd)'*(Jacobian*qd);
        Flags.Position = 1;
        Flags.Jacobian = 0;

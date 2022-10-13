@@ -25,14 +25,14 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
     end
     velvio = max(abs(Jacobian*qd));
     posvio = max(abs(fun));
-    %velvio = (Jacobian*qd)'*(Jacobian*qd);
-    %posvio = fun'*fun;
+%     velvio = (Jacobian*qd)'*(Jacobian*qd);
+%     posvio = fun'*fun;
     
     % Update of the variables (Stores t - Timestep)
     [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it,pv,vv,posvio,velvio);
     
     tic;
-    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',0.1*abs(t0-tf)); 
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',abs(t0-tf)*10^-1); 
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
     display(computationtime)
@@ -92,7 +92,8 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
        end
        rhs = [vetorg;gamma]; %Erro force vector esta a ser calculado em 7 coord, resolver depois
        %% Calculus of the Acceleration vector
-       iapsol = lsqminnorm(augmass,rhs,1e-8);
+       %iapsol = lsqminnorm(augmass,rhs,1e-8);
+       iapsol = augmass\rhs;
        %% Allocation of the Acceleration Results
        i3 = 6*NBodies;
        %i4 = 6*NBodies + size(Jacobian,1); Lagrangian

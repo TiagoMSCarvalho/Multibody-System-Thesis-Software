@@ -82,29 +82,20 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %% Function Responsible for the Force Vectors
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
-%% Solving First Iteration to start the Augmented Process
-    [dim1,dim2] = size(massmatrix);
-    [dim3,~] = size(vetorg);
-    %qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
-    %qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
-    qdd0(8:dim3,1) = pinv(massmatrix(8:dim1,8:dim2))*vetorg(8:dim3,1); 
-
 %% Define Augmented Lagrangian Penalty Parameters
-    %Values taken from Paulo Flores Art on Constraints
-    jdim1 = size(Jacobian,1);
-    jdim2 = size(Jacobian,2);
-    pdim = jdim1 - 7;
-    alpha = 1e7*eye(pdim);
-    omega = 10*eye(pdim);
-    mu = 1*eye(pdim);
+
+    alfa = 1*10^4;
+    beta = 1414.2;
+
+    %% Baumgarte Stabilization
+    % Define Baumgarte Penalty Parameters
+    dim1 = size(Jacobian,1);
+    dim2 = size(Jacobian,2);
     
-%% Solving the Augmented Lagrangian Formula Iterative Formula
-    alf = 'alfon';
-    deltamax = 1;
-    qddi = qdd0;
-    lagit = 0; % Augmented Lagrangian Formula Iteration Number
-    lhslag = massmatrix(8:dim1,8:dim2) + Jacobian(8:jdim1,8:jdim2)'*alpha*Jacobian(8:jdim1,8:jdim2);
+    %Leading Matrix
+    leadingmatrix = [massmatrix, Jacobian'; Jacobian, zeros(dim1,dim1)];
     
+    %gamma retrieval
     % Flags to retrieve gamma
     Flags.Position = 1;
     Flags.Jacobian = 0;
@@ -112,19 +103,21 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Acceleration = 1;
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
-    while deltamax > 1e-3% Second Condition to avoid infinite loops
-        if lagit >= 1
-           qddi = qddi1; 
-        end
-        [~,~,niu,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
-        rhslag = massmatrix(8:dim1,8:dim2)*qddi(8:dim3,1) + Jacobian(8:jdim1,8:jdim2)'*alpha*(gamma(8:jdim1,1) -  2*omega*mu*(Jacobian(8:jdim1,8:jdim2)*qd(8:dim3,1) - niu(8:jdim1,1)) - omega^2*fun(8:jdim1,1));
-        qddi1(8:dim3,1) = gaussian_elimination(lhslag,rhslag);
-        qdd = qddi1;
-        deltaqdd = qddi1 - qddi;
-        deltamax = abs(max(deltaqdd));
-        [Bodies] = UpdateAccelerations(qddi1,NBodies,Bodies,SimType,alf);
-        lagit = lagit + 1; %Iteration Counter
-    end
+    
+    [~,~,~,gamma] = PJmatrixfunct(Flags,Bodies,NBodies,Joints,debugdata,driverfunctions,coord,time);
+    
+    baumgartevector = Impose_Column(gamma - 2*alfa*(Jacobian*qd) - beta^2*fun);
+    rhsvector = [vetorg;baumgartevector];
+    
+    
+    baumgartesolution = lsqminnorm(leadingmatrix,rhsvector);
+    
+    qdd = baumgartesolution(1:dim2);
+    
+    alf = 'alfon';
+    
+    [Bodies] = UpdateAccelerations(qdd,NBodies,Bodies,SimType,alf);
+    
     yd = [qd;qdd];
 
 display(time);

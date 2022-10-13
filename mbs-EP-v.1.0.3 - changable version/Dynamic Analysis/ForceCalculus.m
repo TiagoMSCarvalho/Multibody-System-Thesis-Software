@@ -48,7 +48,7 @@ if coord == 7
         Inertia = Bodies(i).Inertia;
         I = diag(Inertia);
         w = Bodies(i).w;
-        p = Bodies(i).p;
+        %p = Bodies(i).p;
         pd = 0.5*Bodies(i).L'*w;
         pd = Impose_Column(pd);
 %        Definition of Ld

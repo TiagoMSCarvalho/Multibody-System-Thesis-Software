@@ -341,9 +341,9 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
         ylim([-1 1])
         zlim([-1 1])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
-        xlim([-1000 1000])
-        ylim([-1000 1000])
-        zlim([-1000 1000])
+        xlim([-10^3 10^3])
+        ylim([-10^3 10^3])
+        zlim([-10^3 10^3])
     end
     
     %% plot the other timesteps
