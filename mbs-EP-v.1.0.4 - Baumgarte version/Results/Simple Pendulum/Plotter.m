@@ -30,7 +30,7 @@ adxdd = Adams_xaccel;
 adydd = Adams_yaccel;
 
 %% Program Info
-load('CoM_Data.mat');
+load('CoM_wjw.mat');
 load('Timevector.mat');
 
 a = size(CoM,2);

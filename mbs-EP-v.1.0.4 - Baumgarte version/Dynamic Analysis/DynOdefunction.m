@@ -84,8 +84,8 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 
 %% Define Augmented Lagrangian Penalty Parameters
 
-    alfa = 1*10^4;
-    beta = 1414.2;
+    alfa = 10^4;
+    beta = 10^4;
 
     %% Baumgarte Stabilization
     % Define Baumgarte Penalty Parameters
@@ -110,9 +110,11 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     rhsvector = [vetorg;baumgartevector];
     
     
-    baumgartesolution = lsqminnorm(leadingmatrix,rhsvector);
+    baumgartesolution = linsolve(leadingmatrix,rhsvector);
+    %baumgartesolution = regress(rhsvector',leadingmatrix','TSVD');
     
     qdd = baumgartesolution(1:dim2);
+    %qdd = qdd';
     
     alf = 'alfon';
     

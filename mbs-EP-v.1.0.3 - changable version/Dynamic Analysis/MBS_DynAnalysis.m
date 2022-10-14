@@ -121,6 +121,5 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
        %posvio = fun'*fun;
        %% Storage of this step calculus
        [Points,CoM,it,pv,vv] = DynDataStorage(Points,CoM,NBodies,Bodies,Joints,DynAcc,it,pv,vv,posvio,velvio);
-       
     end  
 end
