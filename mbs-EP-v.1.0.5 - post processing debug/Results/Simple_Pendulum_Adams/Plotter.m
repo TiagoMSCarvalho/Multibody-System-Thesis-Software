@@ -30,7 +30,7 @@ adxdd = Adams_xaccel;
 adydd = Adams_yaccel;
 
 %% Program Info
-load('CoM_EPCONST.mat');
+load('CoM_postdebug1.mat');
 load('Timevector.mat');
 
 a = size(CoM,2);
