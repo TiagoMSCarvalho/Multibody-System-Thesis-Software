@@ -30,7 +30,7 @@ adxdd = Adams_xaccel;
 adydd = Adams_yaccel;
 
 %% Program Info
-load('CoM_postdebug1.mat');
+load('CoM_1610.mat');
 load('Timevector.mat');
 
 a = size(CoM,2);
@@ -56,12 +56,21 @@ yaccel = yaccel';
 
 %%  Error Calc
 
+%Position Error
+%Absolute
 abserrx = abs(adx-xpos);
 abserry = abs(ady-ypos);
+%Percentage
+pererrx = (abs(adx-xpos)/abs(adx))*100;
+pererry = (abs(ady-ypos)/abs(ady))*100;
 
 %Velocity Error
+%Absolute
 abserrxd = abs(adxd - xvel);
 abserryd = abs(adyd - yvel);
+%Percentage
+pererrdx = (abs(adxd-xvel)/abs(adxd))*100;
+pererrdy = (abs(adyd-yvel)/abs(adyd))*100;
 
 %Accel Error
 abserrxdd = abs(adxdd - xaccel);
@@ -90,6 +99,15 @@ xlabel('t[s]');
 ylabel('Err abs x [mm]');
 axis auto
 
+%% X - Error Plot %
+str = '% X Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererrx);
+xlabel('t[s]');
+ylabel('Err abs x [%]');
+axis auto
+
 %% yplot
 str = 'Y Plot';
 figure('Name',str,'NumberTitle','off');
@@ -112,6 +130,15 @@ xlabel('t[s]');
 ylabel('Err abs y [mm]');
 axis auto
 
+%% Y - % Error Plot
+str = '% Y Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererry);
+xlabel('t[s]');
+ylabel('Err abs y [%]');
+axis auto
+
 %% X - Vel Error Plot
 
 str = 'Vel dx Error';
@@ -122,6 +149,16 @@ xlabel('t[s]');
 ylabel('Err abs dx [mm/s]');
 axis auto
 
+%% % X - Vel Error Plot
+
+str = 'Vel % dx Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererrdx);
+xlabel('t[s]');
+ylabel('Err abs dx [%]');
+axis auto
+
 %% Y - Vel Error Plot
 
 str = 'Vel dy Error';
@@ -130,6 +167,16 @@ figure('Name',str,'NumberTitle','off');
 plot(atime,abserryd);
 xlabel('t[s]');
 ylabel('Err abs dy [mm/s]');
+axis auto
+
+%% % Y - Vel Error Plot
+
+str = 'Vel % dy Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererrdy);
+xlabel('t[s]');
+ylabel('Err abs dy [%]');
 axis auto
 
 %% X - Accel Error Plot

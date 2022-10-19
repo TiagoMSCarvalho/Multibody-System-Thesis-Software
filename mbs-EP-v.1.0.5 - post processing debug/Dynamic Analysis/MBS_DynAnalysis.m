@@ -108,7 +108,8 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
        for i = 1:NBodies
            i1 = 7*(i-1)+1;
            Bodies(i).rdd = iapsol(i1:i1+2,1);
-           Bodies(i).wd = 2*Bodies(i).L*iapsol(i1+3:i1+6,1);
+           %Bodies(i).wd = 2*Bodies(i).L*iapsol(i1+3:i1+6,1);
+           Bodies(i).wd = 2*Bodies(i).L*(iapsol(i1+3:i1+6,1) + (1/4)*(Bodies(i).w'*Bodies(i).w)*Bodies(i).p);
        end   
 
        coord = 6;
