@@ -3,6 +3,8 @@
 clc
 clear
 
+addpath('txt','Fig','Adams','10^8','10^7','10^6');
+
 %% Adams Info
 load('Adams_timevector.mat');
 load('Adams_xvalues.mat');
@@ -30,7 +32,7 @@ adxdd = Adams_xaccel;
 adydd = Adams_yaccel;
 
 %% Program Info
-load('CoM_EP.mat');
+load('CoM_300_10.mat');
 load('Timevector.mat');
 
 a = size(CoM,2);
@@ -45,6 +47,15 @@ for j = 1:a
     accel = CoM{1,j}(3).TraAccel;
     xaccel(1,j) = accel(1,1);
     yaccel(1,j) =  accel(2,1);
+    %For the Energy Calculus
+    h(1,j) = pos(2,1)*10^-3;
+    m = xvel(1,j)*10^-3; 
+    n = yvel(1,j)*10^-3;    
+    magvel(1,j) = sqrt((m)^2 + (n)^2);
+    g = 9806.65*10^-3;
+    m = 11.208126;
+    Energy(1,j) = (0.5*m*(magvel(1,j))^2 + m*g*1*(1+h(1,j)));
+    TotalE(1,j) = m*g;
 end
 
 xpos = xpos';
@@ -73,8 +84,13 @@ pererrdx = (abs(adxd-xvel)/abs(adxd))*100;
 pererrdy = (abs(adyd-yvel)/abs(adyd))*100;
 
 %Accel Error
+%Absolute
 abserrxdd = abs(adxdd - xaccel);
 abserrydd = abs(adydd - yaccel);
+%Percentage
+pererrxdd = abs(adxdd - xaccel)/abs(adxdd)*100;
+pererrydd = abs(adydd - yaccel)/abs(adydd)*100;
+
 
 
 %% xplot
@@ -85,7 +101,7 @@ plot(atime,adx,'r');
 xlabel('t[s]');
 ylabel('x position [mm]');
 hold on
-plot(timevector,xpos,'b');
+plot(timevector,xpos,'--b','LineWidth',1.5);
 legend('Adams x result','Program Results');
 axis auto
 hold off
@@ -96,7 +112,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserrx);
 xlabel('t[s]');
-ylabel('Err abs x [mm]');
+ylabel('Abs Diff x [mm]');
 axis auto
 
 %% X - Error Plot %
@@ -105,7 +121,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,pererrx);
 xlabel('t[s]');
-ylabel('Err abs x [%]');
+ylabel('Abs Diff x [%]');
 axis auto
 
 %% yplot
@@ -116,7 +132,7 @@ plot(atime,ady,'r');
 xlabel('t[s]');
 ylabel('y position [mm]');
 hold on
-plot(timevector,ypos,'b');
+plot(timevector,ypos,'--b','LineWidth',1.5);
 legend('Adams y result','Program Results');
 axis auto
 hold off
@@ -127,7 +143,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserry);
 xlabel('t[s]');
-ylabel('Err abs y [mm]');
+ylabel('Abs Diff y [mm]');
 axis auto
 
 %% Y - % Error Plot
@@ -136,7 +152,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,pererry);
 xlabel('t[s]');
-ylabel('Err abs y [%]');
+ylabel('Abs Diff y [%]');
 axis auto
 
 %% X - Vel Error Plot
@@ -146,7 +162,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserrxd);
 xlabel('t[s]');
-ylabel('Err abs dx [mm/s]');
+ylabel('Abs Diff dx [mm/s]');
 axis auto
 
 %% % X - Vel Error Plot
@@ -156,7 +172,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,pererrdx);
 xlabel('t[s]');
-ylabel('Err abs dx [%]');
+ylabel('Abs Diff dx [%]');
 axis auto
 
 %% Y - Vel Error Plot
@@ -166,7 +182,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserryd);
 xlabel('t[s]');
-ylabel('Err abs dy [mm/s]');
+ylabel('Abs Diff dy [mm/s]');
 axis auto
 
 %% % Y - Vel Error Plot
@@ -176,7 +192,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,pererrdy);
 xlabel('t[s]');
-ylabel('Err abs dy [%]');
+ylabel('Abs Diff dy [%]');
 axis auto
 
 %% X - Accel Error Plot
@@ -186,7 +202,7 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserrxdd);
 xlabel('t[s]');
-ylabel('Err abs ddx [mm/s]');
+ylabel('Abs Diff ddx [mm/s]');
 axis auto
 
 %% Y - Accel Error Plot
@@ -196,7 +212,27 @@ figure('Name',str,'NumberTitle','off');
 
 plot(atime,abserrydd);
 xlabel('t[s]');
-ylabel('Err abs ddy [mm/s]');
+ylabel('Abs Diff ddy [mm/s]');
+axis auto
+
+%% % X - Accel Error Plot
+
+str = 'Accel % ddx Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererrxdd);
+xlabel('t[s]');
+ylabel('Abs Diff ddx [%]');
+axis auto
+
+%% % Y - Accel Error Plot
+
+str = 'Accel % ddy Error';
+figure('Name',str,'NumberTitle','off');
+
+plot(atime,pererrydd);
+xlabel('t[s]');
+ylabel('Abs Diff ddy [%]');
 axis auto
 
 %% X Plot Vel
@@ -207,7 +243,7 @@ plot(atime,adxd,'r');
 xlabel('t[s]');
 ylabel('x velocity [mm/s]');
 hold on
-plot(timevector,xvel,'b');
+plot(timevector,xvel,'--b','LineWidth',1.5);
 legend('Adams x result','Program Results');
 axis auto
 hold off
@@ -220,7 +256,7 @@ plot(atime,adyd,'r');
 xlabel('t[s]');
 ylabel('y velocity [mm/s]');
 hold on
-plot(timevector,yvel,'b');
+plot(timevector,yvel,'--b','LineWidth',1.5);
 legend('Adams x result','Program Results');
 axis auto
 hold off
@@ -250,3 +286,16 @@ plot(timevector,yaccel,'b');
 legend('Adams x result','Program Results');
 axis auto
 hold off
+
+%% Mechanical Energy
+TotalE = TotalE';
+Energy = Energy';
+Delta = (TotalE - Energy);
+
+str = 'Mechanical Energy Plot';
+figure('Name',str,'NumberTitle','off');
+
+plot(timevector,Delta,'r');
+xlabel('t[s]');
+ylabel('E_m [J]');
+axis auto

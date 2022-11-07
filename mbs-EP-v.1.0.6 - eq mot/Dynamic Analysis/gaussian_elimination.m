@@ -76,7 +76,7 @@ function x = gaussian_elimination(A,b)
         
         % elementary row operation
         for j = (i+1):n
-            A(j,:) = A(j,:)-(A(j,i)/A(i,i))*A(i,:);
+              A(j,:) = A(j,:)-(A(j,i)/A(i,i))*A(i,:);
         end
         
     end

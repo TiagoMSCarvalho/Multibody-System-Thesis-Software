@@ -34,9 +34,16 @@ ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 
 %file containing the suspension data:
 %filename = 'simple_pendulum_adams';
-%filename = 'nbar_mechanism_oc';
+%filename = 'nbar_mechanism';
 %filename = 'flyball_governor_damper_spring_vel';
-filename = 'flyball_governor_simplified';
+%filename = 'flyball_governor_simplified';
+%filename = 'nbar_springlinkage';
+%filename = 'bricards_mechanism';
+%filename = 'andrew_mechanism_torque';
+%filename = 'flyball_governor_si';
+filename = 'Spring_Damper';
+%filename = 'flyball_governor_damper_2';
+
 
 %% Retrive Information from the Excel
 %Array to save the points during each iteration, lines are the points, col their value to each iteration

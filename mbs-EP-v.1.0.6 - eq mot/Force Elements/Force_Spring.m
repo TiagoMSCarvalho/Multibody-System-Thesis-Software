@@ -28,7 +28,7 @@ idisplacement = Spring(forcescount).InitialDisplacement;
 % Null Force Length if exists
 nl = Spring(forcescount).NullLength;
 % Force Direction Vector = Initial Direction Vector
-[~,lun] = unitvector(idisplacement);
+[idispmag,~] = unitvector(idisplacement);
 %Skew Matrix
 sspi = SkewMatrix3(spi);    
 sspj = SkewMatrix3(spj);
@@ -37,10 +37,11 @@ sspj = SkewMatrix3(spj);
 %% Force Calculus
 % Displacement Calculus
 displacement = rj + spjg -ri - spig;
+[dispmag,dispvect] = unitvector(displacement);
 if isnan(nl)
-    deltaxmag = displacement - idisplacement;
+    deltaxmag = dispmag - idispmag;
 elseif ~isnan(nl)
-    deltaxmag = displacement - nl*lun;
+    deltaxmag = dispmag - nl;
 end
 % Force Magnitude Calculus
 if ~isnan(Spring(forcescount).Constant)
@@ -79,8 +80,8 @@ elseif isnan(Spring(forcescount).Constant)
     end
 end
 %Force Vectors
-forcei = force;
-forcej = -force;
+forcei = force*dispvect;
+forcej = -force*dispvect;
 %Moments Created by the Translational Spring
 momenti = sspi*Ai'*forcei; 
 momentj = sspj*Aj'*forcej;

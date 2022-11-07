@@ -337,9 +337,9 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     
     % set limits...
     if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-        xlim([-1 3])
-        ylim([-1.5 1.5])
-        zlim([-1 1])
+        xlim([-2 2])
+        ylim([-2 2])
+        zlim([-2 2])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
         xlim([-10^3 10^3])
         ylim([-10^3 10^3])
