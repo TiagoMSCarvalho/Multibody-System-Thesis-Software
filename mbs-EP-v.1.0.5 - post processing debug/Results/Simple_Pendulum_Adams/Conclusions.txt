@@ -1,2 +1,0 @@
-Lower Time Step for the Integration does not influence the errors.
-It is confirmed that alfa only influences the convergence of the ALF.

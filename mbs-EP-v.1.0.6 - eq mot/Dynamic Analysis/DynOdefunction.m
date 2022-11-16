@@ -108,28 +108,23 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %     alpha = 1e7*eye(jdim1);
 %     omega = 1000*eye(jdim1);
 %     mu = 1*eye(jdim1);
-% For Flyball PDF Model
-%       alpha = 1e7*eye(jdim1);
-%       omega = 300*eye(jdim1);
-%       mu = 150*eye(jdim1);
-% For Flyball Simplified
-%       alpha = 1e7*eye(jdim1);
-%       omega = 100*eye(jdim1);
-%       mu = 10*eye(jdim1);
 % For Nbar_SpringLinkage
-%       alpha = 1e8*eye(jdim1);
-%       omega = 250*eye(jdim1);
-%       mu = 1*eye(jdim1);
+%     alpha = 1e8*eye(jdim1);
+%     omega = 250*eye(jdim1);
+%     mu = 1*eye(jdim1);
 % For Bricards Mechanism
-%       alpha = 1e7*eye(jdim1);
-%       omega = 1000*eye(jdim1);
-%       mu = 1*eye(jdim1);
+%     alpha = 1e7*eye(jdim1);
+%     omega = 1000*eye(jdim1);
+%     mu = 1*eye(jdim1);
+% For Andrews Mechanism
+%     alpha = 10^2*eye(jdim1);
+%     omega = 10^5*eye(jdim1);
+%     mu = 1*eye(jdim1);
 
-%e8,1000,1
 
-    alpha = 1*10^7*eye(jdim1);
-    omega = 1000*eye(jdim1);
-    mu = 1000*eye(jdim1);
+    alpha = 10^7*eye(jdim1);
+    omega = 10^6*eye(jdim1);
+    mu = 1*eye(jdim1);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
     alf = 'alfon';

@@ -39,9 +39,9 @@ ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 %filename = 'flyball_governor_simplified';
 %filename = 'nbar_springlinkage';
 %filename = 'bricards_mechanism';
-%filename = 'andrew_mechanism_torque';
-%filename = 'flyball_governor_si';
-filename = 'Spring_Damper';
+%filename = 'andrew_mechanism';
+filename = 'flyball_governor_si';
+%filename = 'Spring_Damper';
 %filename = 'flyball_governor_damper_2';
 
 

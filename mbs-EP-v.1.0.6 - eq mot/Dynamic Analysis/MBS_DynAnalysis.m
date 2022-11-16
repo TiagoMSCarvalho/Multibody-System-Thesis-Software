@@ -35,7 +35,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
     
     tic;
     initime = cputime;
-    opts = odeset('RelTol',1e-8,'AbsTol',1e-8,'MaxStep',abs(t0-tf)*10^-5); 
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',5*10^-4); %abs(t0-tf)*10^-3
     [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     %[timevector,y] = ode15i(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0);
     computationtime = toc;
