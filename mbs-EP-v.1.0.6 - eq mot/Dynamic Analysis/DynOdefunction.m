@@ -91,7 +91,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %     [dim1,dim2] = size(massmatrix);
 %     [dim3,~] = size(vetorg);
     %qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
-    qdd0 = lsqminnorm(massmatrix,vetorg,1e-8);
+    qdd0 = lsqminnorm(massmatrix,vetorg,1e-10);
 
 %% Define Augmented Lagrangian Penalty Parameters
     %Values taken from Paulo Flores Art on Constraints
@@ -123,7 +123,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 
 
     alpha = 10^7*eye(jdim1);
-    omega = 10^6*eye(jdim1);
+    omega = 10^2*eye(jdim1);
     mu = 1*eye(jdim1);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
@@ -141,7 +141,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     Flags.Eqmotion = 0;
-    while deltamax > 1e-3
+    while deltamax > 1e-4
         if lagit >= 1
            qddi = qddi1; 
         end

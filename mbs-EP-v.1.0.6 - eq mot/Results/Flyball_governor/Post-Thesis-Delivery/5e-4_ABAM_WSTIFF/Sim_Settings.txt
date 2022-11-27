@@ -1,0 +1,4 @@
+Integrator - WSTIFF
+Formulation - I3
+Error - 1e-6
+Time Step - 5e-04

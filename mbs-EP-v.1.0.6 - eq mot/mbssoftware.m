@@ -40,9 +40,9 @@ ForcesTypes = {'Spring','TSpring','Damper','Actuator'};
 %filename = 'nbar_springlinkage';
 %filename = 'bricards_mechanism';
 %filename = 'andrew_mechanism';
-filename = 'flyball_governor_si';
+%filename = 'flyball_governor_si';
 %filename = 'Spring_Damper';
-%filename = 'flyball_governor_damper_2';
+filename = 'PT_flyball_governor_si';
 
 
 %% Retrive Information from the Excel

@@ -337,9 +337,9 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     
     % set limits...
     if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-        xlim([-0.1 0.1])
-        ylim([-0.1 0.1])
-        zlim([-0.1 0.1])
+        xlim([-1 1])
+        ylim([-1 1])
+        zlim([-1 1])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
         xlim([-10^3 10^3])
         ylim([-10^3 10^3])
@@ -386,9 +386,9 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     
     % set limits... 
     if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-        xlim([-1 1])
-        ylim([-1 1])
-        zlim([-1 1])
+        xlim([-1.5 1.5])
+        ylim([-1.5 1.5])
+        zlim([-1.5 1.5])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
         xlim([-1000 1000])
         ylim([-1000 1000])
