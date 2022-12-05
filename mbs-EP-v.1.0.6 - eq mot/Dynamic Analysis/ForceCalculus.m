@@ -54,10 +54,8 @@ if coord == 7
         Mass = eye(3)*Mass;
         Inertia = Bodies(i).Inertia;
         I = diag(Inertia);
-        A = Bodies(i).A;
-        aIa = A*I*A';
         w = Bodies(i).w;
-        p = Bodies(i).p;
+        skw= SkewMatrix3(w);
         pd = 0.5*Bodies(i).L'*w;
         pd = Impose_Column(pd);
 %        Definition of Ld
@@ -68,10 +66,8 @@ if coord == 7
         e = [e1d;e2d;e3d];
         Ld = [-e,-SkewMatrix3(e) + e0d*eye(3)];
         %Calculo do wJw para EP
-        wJw = 8*Ld'*I*Bodies(i).L*pd; %4 ->8 wJw =
-        %-8*Ld'*I*Bodies(i):L*pd;
-        %wJw = 8*Ld'*I*Ld*p;
-        %wJw = (1/2*((2*Bodies(i).L*pd)'*aIa*(2*Bodies(i).L*pd)))'; %Nikra Art Version
+        %wJw = -2*Bodies(i).L'*(skw*I*w); %Ambas as equações funcionam? wJw = -8*Ld'*I*Bodies(i).L*pd;
+        wJw = -8*Ld'*I*Bodies(i).L*pd;
         %% Calculus of the Force and Torque Vector - isnumeric/ischar ensures that the user can use a function has input or scalars.
         % Force
         forcevec = zeros(1,3);

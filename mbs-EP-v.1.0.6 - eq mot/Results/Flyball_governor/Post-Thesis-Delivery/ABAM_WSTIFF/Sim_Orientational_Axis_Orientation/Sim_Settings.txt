@@ -1,0 +1,9 @@
+Integrator - WSTIFF
+Formulation - SI2
+Error - 1e-6
+Time Step - 1e-03
+
+Program:
+
+Orientation Taken from general tool agreggate mass
+Orientation Axis - Orinetation of the Principal Axis of Inertia

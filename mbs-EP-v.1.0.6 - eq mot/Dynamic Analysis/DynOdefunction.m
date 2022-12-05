@@ -123,7 +123,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 
 
     alpha = 10^7*eye(jdim1);
-    omega = 10^2*eye(jdim1);
+    omega = 10^4*eye(jdim1);
     mu = 1*eye(jdim1);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
@@ -141,7 +141,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     Flags.Eqmotion = 0;
-    while deltamax > 1e-4
+    while deltamax > 1e-5
         if lagit >= 1
            qddi = qddi1; 
         end

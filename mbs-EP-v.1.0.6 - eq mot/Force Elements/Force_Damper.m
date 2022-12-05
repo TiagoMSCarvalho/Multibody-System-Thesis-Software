@@ -35,8 +35,8 @@ wj = Bodies(j).w;
 swi = SkewMatrix3(wi);
 swj = SkewMatrix3(wj);
 % Derivatives of the global spi and spj
-spid = swi*Ai*spi;
-spjd = swj*Aj*spj;
+spid = Ai*swi*spi;
+spjd = Aj*swj*spj;
 %Skew spi and spj
 sspi = SkewMatrix3(spi);
 sspj = SkewMatrix3(spj);

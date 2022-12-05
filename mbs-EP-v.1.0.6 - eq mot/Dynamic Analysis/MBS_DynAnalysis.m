@@ -35,8 +35,8 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
     
     tic;
     initime = cputime;
-    opts = odeset('RelTol',1e-6,'AbsTol',1e-10); %'MaxStep',5*10^-4
-    [timevector,y] = ode15s(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
+    opts = odeset('RelTol',1e-6,'AbsTol',1e-6,'MaxStep',5*10^-3); %'MaxStep',5*10^-4
+    [timevector,y] = ode113(@(t,y)DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,SimType,UnitsSystem,driverfunctions,debugdata,ForceFunction),t0:TimeStep:tf,y0,opts);
     computationtime = toc;
     fintime = cputime;
     cpu = fintime-initime;
@@ -46,7 +46,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
     
 
     
-    %% All of this section can be stored in a different function for clarity.
+    %% All of this section can be stored in a different function for clarity. Mudar para parametros de Euler para tirar as forças como deve ser.
     for k = 2:a
        
        %display(k);
@@ -66,7 +66,7 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
        for i = 1:NBodies
            i1 = 7*(i-1)+1;
            Bodies(i).rd = velocity(i1:i1+2,1);
-           Bodies(i).w = 2*Bodies(i).L*velocity(i1+3:i1+6,1);
+           Bodies(i).w = 2*Bodies(i).G*velocity(i1+3:i1+6,1);
            Bodies(i).wl = Bodies(i).w; 
        end
        
@@ -120,7 +120,6 @@ function [Bodies,Points,CoM,DynAcc,it,debugdata,pv,vv,timevector] = MBS_DynAnaly
            i1 = 8*(i-1)+1;
            Bodies(i).rdd = iapsol(i1:i1+2,1);
            Bodies(i).wd = 2*Bodies(i).L*iapsol(i1+3:i1+6,1);
-           %Bodies(i).wd = 2*Bodies(i).L*(iapsol(i1+3:i1+6,1) + (1/4)*(Bodies(i).w'*Bodies(i).w)*Bodies(i).p);
        end   
 
        coord = 6;

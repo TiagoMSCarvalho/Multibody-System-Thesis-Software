@@ -164,10 +164,10 @@ if(Flags.Acceleration == 1)
     wli = Bodies(i).wl;
     wlj = Bodies(j).wl;
     %Derivatives of qi,ti and sj in the global frame
-    qid = Ai*SkewMatrix3(wli)*qig;
-    tid = Ai*SkewMatrix3(wli)*tig;
-    sjd = Aj*SkewMatrix3(wlj)*sjg;
-    qjd = Aj*SkewMatrix3(wlj)*qjg;
+    qid = Ai*SkewMatrix3(wli)*qi;
+    tid = Ai*SkewMatrix3(wli)*ti;
+    sjd = Aj*SkewMatrix3(wlj)*sj;
+    qjd = Aj*SkewMatrix3(wlj)*qj;
     %For the derivative of d we have to use the eq defined above in the
     %code d = rj + Aj*spj - ri - Ai*spi;
     rid = Bodies(i).rd;
@@ -177,8 +177,8 @@ if(Flags.Acceleration == 1)
     spid = SkewMatrix3(wli)*spi;
     spjd = SkewMatrix3(wlj)*spj;
     
-    gamma(funCount,1) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*dd'*qid; 
-    gamma(funCount+1,1) = tig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*ti) - 2*dd'*tid;
+    gamma(funCount,1) = qig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*qi) - 2*qid'*dd; 
+    gamma(funCount+1,1) = tig'*(-2*Gdj*Ldj'*spjd + 2*Gdi*Ldi'*spid) + d'*(-2*Gdi*Ldi'*ti) - 2*tid'*dd;
     gamma(funCount+2,1) = qig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*qi) - 2*qid'*sjd; 
     gamma(funCount+3,1) = tig'*(-2*Gdj*Ldj'*sj) + sjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*sjd;    
     gamma(funCount+4,1) = tig'*(-2*Gdj*Ldj'*qj) + qjg'*(-2*Gdi*Ldi'*ti) - 2*tid'*qjd;

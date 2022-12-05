@@ -174,6 +174,7 @@ function A = BryantAnglesAmatrix(i,eang,ang)
         0,0,1];
 
     A = D*C*B;
+    
 end
 
 function [epar,debugdata] = OrientationalAxisAmatrix(i,uaxis,rota,ang)
@@ -474,6 +475,7 @@ spi = sp - Bodies(i).r;
 spi = EarthtoBody(spi,pi);
 spj = sp - Bodies(j).r;
 spj = EarthtoBody(spj,pj);
+% Redefinition of the vector s
 s = s - sp;
 si = EarthtoBody(s,pi);
 sj = EarthtoBody(s,pj);
@@ -503,6 +505,8 @@ spi = sp - Bodies(i).r;
 spi = EarthtoBody(spi,pi);
 spj = sp - Bodies(j).r;
 spj = EarthtoBody(spj,pj);
+% Redefinition of the vector s
+s = s - sp;
 si = EarthtoBody(s,pi);
 sj = EarthtoBody(s,pj);
 % Save the joint location in each bodies' reference
@@ -531,6 +535,8 @@ spi = sp - Bodies(i).r;
 spi = EarthtoBody(spi,pi);
 spj = sp - Bodies(j).r;
 spj = EarthtoBody(spj,pj);
+% Redefinition of the vector s
+s = s - sp;
 si = EarthtoBody(s,pi);
 sj = EarthtoBody(s,pj);
 % Save the joint location in each bodies' reference
