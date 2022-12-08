@@ -337,9 +337,9 @@ if strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigraph
     
     % set limits...
     if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
-        xlim([-1 1])
-        ylim([-1 1])
-        zlim([-1 1])
+        xlim([-1.5 1.5])
+        ylim([-1.5 1.5])
+        zlim([-3 3])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
         xlim([-10^3 10^3])
         ylim([-10^3 10^3])
@@ -366,9 +366,9 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     NPoint = Joints.NPoint; %Number of Points
     
     %% Initialize video
-    myVideo = VideoWriter('myVideoFile'); %open video file
-    myVideo.FrameRate = 144;  %can adjust this, 5 - 10 works well for me
-    open(myVideo)
+    %myVideo = VideoWriter('myVideoFile'); %open video file
+    %myVideo.FrameRate = 144;  %can adjust this, 5 - 10 works well for me
+    %open(myVideo)
     
     %% Initiate the 3D Plot
     % first get the grid for the inital iteration
@@ -379,16 +379,17 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
     figure
     m = plot3( reshape([MyGrid(1,MyPoints(1,:));MyGrid(1,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
                reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),...
-               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'r');
+               reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]),'-o','Color','r');
     
     axis auto
     grid on
+    
     
     % set limits... 
     if strcmp(UnitsSystem,"MKS") == 1 || strcmp(UnitsSystem,"mks") == 1
         xlim([-1.5 1.5])
         ylim([-1.5 1.5])
-        zlim([-1.5 1.5])
+        zlim([-3 3])
     elseif strcmp(UnitsSystem,"MMKS") == 1 || strcmp(UnitsSystem,"mmks") == 1
         xlim([-1000 1000])
         ylim([-1000 1000])
@@ -406,10 +407,11 @@ if (strcmp(anigraph,'yes') == 1 || strcmp(anigraph,'YES') == 1 || strcmp(anigrap
         m.YData = reshape([MyGrid(2,MyPoints(1,:));MyGrid(2,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
         m.ZData = reshape([MyGrid(3,MyPoints(1,:));MyGrid(3,MyPoints(2,:));NaN(1,NPoint-1)],1,[]);
         
-        frame = getframe(gcf); %get frame
-        writeVideo(myVideo, frame);
+        %frame = getframe(gcf); %get frame
+        
+        exportgraphics(gca,"mygif.gif","Append",true,"Resolution",300)
     end
-    close(myVideo)
+    %close(myVideo)
 end
 end
 

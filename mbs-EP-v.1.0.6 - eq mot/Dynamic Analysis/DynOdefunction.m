@@ -74,23 +74,12 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
         massmatrix(i1:i1+2,i1:i1+2) = Mass * eye(3);
         massmatrix(i1+3:i1+6,i1+3:i1+6) = Irat; 
     end
-    
-% %% Definition of the Velocity Vector from 6 coordinates to 7 coordinates
-%     for i = 1:NBodies
-%         i1 = 7*(i-1)+1;
-%         qd(i1:i1+2,1) = Bodies(i).rd;
-%         pd = 0.5*Bodies(i).L'*Bodies(i).w;
-%         pd = Impose_Column(pd);
-%         qd(i1+3:i1+6,1) = pd;
-%     end
+
     
 %% Function Responsible for the Force Vectors
     [vetorg] = ForceCalculus(Forces,NBodies,Bodies,dynfunc,Grav,UnitsSystem,time,ForceFunction,coord);
 
 %% Solving First Iteration to start the Augmented Process
-%     [dim1,dim2] = size(massmatrix);
-%     [dim3,~] = size(vetorg);
-    %qdd0(8:dim3,1) = lsqminnorm(massmatrix(8:dim1,8:dim2),vetorg(8:dim3,1),1e-8);    
     qdd0 = lsqminnorm(massmatrix,vetorg,1e-10);
 
 %% Define Augmented Lagrangian Penalty Parameters
@@ -106,11 +95,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 %     mu = 1*eye(jdim1);
 % % For Flyball Governor
 %     alpha = 1e7*eye(jdim1);
-%     omega = 1000*eye(jdim1);
-%     mu = 1*eye(jdim1);
-% For Nbar_SpringLinkage
-%     alpha = 1e8*eye(jdim1);
-%     omega = 250*eye(jdim1);
+%     omega = 10^4*eye(jdim1);
 %     mu = 1*eye(jdim1);
 % For Bricards Mechanism
 %     alpha = 1e7*eye(jdim1);
@@ -123,7 +108,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
 
 
     alpha = 10^7*eye(jdim1);
-    omega = 10^4*eye(jdim1);
+    omega = 10*eye(jdim1);
     mu = 1*eye(jdim1);
     
 %% Solving the Augmented Lagrangian Formula Iterative Formula
@@ -141,7 +126,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
     Flags.Dynamic = 0;
     Flags.AccelDyn = 0;
     Flags.Eqmotion = 0;
-    while deltamax > 1e-5
+    while deltamax > 1e-3
         if lagit >= 1
            qddi = qddi1; 
         end
@@ -155,9 +140,7 @@ function [yd] = DynOdefunction(t,y,NBodies,Bodies,dynfunc,Joints,Forces,Grav,Sim
         lagit = lagit + 1; %Iteration Counter
     end
     yd = [qd;qdd];
-    
-    %lagrange = Jacobian'\(vetorg-massmatrix*qdd)
-    %forces = massmatrix*qdd;
+   
 
 display(time);
 end
