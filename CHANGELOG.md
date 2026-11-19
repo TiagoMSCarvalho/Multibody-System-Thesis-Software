@@ -1,6 +1,6 @@
 # Changelog
 
-Development history of the kinematic solver (pK-EP) and the dynamic solver (mbs-EP), kept from the original README. `pK-EP` was later merged into `mbs-EP`, which is the version in `solver/`.
+Development history of the kinematic solver (pK-EP) and the dynamic solver (mbs-EP), kept from the original README. `pK-EP` (kinematics only) is in `kinematics-solver/`; `mbs-EP` (kinematics + forward dynamics) is in `solver/`.
 
 ```text
 pk-EP v.1.0.0:

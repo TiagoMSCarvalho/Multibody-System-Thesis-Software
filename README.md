@@ -40,12 +40,14 @@ All five problems solved, every result within the 5 % acceptance margin (mean 0.
 ## Repository layout
 
 ```
-solver/            Main program: kinematics + forward dynamics (latest version, v1.0.6)
-  mbssoftware.m    Entry point
-  Excel Files/     Example and benchmark models
-  Results/         Saved benchmark results
-docs/              Thesis, extended abstract and figures
-CHANGELOG.md       Development history, version by version
+solver/                 Full program: kinematics + forward dynamics (mbs-EP v1.0.6)
+  mbssoftware.m         Entry point
+  Excel Files/          Example and benchmark models
+  Results/              Saved benchmark results
+kinematics-solver/      Standalone kinematic solver (pK-EP v1.0.3)
+  perfectKinematics.m   Entry point
+docs/                   Thesis, extended abstract and figures
+CHANGELOG.md            Development history, version by version
 ```
 
 ## Running it
@@ -55,6 +57,8 @@ Requires MATLAB with the Optimization Toolbox (`fsolve`).
 1. Open `solver/mbssoftware.m`.
 2. Set `filename` to one of the models in `solver/Excel Files/` (e.g. `'simple_pendulum_adams'`, `'bricards_mechanism'`).
 3. Run the script. The simulation type (kinematic or dynamic), time step and run time are read from the Excel file.
+
+For kinematics only, the standalone solver in `kinematics-solver/` runs the same way from `perfectKinematics.m`.
 
 ## Limitations
 
