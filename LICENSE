@@ -20,6 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-The folder solver/Dynamic Analysis/Regtools/ is third-party code
+The folder full-solver/Dynamic Analysis/Regtools/ is third-party code
 (Regularization Tools, (c) Per Christian Hansen) and is distributed under
 its own licence, found in that folder.
