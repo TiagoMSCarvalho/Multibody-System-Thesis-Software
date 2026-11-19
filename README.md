@@ -1,88 +1,76 @@
-# Thesis-Project
-Repository related to the 3D Sim Kinematic and Dynamic
+# 3D Multibody Dynamics Simulator (MATLAB)
 
-pk-EP v.1.0.0:
-  - First Implementation regarding the Kinematic Sim
-  - Implementation of Euler Parameters instead of Bryant Angles ( to avoid Singularities);
-      - Implementation of the Velocity and Acceleration Equations
-      - Implementation of SkewMatrix Modules, PerpendicularVectors and UnitVectors
+A general-purpose 3D kinematics and forward-dynamics solver for rigid multibody systems, written from scratch for my MSc thesis at Instituto Superior Técnico so that the **FST Lisboa** Formula Student team could bring multibody dynamics into suspension design.
 
-pk-EP v.1.0.1:
-  - Implementation of the condition number for the inverse kinematics (IK) linear systems (velocity and acceleration);
-  - Restructure to the pre processing data module, three new types of inputs to define the body orientation:
-      - Axis Vectors, the user defines 2 axis of the body frame;
-      - Bryant Angles, the user supplies the bryant angles corresponding to the rotation of the frame (x-y-z order);
-      - Orientational Axis, the user define a vector-axis around which the frame rotates (active view) and a angle corresponding to the rotation;
-  - Implementation of a 3D Example for Debug of lsqr and fsolver;
-  - Version Closure: 
-	- Statement:
-		- Closed for backup porpuses;
-		- An extensive debug was done during the week, several bugs were found and corrected at this time the comparison with ADAMS is the following:
-			- Translational joint:
-				- All values are correct since only Vx is different from 0;
-				- Velocity signals are all correct;
-				- Velocity values of Matlab are higher than expected;
-				- Acceleration values are different from expected;
-			- Universal Joint:
-				- Velocity values are erratic, Vy should be 0;
-				- Acceleration Values don't add up vs Adams, Accel in y should be 0, Ang Accel in Z have different magnitudes;
-			- Spherical Joint:
-				- Velocity values are correct both in x and y;
-				- Angular z velocity signal is wrong, values are different than expected;
-				- Acceleration values are wrong;
+Models are defined in Excel (bodies, joints, drivers, force elements); the solver returns positions, velocities, accelerations and reaction forces, with 2D plots and a 3D animation of the motion.
 
-pk-EP v.1.0.2:
-  - Implementation of debug changes to the joints equations, experience changing some inconsistencies between the Wichita thesis and Nikravesh.
-  - Issues Detected:
-	- Acceleration Values were wrong in the joints and center of mass;
-		- Solved: Issue with the Driver Input Equation ( Nikravesh page 175(193) equation 6.112)
-			- Attention: The program is only giving the correct values with the signal of the equation second term is positive.
-			- Simulations were done for positive and negative values of the angular velocity both are correct.
-	- The y component of the velocity in the center of mass of body 3 is not giving the correct values
-		- May be problematic due to the dynamic simulation.
+<p align="center">
+  <img src="docs/images/pendulum_vs_adams.png" width="48%" alt="Simple pendulum: solver output overlaid on MSC Adams">
+  <img src="docs/images/bricards_mechanism_adams.png" width="40%" alt="Bricard's mechanism reference model in MSC Adams">
+</p>
+<p align="center"><sub>Left: simple pendulum, this solver (dashed) on top of MSC Adams (solid). Right: Bricard's over-constrained mechanism, reference model in MSC Adams.</sub></p>
 
-pk-EP v1.0.3:
-  - Implementation of a more robust input function:
-  	- Implementation of the Spherical-Spherical Composite Joint;
-   	- Implementation of a new Driver Equation Input:
-		- Program now reads handle functions from the excel;
-		- Program has lost "sturdiness" in relation to the Rotational Inputs being in Rads or Deg; [Limitation]
-			- The sturdiness is maintained for the Body Orientation Input;
-	-  Displacements and rotations are being applied to the CoM of the body, not to the point of application
-	- Version CLosure:
-		- SPH - SPH Implemented
-		- Sinusoidal and Polynomial input functions implemented 
+## Results
 
-mbs-EP v1.0.0:
-  - Implementation of the dynamic simulations:
-  	- Solves the linear initial acceleration problem with the input of the q0 and rd0/w0 or q and rd/w for t0+timestep;
-  	- Implements the ODE45 function (runge-Kutta algorithm with a method of 4th Order and Error Estimation of 5th Order) to integrate the DAE's of the velocity and acceleration;
-		- A standard Euler Integration would be enough for this version, it was a mistake to implement ODE45. However, the computational effort is not demanding enough to force a correction;
-  	- Uses the algorithm of Direct Correction by S.Yoon to geometric eliminate the constraint violations of the joints;
-		- Due to this implementation this version is slow but extremly reliable;
-  - The program is capable of receiving:
-  	-  Linear and Non Linear Spring and Damper Functions (Up to 3 functions for 1 spring);
-  	-  Capable of receiving Sinusoidal and Polynomial Driving Input Functions for Position, Velocity and Acceleration;
-  	-  Run simulations in mmks and MKS (SI) Units;
-  	-  Run simulations with gravity or without it;
-  	-  Simulate Steering forces and Bump Scenarios;
-  	-  Simulate Tyre Vertical Forces by means of a prismatic joint and spring system;
-	-  Plot Kinematic and Dynamic 2d plots and plot a 3D animation
-  - Limitations:
-  	-  The Program is not able to simulate the tyre sideslipping or the lateral forces performed by the tyre during cornering;
-  		- Would be needed an implementation of a Sideslip tyre force model;
-	-  Algorithm does not have a Variable Step and Variable order, this implies that all the integration steps are the same and the program computation time is not efficient;
-	-  Symbolic toolbox is used for the inputs which causes the program to be even more inefficient;
+Verified against **MSC Adams** on the five standard benchmark problems of González et al. (2006), each built as an identical model in both tools:
 
-mbs-EP v1.0.1:
-  - Implementation of the following algorithms:
-	- Implementation of the Stabilization algorithm: Augmented Lagragian Formula which reduces the number of equations to half ( eliminates the lagrangian mutipliers);
-	- Implementation of the Integration predictor-corrector algorithm: Adams-Moulton-Bashforth which allows the program to have variable order of accuracy and variable step and consequently a higher efficiency;
-  - The program is capable of developing all the functions from mbs-EP v1.0.0 with a higher effiency and a lower computation time;
-  - Limitations:
-	- The user has to choose the parameters for the ALF algorithm which, if chosen incorrectly, can lead to instability and incorrect results at the worst case;
-	- The program still uses the symbolic toolbox for non linear inputs has a result the usage of this feature causes the program to become inefficient;
+| ID | Problem | What it stresses | Difference vs MSC Adams (y displacement) |
+|---|---|---|---|
+| A01 | Simple pendulum | 2D reference case | 0.59 % |
+| A02 | N-four-bar mechanism | Singular positions | 0.12 % |
+| A03 | Andrew's mechanism | Very small time scale | 0.07 % |
+| A04 | Bricard's mechanism | Redundant constraints (3D) | 0.05 % |
+| A05 | Flyball governor | Stiff system (3D) | 1.88 % |
 
-mbs-EP v1.0.2:
-  - Overhaul of the Excel GUI and Pre Data Processing functions to allow the program to treat the nonlinear inputs has anonymous functions and discard the usage of the symbolic toolbox resulting in an increased efficiency;
-      
+All five problems solved, every result within the 5 % acceptance margin (mean 0.54 %). Full convergence studies of the solver penalty parameters (α, Ω, µ) versus accuracy and run time are in the [thesis](docs/Thesis.pdf), Chapter 4.
+
+## How it works
+
+- **Orientation:** Euler parameters (quaternions) instead of Bryant angles, so the formulation stays free of rotational singularities.
+- **Kinematics:** appended driving constraints; the nonlinear position problem is solved with a **trust-region dogleg** algorithm (faster than Levenberg–Marquardt on the same models), followed by the linear velocity and acceleration problems.
+- **Dynamics:** index-1 **Augmented Lagrangian Formulation** for constraint stabilisation, integrated with the variable-step, variable-order **Adams–Bashforth–Moulton** predictor-corrector (MATLAB `ode113`), which ran 2–3× faster than `ode45` on the benchmark models. Initial conditions are made consistent with an inertia-weighted correction before integration.
+- **Library:** spherical, revolute, cylindrical, translational, universal and composite joints; linear and nonlinear springs, dampers and actuators; sinusoidal and polynomial drivers; SI and mm-kg-s units.
+
+<details>
+<summary>Program flow</summary>
+
+<p align="center"><img src="docs/images/program_flow.png" width="70%" alt="Program flowchart: pre-processing, kinematic and dynamic solvers, post-processing"></p>
+</details>
+
+## Repository layout
+
+```
+solver/            Main program: kinematics + forward dynamics (latest version, v1.0.6)
+  mbssoftware.m    Entry point
+  Excel Files/     Example and benchmark models
+  Results/         Saved benchmark results
+docs/              Thesis, extended abstract and figures
+CHANGELOG.md       Development history, version by version
+```
+
+## Running it
+
+Requires MATLAB with the Optimization Toolbox (`fsolve`).
+
+1. Open `solver/mbssoftware.m`.
+2. Set `filename` to one of the models in `solver/Excel Files/` (e.g. `'simple_pendulum_adams'`, `'bricards_mechanism'`).
+3. Run the script. The simulation type (kinematic or dynamic), time step and run time are read from the Excel file.
+
+## Limitations
+
+- Run time is 7–60× longer than MSC Adams on the benchmarks, mainly because MATLAB is interpreted while the Adams solver runs in compiled Fortran/C++.
+- Penalty parameters for the Augmented Lagrangian are chosen empirically per model; the thesis includes a convergence library to guide the choice.
+- No tyre model or unconditionally stable integrator (e.g. HHT) yet; these are listed as future work in the thesis.
+
+## Documentation
+
+- [Full thesis (PDF)](docs/Thesis.pdf): *Multibody 3D Simulation Tool for Vehicle Development*, Instituto Superior Técnico, 2022
+- [Extended abstract (PDF)](docs/Thesis_Abstract.pdf)
+
+## Third-party code
+
+`solver/Dynamic Analysis/Regtools/` contains Regularization Tools by Per Christian Hansen, distributed under its own licence (see `license.txt` in that folder).
+
+## Author
+
+**Tiago Carvalho** · [LinkedIn](https://www.linkedin.com/in/tiagomspcarvalho/)
